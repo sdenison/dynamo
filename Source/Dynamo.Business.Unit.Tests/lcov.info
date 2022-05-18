@@ -1,0 +1,46 @@
+SF:/home/user1/Dev/dynamo/Source/Dynamo.Business/Region.cs
+FN:7,System.Guid Dynamo.Business.Region::get_RegionId()
+FNDA:2,System.Guid Dynamo.Business.Region::get_RegionId()
+DA:8,2
+FN:8,System.String Dynamo.Business.Region::get_Name()
+FNDA:3,System.String Dynamo.Business.Region::get_Name()
+DA:9,3
+FN:9,System.Collections.Generic.List`1<Dynamo.Business.Store> Dynamo.Business.Region::get_Stores()
+FNDA:4,System.Collections.Generic.List`1<Dynamo.Business.Store> Dynamo.Business.Region::get_Stores()
+DA:10,4
+FN:11,System.Void Dynamo.Business.Region::.ctor(System.String)
+FNDA:2,System.Void Dynamo.Business.Region::.ctor(System.String)
+DA:12,2
+DA:13,2
+DA:14,2
+DA:15,2
+DA:16,2
+DA:17,2
+LF:9
+LH:9
+BRF:0
+BRH:0
+FNF:4
+FNH:4
+end_of_record
+SF:/home/user1/Dev/dynamo/Source/Dynamo.Business/Store.cs
+FN:6,System.Guid Dynamo.Business.Store::get_StoreId()
+FNDA:1,System.Guid Dynamo.Business.Store::get_StoreId()
+DA:7,1
+FN:7,System.String Dynamo.Business.Store::get_Name()
+FNDA:1,System.String Dynamo.Business.Store::get_Name()
+DA:8,1
+FN:9,System.Void Dynamo.Business.Store::.ctor(System.String)
+FNDA:1,System.Void Dynamo.Business.Store::.ctor(System.String)
+DA:10,1
+DA:11,1
+DA:12,1
+DA:13,1
+DA:14,1
+LF:7
+LH:7
+BRF:0
+BRH:0
+FNF:3
+FNH:3
+end_of_record
