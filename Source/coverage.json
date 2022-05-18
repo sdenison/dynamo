@@ -1,0 +1,38 @@
+{
+  "Dynamo.Business.dll": {
+    "/home/user1/Dev/dynamo/Source/Dynamo.Business/Region.cs": {
+      "Dynamo.Business.Region": {
+        "System.String Dynamo.Business.Region::DoSomething()": {
+          "Lines": {
+            "13": 0,
+            "14": 0,
+            "15": 0
+          },
+          "Branches": []
+        },
+        "System.Void Dynamo.Business.Region::.ctor()": {
+          "Lines": {
+            "7": 2,
+            "8": 2,
+            "9": 2,
+            "10": 2
+          },
+          "Branches": []
+        }
+      }
+    },
+    "/home/user1/Dev/dynamo/Source/Dynamo.Business/Store.cs": {
+      "Dynamo.Business.Store": {
+        "System.Void Dynamo.Business.Store::.ctor()": {
+          "Lines": {
+            "5": 0,
+            "6": 0,
+            "7": 0,
+            "8": 0
+          },
+          "Branches": []
+        }
+      }
+    }
+  }
+}
