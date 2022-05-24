@@ -1,7 +1,9 @@
-# dynamo
+# dynamo 
 
-Useful Commands:
-#Build web project
+##Useful Commands:
+##Build web project
 dotnet publish -c release -o dynamo-release Dynamo.Web/Dynamo.Web.csproj
-#Run web server
+##Run web server
 dotnet Dynamo.Web.dll --urls "http://localhost:5002"
+##Run web server in Docker
+sudo docker run -p 5002:80 dynamo-web-server
