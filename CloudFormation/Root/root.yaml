@@ -1,0 +1,16 @@
+Description:
+  This template deploys all resources
+
+Parameters:
+  CFTemplateBucket:
+    Type: String
+  EnvironmentName:
+    Type: String
+
+Resources:
+  Network:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/Network/network.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
