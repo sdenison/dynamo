@@ -1,0 +1,2 @@
+aws s3 cp . s3://sdenison-codebuild --recursive
+aws cloudformation create-stack --stack-name dynamo --template-url s3://sdenison-codebuild/Root/root.yaml --parameters ParameterKey=EnvironmentName,ParameterValue=Test --parameters ParameterKey=CFTemplateBucket,ParameterValue=sdenison-codebuild

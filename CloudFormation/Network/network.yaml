@@ -1,0 +1,36 @@
+Description:
+  This template deploys network infrastructure
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: poc
+  VpcCIDR:
+    Type: String
+    Default: 10.90.55.0/24
+  PublicSubnet1CIDR:
+    Type: String
+    Default: 10.90.55.0/27
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      InstanceTenancy: default
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName}
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} - Public Subnet-az1a
