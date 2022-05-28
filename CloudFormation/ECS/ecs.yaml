@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  CFTemplateBucket:
+    Type: String
+  EnvironmentName:
+    Type: String
+
+Resources:
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub ${EnvironmentName}-dynamo-fargate-cluster
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+      Tags:
+        - Key: environment
+          Value: !Ref EnvironmentName
+
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-ECSTaskExecutionRole
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  DynamoWebTaskDefinition:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ECSCluster
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/ECS/one-web-task-definition.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        TaskName: "dynamo-web"
+        Command: ""
+        ExecutionRoleArn: !GetAtt ECSTaskExecutionRole.Arn

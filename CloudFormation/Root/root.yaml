@@ -14,3 +14,19 @@ Resources:
       TemplateURL: !Sub https://${CFTemplateBucket}/Network/network.yaml
       Parameters:
         EnvironmentName: !Ref EnvironmentName
+
+  ECR:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/ECR/ecr.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
+
+  ECS:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: ECR
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/ECS/ecs.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
+        CFTemplateBucket: !Ref CFTemplateBucket

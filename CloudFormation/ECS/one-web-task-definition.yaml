@@ -1,0 +1,109 @@
+Description: This template creates one Dynamo web task definition
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  TaskName:
+    Type: String
+  #Command is a comma separated list of strings. 
+  Command:
+    Type: String
+  ExecutionRoleArn:
+    Type: String
+  Memory:
+    Type: String
+    Default: "512"
+  Cpu:
+    Type: String
+    Default: "256"
+
+Resources:
+  OneDynamoWebRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "${EnvironmentName}-role-dynamo-${TaskName}"
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ecs-tasks.amazonaws.com
+          Action:
+          - "sts:AssumeRole"
+      Policies:
+      - PolicyName: !Sub "${EnvironmentName}-role-policy-${TaskName}"
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DeleteNetworkInterface
+                - ec2:DescribeNetworkInterfaces
+                - ssm:GetParameters
+                - ssm:GetParameter
+                - ssm:GetParametersByPath
+                - secretsmanager:GetSecretValue
+                - secretsmanager:DescribeSecret
+                - s3:DeleteObject
+                - s3:GetObject
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:ListBucket
+                - ses:SendEmail
+                - sqs:GetQueueAttributes
+                - sqs:SetQueueAttributes
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:SendMessage
+                - sqs:ListQueues
+                - sqs:ListQueueTags
+                - sqs:GetQueueUrl
+                - sns:GetTopicAttributes
+                - sns:Publish
+                - sns:Subscribe
+                - sns:CreateTopic
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                - logs:DescribeLogGroups
+                - logs:DescribeLogStreams
+                - cloudwatch:PutMetricData
+              Resource: "*"
+
+  OneFfeCliTaskDefinitionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /ecs/${EnvironmentName}-${TaskName}-task-log-group
+
+  OneFfeCliTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub ${EnvironmentName}-ecs-task-${TaskName}
+      RequiresCompatibilities:
+        - FARGATE
+      NetworkMode: awsvpc
+      ExecutionRoleArn: !Ref ExecutionRoleArn
+      TaskRoleArn: !GetAtt OneDynamoWebRole.Arn
+      Cpu: !Sub ${Cpu}
+      Memory: !Sub ${Memory}
+      ContainerDefinitions:
+        - Name: !Sub ${EnvironmentName}-ecs-task-container-${TaskName}
+          Image: !Join [":", ["Fn::ImportValue": !Sub "${EnvironmentName}-dynamo-ecr-repository-uri", "latest"]]
+          Command: !Split [",", !Ref Command]
+          Environment:
+            - Name: "ENVIRONMENT"
+              Value: !Sub ${EnvironmentName}
+            - Name: "AppSettings__EnvironmentName"
+              Value: !Sub "${EnvironmentName}"
+            - Name: "AppSettings__AWSRegion"
+              Value: !Sub "${AWS::Region}"
+          Essential: true
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub /ecs/${EnvironmentName}-${TaskName}-task-log-group
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: ecs
