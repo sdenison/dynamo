@@ -18,4 +18,11 @@ aws cloudformation create-stack --stack-name dynamo --template-body file://Root/
 aws cloudformation delete-stack --stack-name dynamo
 
 ## Delete stack
-aws cloudformation update-stack --stack-name dynamo
+aws ecr batch-delete-image --repository-name test-dynamo-repository --image-ids imageTag=latest |
+aws cloudformation delete-stack --stack-name dynamo
+
+## Push Docker image
+sudo docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-repository
+
+
+
