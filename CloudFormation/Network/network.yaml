@@ -24,25 +24,14 @@ Resources:
       - Key: Name
         Value: !Sub ${EnvironmentName}
 
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
-      CidrBlock: !Ref PublicSubnet1CIDR
-      MapPublicIpOnLaunch: false
-      Tags:
-      - Key: Name
-        Value: !Sub ${EnvironmentName} - Public Subnet-az1a
-
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
       - Key: Name
-        Value: !Sub ${EnvironmentName} - IGW
+        Value: !Sub ${EnvironmentName} - IGW        
 
-  InternetGatewayAttachment:
+  VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
@@ -50,15 +39,79 @@ Resources:
 
   NatGateway1EIP:
     Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
+    DependsOn: VPCGatewayAttachment
     Properties:
-      Domain: vpc
+      Domain: vpc      
 
-  NatGateway1:
+  NatGateway01:
+    DependsOn:
+    - VPCGatewayAttachment
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId: !GetAtt NatGateway1EIP.AllocationId
       SubnetId: !Ref PublicSubnet1
       Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-NatGateway01
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-PublicRouteTable
+
+  PublicRoute:
+    DependsOn: VPCGatewayAttachment
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway 
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: true 
+      Tags:
       - Key: Name
-        Value: !Sub ${EnvironmentName} - NATGW
+        Value: !Sub ${EnvironmentName} - Public Subnet-az1a
+
+  PublicSubnet01RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable    
+
+  PublicSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Public Security group
+      VpcId: !Ref  VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+        Description: HTTP from Internet
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
+        Description: HTTPS from Internet
+      - IpProtocol: tcp
+        FromPort: 22 
+        ToPort: 22 
+        CidrIp: 0.0.0.0/0
+        Description: SSH from Internet
+      SecurityGroupEgress:
+      - IpProtocol: '-1'
+        CidrIp: 0.0.0.0/0
+        Description: Outbound to internet
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName}-Public-sg

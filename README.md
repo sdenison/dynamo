@@ -17,9 +17,12 @@ aws cloudformation create-stack --stack-name dynamo --template-body file://Root/
 ## Delete stack
 aws cloudformation delete-stack --stack-name dynamo
 
-## Delete stack
+## Delete stackaws ecr get-login-password --region us-east-2 | sudo docker login --username AWS --password-stdin 477374169746.dkr.ecr.us-east-2.amazonaws.com
 aws ecr batch-delete-image --repository-name test-dynamo-repository --image-ids imageTag=latest |
 aws cloudformation delete-stack --stack-name dynamo
+
+## Login to remote Docker
+
 
 ## Push Docker image
 sudo docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-repository
