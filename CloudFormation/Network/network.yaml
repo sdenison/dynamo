@@ -11,6 +11,9 @@ Parameters:
   PublicSubnet1CIDR:
     Type: String
     Default: 10.90.55.0/27
+  PublicSubnet2CIDR:
+    Type: String
+    Default: 10.90.55.32/27
 
 Resources:
   VPC:
@@ -81,10 +84,27 @@ Resources:
       - Key: Name
         Value: !Sub ${EnvironmentName} - Public Subnet-az1a
 
-  PublicSubnet01RouteTableAssociation:
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet2CIDR
+      MapPublicIpOnLaunch: true 
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} - Public Subnet-az1a        
+
+  PublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable    
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable    
 
   PublicSecurityGroup:
@@ -115,3 +135,199 @@ Resources:
       Tags:
       - Key: Name
         Value: !Sub ${EnvironmentName}-Public-sg
+
+  PublicLoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Access to the public facing load balancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        # Allow access to ALB from anywhere on the internet
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1        
+
+  PublicLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets:
+        # The load balancer is placed into the public subnets, so that traffic
+        # from the internet can reach the load balancer directly via the internet gateway
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups: [!Ref PublicLoadBalancerSecurityGroup]        
+
+  DummyTargetGroupPublic:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Name: "no-op"
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref VPC
+
+  PublicLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - PublicLoadBalancer
+    Properties:
+      DefaultActions:
+        - TargetGroupArn: !Ref DummyTargetGroupPublic
+          Type: 'forward'
+      LoadBalancerArn: !Ref PublicLoadBalancer
+      Port: 80
+      Protocol: HTTP      
+
+  ECSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Access to the ECS containers
+      VpcId: !Ref 'VPC'      
+
+  ECSSecurityGroupIngressFromPublicALB:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress from the public ALB
+      GroupId: !Ref 'ECSSecurityGroup'
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref 'PublicLoadBalancerSecurityGroup'
+
+  ECSSecurityGroupIngressFromSelf:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      Description: Ingress from other containers in the same security group
+      GroupId: !Ref 'ECSSecurityGroup'
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref 'ECSSecurityGroup'
+
+
+  # ECSCluster:
+  #   Type: AWS::ECS::Cluster
+  #   Properties:
+  #     ClusterName: !Sub ${EnvironmentName}-dynamo-fargate-cluster
+  #     ClusterSettings:
+  #       - Name: containerInsights
+  #         Value: enabled
+  #     Tags:
+  #       - Key: environment
+  #         Value: !Ref EnvironmentName      
+
+  # ECSSecurityGroup:
+  #   Type: AWS::EC2::SecurityGroup
+  #   Properties:
+  #     GroupDescription: Access to the ECS containers
+  #     VpcId: !Ref 'VPC'
+
+  # ECSSecurityGroupIngressFromPublicALB:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties:
+  #     Description: Ingress from the public ALB
+  #     GroupId: !Ref 'ECSSecurityGroup'
+  #     IpProtocol: -1
+  #     SourceSecurityGroupId: !Ref 'PublicLoadBalancerSecurityGroup'
+
+  # ECSSecurityGroupIngressFromSelf:
+  #   Type: AWS::EC2::SecurityGroupIngress
+  #   Properties:
+  #     Description: Ingress from other containers in the same security group
+  #     GroupId: !Ref 'ECSSecurityGroup'
+  #     IpProtocol: -1
+  #     SourceSecurityGroupId: !Ref 'ECSSecurityGroup'
+
+  # ECSRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service: [ecs.amazonaws.com]
+  #           Action: ['sts:AssumeRole']
+  #     Path: /
+  #     Policies:
+  #       - PolicyName: ecs-service
+  #         PolicyDocument:
+  #           Statement:
+  #             - Effect: Allow
+  #               Action:
+  #                 # Rules which allow ECS to attach network interfaces to instances
+  #                 # on your behalf in order for awsvpc networking mode to work right
+  #                 - 'ec2:AttachNetworkInterface'
+  #                 - 'ec2:CreateNetworkInterface'
+  #                 - 'ec2:CreateNetworkInterfacePermission'
+  #                 - 'ec2:DeleteNetworkInterface'
+  #                 - 'ec2:DeleteNetworkInterfacePermission'
+  #                 - 'ec2:Describe*'
+  #                 - 'ec2:DetachNetworkInterface'
+
+  #                 # Rules which allow ECS to update load balancers on your behalf
+  #                 # with the information sabout how to send traffic to your containers
+  #                 - 'elasticloadbalancing:DeregisterInstancesFromLoadBalancer'
+  #                 - 'elasticloadbalancing:DeregisterTargets'
+  #                 - 'elasticloadbalancing:Describe*'
+  #                 - 'elasticloadbalancing:RegisterInstancesWithLoadBalancer'
+  #                 - 'elasticloadbalancing:RegisterTargets'
+  #               Resource: '*'
+
+  # ECSTaskExecutionRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service: [ecs-tasks.amazonaws.com]
+  #           Action: ['sts:AssumeRole']
+  #     Path: /
+  #     Policies:
+  #       - PolicyName: AmazonECSTaskExecutionRolePolicy
+  #         PolicyDocument:
+  #           Statement:
+  #             - Effect: Allow
+  #               Action:
+  #                 # Allow the ECS Tasks to download images from ECR
+  #                 - 'ecr:GetAuthorizationToken'
+  #                 - 'ecr:BatchCheckLayerAvailability'
+  #                 - 'ecr:GetDownloadUrlForLayer'
+  #                 - 'ecr:BatchGetImage'
+
+  #                 # Allow the ECS tasks to upload logs to CloudWatch
+  #                 - 'logs:CreateLogStream'
+  #                 - 'logs:PutLogEvents'
+  #               Resource: '*'
+Outputs:
+  ExternalUrl:
+    Description: The url of the external load balancer
+    Value: !Join ['', ['http://', !GetAtt 'PublicLoadBalancer.DNSName']]
+    Export:
+      Name: !Sub ${EnvironmentName}-ExternalUrl
+  PublicListener:
+    Description: The ARN of the public load balancer's Listener
+    Value: !Ref PublicLoadBalancerListener
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicListener
+  VPCId:
+    Description: The ID of the VPC that this stack is deployed in
+    Value: !Ref 'VPC'
+    Export:
+      Name: !Sub ${EnvironmentName}-VPCId
+  PublicSubnet1:
+    Description: Public subnet one
+    Value: !Ref 'PublicSubnet1'
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicSubnet1
+  PublicSubnet2:
+    Description: Public subnet two
+    Value: !Ref 'PublicSubnet2'
+    Export:
+      Name: !Sub ${EnvironmentName}-PublicSubnet2
+  ECSSecurityGroup:
+    Description: A security group used to allow ECS containers to receive traffic
+    Value: !Ref 'ECSSecurityGroup'
+    Export:
+      Name: !Sub ${EnvironmentName}-ECSSecurityGroup

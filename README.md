@@ -18,6 +18,8 @@ aws cloudformation create-stack --stack-name dynamo --template-body file://Root/
 aws cloudformation delete-stack --stack-name dynamo
 
 ## Delete stackaws ecr get-login-password --region us-east-2 | sudo docker login --username AWS --password-stdin 477374169746.dkr.ecr.us-east-2.amazonaws.com
+IMAGES_TO_DELETE=$( aws ecr list-images --region $ECR_REGION --repository-name $ECR_REPO --filter "tagStatus=UNTAGGED" --query 'imageIds[*]' --output json )
+ecr list-images --region $ECR_REGION --repository-name $ECR_REPO --filter "tagStatus=UNTAGGED" imageIds[*]' --output json )
 aws ecr batch-delete-image --repository-name test-dynamo-repository --image-ids imageTag=latest |
 aws cloudformation delete-stack --stack-name dynamo
 
@@ -27,5 +29,6 @@ aws cloudformation delete-stack --stack-name dynamo
 ## Push Docker image
 sudo docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-repository
 
-
+## Running the app
+When the app is running you can navigate to it by using the public dns of the load balancer.
 

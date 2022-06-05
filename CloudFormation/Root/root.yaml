@@ -17,6 +17,7 @@ Resources:
 
   ECR:
     Type: AWS::CloudFormation::Stack
+    DependsOn: Network
     Properties:
       TemplateURL: !Sub https://${CFTemplateBucket}/ECR/ecr.yaml
       Parameters:
