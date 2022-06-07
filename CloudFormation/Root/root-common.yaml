@@ -1,0 +1,16 @@
+Description:
+  This template deploys resources that should not be brought down with the root app
+
+Parameters:
+  CFTemplateBucket:
+    Type: String
+  EnvironmentName:
+    Type: String
+
+Resources:
+  ECR:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/ECR/ecr.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        

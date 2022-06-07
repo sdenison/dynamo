@@ -129,7 +129,7 @@ Resources:
       Memory: !Sub ${Memory}
       ContainerDefinitions:
         - Name: !Sub ${EnvironmentName}-ecs-task-container-${TaskName}
-          Image: !Join [":", ["Fn::ImportValue": !Sub "${EnvironmentName}-dynamo-ecr-repository-uri", "latest"]]
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${EnvironmentName}-dynamo-repository:latest
           Command: !Split [",", !Ref Command]
           PortMappings:
             - ContainerPort: !Ref ContainerPort
