@@ -172,9 +172,7 @@ Resources:
       VpcId: !Ref VPC
 
   PublicLoadBalancerListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    DependsOn:
-      - PublicLoadBalancer
+    Type: AWS::ElsticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
         - TargetGroupArn: !Ref DummyTargetGroupPublic
