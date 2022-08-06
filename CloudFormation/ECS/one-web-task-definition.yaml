@@ -148,7 +148,35 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: ecs
 
-  Service:
+  # PublicNamespace:
+  #   Type: AWS::ServiceDiscovery::PublicDnsNamespace
+  #   Properties:
+  #       Name: sdenisondemo.com
+
+  # PrivateNamespace:
+  #   Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+  #   Properties:
+  #     Name: sdenisondemo.com
+  #     Vpc: vpc-07a3580a9e8ee717f
+
+  # DiscoveryService:
+  #   DependsOn: DynamoService
+  #   Type: AWS::ServiceDiscovery::Service
+  #   Properties: 
+  #     Description: Discovery Service for the Demo Application
+  #     DnsConfig:
+  #       RoutingPolicy: MULTIVALUE
+  #       DnsRecords:
+  #       - TTL: 60
+  #         Type: A
+  #       - TTL: 60
+  #         Type: SRV
+  #     HealthCheckCustomConfig: 
+  #       FailureThreshold: 1
+  #     Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-service
+  #     NamespaceId: !Ref PublicNamespace
+
+  DynamoService:
     Type: AWS::ECS::Service
     DependsOn: LoadBalancerRule
     Properties:
@@ -161,7 +189,7 @@ Resources:
       DesiredCount: !Ref 'DesiredCount'
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
+          AssignPublicIp: DISABLED 
           SecurityGroups:
             - Fn::ImportValue: 
                 !Sub ${EnvironmentName}-ECSSecurityGroup
@@ -171,10 +199,14 @@ Resources:
             - Fn::ImportValue:
                 !Sub ${EnvironmentName}-PublicSubnet2
       TaskDefinition: !Ref OneFfeCliTaskDefinition
+      # ServiceRegistries:
+      #   - RegistryArn: !GetAtt DiscoveryService.Arn
+      #     Port: 80 
       LoadBalancers:
         - ContainerName: !Sub ${EnvironmentName}-ecs-task-container-${TaskName}
           ContainerPort: !Ref 'ContainerPort'
-          TargetGroupArn: !Ref 'TargetGroup'              
+          TargetGroupArn: !Ref 'TargetGroup'
+          #LoadBalancerName: !Sub ${EnvironmentName}-ecs-service-${TaskName}
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -205,6 +237,24 @@ Resources:
       ListenerArn:
         Fn::ImportValue:
           !Sub ${EnvironmentName}-PublicListener
-      Priority: 1              
+      Priority: 1          
+
+  # LoadBalanacerDnsEntry:
+  #   Type: AWS::Route53::RecordSet
+  #   Properties:
+  #     Name: test2.dynamo.sdenisondemo.com.
+  #     HostedZoneName: sdenisondemo.com.
+  #     Type: A
+  #     AliasTarget:
+  #       #DNSName: !GetAtt TargetGroup.Arn
+  #       DNSName: dualstack.dynam-Publi-BAWZ88STMETN-1432335151.us-east-2.elb.amazonaws.com
+  #       HostedZoneId: Z2Z85ORGHA3LHD
+
+          #- !Sub ${EnvironmentName}-ecs-service-${TaskName}.DNSName
+        
+        #jHostedZoneId: !GetAtt DynamoService.
+        #!Sub ${EnvironmentName}-ecs-service-${TaskName}
+
+      
 
       
