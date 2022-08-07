@@ -22,11 +22,11 @@ Parameters:
     Description: How many copies of the service task to run.    
   HealthCheckPath:
     Type: String
-    Default: /health
+    Default: /
     Description: Path to perform the healthcheck on each instance.
   HealthCheckIntervalSeconds:
     Type: Number
-    Default: 5
+    Default: 10 
     Description: Number of seconds to wait between each health check.
   ContainerPort:
     Type: Number
@@ -111,12 +111,80 @@ Resources:
                 - 'elasticloadbalancing:RegisterTargets'                
               Resource: "*"
 
-  OneFfeCliTaskDefinitionLogGroup:
+  LoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Access to the public facing load balancer
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${EnvironmentName}-VPCId      
+      SecurityGroupIngress:
+        # Allow access to ALB from anywhere on the internet
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1                    
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${EnvironmentName}-LoadBalancer
+      SecurityGroups:
+        - !Ref LoadBalancerSecurityGroup
+      Subnets:
+        - Fn::ImportValue: !Sub ${EnvironmentName}-PublicSubnet1
+        - Fn::ImportValue: !Sub ${EnvironmentName}-PublicSubnet2      
+
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Matcher:
+        HttpCode: 200-299
+      HealthCheckIntervalSeconds: !Ref 'HealthCheckIntervalSeconds'
+      HealthCheckPath: !Ref 'HealthCheckPath'
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 10 
+      TargetType: ip
+      Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-tg
+      Port: !Ref ContainerPort
+      Protocol: HTT
+      UnhealthyThresholdCount: 2
+      TargetGroupAttributes:
+        -
+          Key: stickiness.enabled
+          Value: true
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${EnvironmentName}-VPCId          
+
+  ContainerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: 
+        Fn::ImportValue:
+          !Sub ${EnvironmentName}-VPCId
+      GroupDescription: for ecs container
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref 'LoadBalancerSecurityGroup'
+          IpProtocol: -1
+
+  OneTaskDefinitionLogGroup:
     Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       LogGroupName: !Sub /ecs/${EnvironmentName}-${TaskName}-task-log-group
 
-  OneFfeCliTaskDefinition:
+  OneTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: !Sub ${EnvironmentName}-ecs-task-${TaskName}
@@ -133,6 +201,7 @@ Resources:
           Command: !Split [",", !Ref Command]
           PortMappings:
             - ContainerPort: !Ref ContainerPort
+              Protocol: tcp
           Environment:
             - Name: "ENVIRONMENT"
               Value: !Sub ${EnvironmentName}
@@ -146,35 +215,7 @@ Resources:
             Options:
               awslogs-group: !Sub /ecs/${EnvironmentName}-${TaskName}-task-log-group
               awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: ecs
-
-  # PublicNamespace:
-  #   Type: AWS::ServiceDiscovery::PublicDnsNamespace
-  #   Properties:
-  #       Name: sdenisondemo.com
-
-  # PrivateNamespace:
-  #   Type: AWS::ServiceDiscovery::PrivateDnsNamespace
-  #   Properties:
-  #     Name: sdenisondemo.com
-  #     Vpc: vpc-07a3580a9e8ee717f
-
-  # DiscoveryService:
-  #   DependsOn: DynamoService
-  #   Type: AWS::ServiceDiscovery::Service
-  #   Properties: 
-  #     Description: Discovery Service for the Demo Application
-  #     DnsConfig:
-  #       RoutingPolicy: MULTIVALUE
-  #       DnsRecords:
-  #       - TTL: 60
-  #         Type: A
-  #       - TTL: 60
-  #         Type: SRV
-  #     HealthCheckCustomConfig: 
-  #       FailureThreshold: 1
-  #     Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-service
-  #     NamespaceId: !Ref PublicNamespace
+              awslogs-stream-prefix: ecs-task
 
   DynamoService:
     Type: AWS::ECS::Service
@@ -189,41 +230,23 @@ Resources:
       DesiredCount: !Ref 'DesiredCount'
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: DISABLED 
+          AssignPublicIp: ENABLED 
           SecurityGroups:
-            - Fn::ImportValue: 
-                !Sub ${EnvironmentName}-ECSSecurityGroup
+            - !Ref ContainerSecurityGroup
           Subnets:
             - Fn::ImportValue:
                 !Sub ${EnvironmentName}-PublicSubnet1
             - Fn::ImportValue:
                 !Sub ${EnvironmentName}-PublicSubnet2
-      TaskDefinition: !Ref OneFfeCliTaskDefinition
+      TaskDefinition: !Ref OneTaskDefinition
       # ServiceRegistries:
       #   - RegistryArn: !GetAtt DiscoveryService.Arn
       #     Port: 80 
       LoadBalancers:
         - ContainerName: !Sub ${EnvironmentName}-ecs-task-container-${TaskName}
-          ContainerPort: !Ref 'ContainerPort'
-          TargetGroupArn: !Ref 'TargetGroup'
+          ContainerPort: !Ref ContainerPort
+          TargetGroupArn: !Ref TargetGroup
           #LoadBalancerName: !Sub ${EnvironmentName}-ecs-service-${TaskName}
-
-  TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      HealthCheckIntervalSeconds: !Ref 'HealthCheckIntervalSeconds'
-      HealthCheckPath: !Ref 'HealthCheckPath'
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 4
-      HealthyThresholdCount: 2
-      TargetType: ip
-      Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-tg
-      Port: !Ref 'ContainerPort'
-      Protocol: HTTP
-      UnhealthyThresholdCount: 2
-      VpcId:
-        Fn::ImportValue:
-          !Sub ${EnvironmentName}-VPCId
 
   LoadBalancerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
@@ -233,28 +256,38 @@ Resources:
           Type: 'forward'
       Conditions:
         - Field: path-pattern
-          Values: [!Ref 'Path']
-      ListenerArn:
-        Fn::ImportValue:
-          !Sub ${EnvironmentName}-PublicListener
-      Priority: 1          
+          Values:
+            #This value was - /api/book* in the example. Maybe we can send traffic to different servers based on this path.
+            - /*
+      ListenerArn: !Ref LoadBalancerListener
+      Priority: 2          
 
-  # LoadBalanacerDnsEntry:
-  #   Type: AWS::Route53::RecordSet
-  #   Properties:
-  #     Name: test2.dynamo.sdenisondemo.com.
-  #     HostedZoneName: sdenisondemo.com.
-  #     Type: A
-  #     AliasTarget:
-  #       #DNSName: !GetAtt TargetGroup.Arn
-  #       DNSName: dualstack.dynam-Publi-BAWZ88STMETN-1432335151.us-east-2.elb.amazonaws.com
-  #       HostedZoneId: Z2Z85ORGHA3LHD
 
-          #- !Sub ${EnvironmentName}-ecs-service-${TaskName}.DNSName
-        
-        #jHostedZoneId: !GetAtt DynamoService.
-        #!Sub ${EnvironmentName}-ecs-service-${TaskName}
+  LoadBalanacerDnsEntry:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      Name: test.dynamo.sdenisondemo.com
+      HostedZoneName: sdenisondemo.com.
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt LoadBalancer.DNSName
+        HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
 
-      
+Outputs:
+  Listener:
+    Description: listener port 80
+    Value: !Ref LoadBalancerListener
+    Export:
+      Name: !Sub ${EnvironmentName}-Listener     
 
-      
+  ContainerSecurityGroiup:
+    Description: continer security group
+    Value: !Ref ContainerSecurityGroup
+    Export:
+      Name: !Sub ${EnvironmentName}-ContainerSecurityGroup    
+
+  LoadBalancerDNS:
+    Description: Domain name for the load balancer
+    Value: LoadBalancer.DNSName
+    Export:
+      Name: !Sub ${EnvironmentName}-LoadBalancerDns
