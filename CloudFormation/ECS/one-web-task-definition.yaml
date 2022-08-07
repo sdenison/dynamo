@@ -156,7 +156,7 @@ Resources:
       TargetType: ip
       Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-tg
       Port: !Ref ContainerPort
-      Protocol: HTT
+      Protocol: HTTP
       UnhealthyThresholdCount: 2
       TargetGroupAttributes:
         -
