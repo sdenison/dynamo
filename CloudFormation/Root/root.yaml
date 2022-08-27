@@ -6,6 +6,8 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  ApplicationName:
+    Type: String
 
 Resources:
   Network:
@@ -24,3 +26,14 @@ Resources:
       Parameters:
         EnvironmentName: !Ref EnvironmentName        
         CFTemplateBucket: !Ref CFTemplateBucket
+
+  CodePipeline:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - Network
+      - ECS
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/CodePipeline/ecs-service-pipeline.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
+        ApplicationName: !Ref ApplicationName

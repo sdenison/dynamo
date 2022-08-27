@@ -65,14 +65,14 @@ Resources:
   EcsCopyImageCodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !Sub ${EnvironmentName}-EcsCopyImageCodeBuildProject
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-EcsCopyImageCodeBuildProject
       Source:
         Auth:
           Type: OAUTH
         Type: GITHUB 
         Location: https://github.com/sdenison/dynamo.git
         #Location: !Sub sdenison-codebuild/build/${EnvironmentName}-dynamo-build-specs.zip
-        BuildSpec: !Sub ${EnvironmentName}-dynamo-build-specs.yml
+        BuildSpec: !Sub CloudFormation/CodePipeline/${ApplicationName}/${EnvironmentName}-${ApplicationName}-build-specs.yml
       SourceVersion: !Sub ${EnvironmentName}
       Artifacts:
         Type: NO_ARTIFACTS
@@ -91,9 +91,8 @@ Resources:
       ServiceRole: !GetAtt EcsDeploymentServiceRole.Arn
       VpcConfig: 
         SecurityGroupIds:
-          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSecurityGroup
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSecurityGroup
         Subnets:
-          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSubnet1
-          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSubnet2
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet1
         VpcId: 
-          Fn::ImportValue : !Sub ${EnvironmentName}-VPCID         
+          Fn::ImportValue : !Sub ${EnvironmentName}-VPCId         
