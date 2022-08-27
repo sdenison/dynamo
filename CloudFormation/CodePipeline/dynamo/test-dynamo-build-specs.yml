@@ -1,0 +1,15 @@
+---
+version: 0.2
+env:
+  shell: bash
+  parameter-store:
+    ENVIRONMENT_NAME: $ENVIRONMENT_NAME
+    AWS_REGION: $AWS_REGION
+    AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID     
+phases:
+  install:
+    commands:
+      - apt-get -y install jq
+  build:
+    commands:
+      - echo "This is a message from the build script."

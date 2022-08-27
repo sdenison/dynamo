@@ -166,3 +166,7 @@ Outputs:
     Value: !Ref 'PublicSubnet2'
     Export:
       Name: !Sub ${EnvironmentName}-PublicSubnet2
+  PublicSecurityGroup:
+    Value: !Ref PublicSecurityGroup
+    Export: 
+      Name: !Sub ${EnvironmentName}-PublicSecurityGroup      

@@ -1,0 +1,99 @@
+Description:
+  This template deploys the CMS CodeDeploy configuration.
+  Dependant Stacks - S3, Compute
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String
+  # CFTemplateBucket:
+  #   Type: String
+  # AppKey:
+  #   Type: String
+  #   Default: ffe    
+  CodeBuildDockerImage:
+    Type: String
+    Default: aws/codebuild/standard:4.0
+    Description: Default AWS CodeBuild image for Ubuntu 18.04
+
+Resources:
+  EcsDeploymentServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-${ApplicationName}-EcsDeploymentServiceRole
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents               
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeVpcs
+                  - ec2:CreateNetworkInterfacePermission                   
+                  - ssm:GetParameters
+                  - ssm:GetParameter             
+                  - ssm:PutParameter
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:GetObjectVersion                  
+                  - secretsmanager:GetResourcePolicy
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                  - secretsmanager:ListSecretVersionIds
+                  - ecr:*
+                  - lambda:UpdateFunctionCode         
+
+  EcsCopyImageCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${EnvironmentName}-EcsCopyImageCodeBuildProject
+      Source:
+        Auth:
+          Type: OAUTH
+        Type: GITHUB 
+        Location: https://github.com/sdenison/dynamo.git
+        #Location: !Sub sdenison-codebuild/build/${EnvironmentName}-dynamo-build-specs.zip
+        BuildSpec: !Sub ${EnvironmentName}-dynamo-build-specs.yml
+      SourceVersion: !Sub ${EnvironmentName}
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+        Image: !Ref CodeBuildDockerImage
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: ENVIRONMENT_NAME
+            Value: !Ref EnvironmentName
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
+      ServiceRole: !GetAtt EcsDeploymentServiceRole.Arn
+      VpcConfig: 
+        SecurityGroupIds:
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSecurityGroup
+        Subnets:
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSubnet1
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSubnet2
+        VpcId: 
+          Fn::ImportValue : !Sub ${EnvironmentName}-VPCID         
