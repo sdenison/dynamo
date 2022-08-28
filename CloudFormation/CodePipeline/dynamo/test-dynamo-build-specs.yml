@@ -15,3 +15,5 @@ phases:
       - echo "This is a message from the build script."
       - docker image ls
       - ls -lta
+      - docker build . -t dynamo-web-server
+      - docker image ls
