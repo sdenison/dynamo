@@ -131,7 +131,7 @@ Resources:
             - Name: !Sub ${EnvironmentName}-ecs-task-dyname-web-tg-2
             ProdTrafficRoute:
               ListenerArns:
-                - !Sub ${EnvironmentName}-Listener
+                - Fn::ImportValue : !Sub ${EnvironmentName}-Listener
       ECSServices:
         - ClusterName: !Sub ${EnvironmentName}-dynamo-fargate-cluster
           ServiceName: !Sub ${EnvironmentName}-ecs-task-dynamo-web-service
@@ -143,6 +143,36 @@ Resources:
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSCodeDeployRole
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents               
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeVpcs
+                  - ec2:CreateNetworkInterfacePermission                   
+                  - ssm:GetParameters
+                  - ssm:GetParameter             
+                  - ssm:PutParameter
+                  - s3:*
+                  - secretsmanager:GetResourcePolicy
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                  - secretsmanager:ListSecretVersionIds
+                  - ecr:*
+                  - ecs:*
+                  - lambda:UpdateFunctionCode                 
       AssumeRolePolicyDocument: 
         Version: 2012-10-17
         Statement: 
