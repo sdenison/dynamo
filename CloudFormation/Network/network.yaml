@@ -58,43 +58,43 @@ Resources:
     Properties:
       Domain: vpc      
 
-  NatGateway01:
-    DependsOn:
-    - VPCGatewayAttachment
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway1EIP.AllocationId
-      SubnetId: !Ref PublicSubnet1
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-NatGateway01
+  # NatGateway01:
+  #   DependsOn:
+  #   - VPCGatewayAttachment
+  #   Type: AWS::EC2::NatGateway
+  #   Properties:
+  #     AllocationId: !GetAtt NatGateway1EIP.AllocationId
+  #     SubnetId: !Ref PublicSubnet1
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub ${EnvironmentName}-NatGateway01
 
-  NatGateway02:
-    DependsOn:
-    - VPCGatewayAttachment
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway2EIP.AllocationId
-      SubnetId: !Ref PublicSubnet2
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-NatGateway02          
+  # NatGateway02:
+  #   DependsOn:
+  #   - VPCGatewayAttachment
+  #   Type: AWS::EC2::NatGateway
+  #   Properties:
+  #     AllocationId: !GetAtt NatGateway2EIP.AllocationId
+  #     SubnetId: !Ref PublicSubnet2
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub ${EnvironmentName}-NatGateway02          
 
-  PrivateRT1Route1:
-    Type: AWS::EC2::Route
-    DependsOn: VPCGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable1
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway01
+  # PrivateRT1Route1:
+  #   Type: AWS::EC2::Route
+  #   DependsOn: VPCGatewayAttachment
+  #   Properties:
+  #     RouteTableId: !Ref PrivateRouteTable1
+  #     DestinationCidrBlock: 0.0.0.0/0
+  #     NatGatewayId: !Ref NatGateway01
 
-  PrivateRT1Route2:
-    Type: AWS::EC2::Route
-    DependsOn: VPCGatewayAttachment
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable2
-      DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref NatGateway02      
+  # PrivateRT1Route2:
+  #   Type: AWS::EC2::Route
+  #   DependsOn: VPCGatewayAttachment
+  #   Properties:
+  #     RouteTableId: !Ref PrivateRouteTable2
+  #     DestinationCidrBlock: 0.0.0.0/0
+  #     NatGatewayId: !Ref NatGateway02      
 
   PrivateRouteTable1:
     Type: AWS::EC2::RouteTable
