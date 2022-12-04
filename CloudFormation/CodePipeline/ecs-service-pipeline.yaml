@@ -94,7 +94,7 @@ Resources:
         SecurityGroupIds:
           - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSecurityGroup
         Subnets:
-          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet1
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSubnet1
         VpcId: 
           Fn::ImportValue : !Sub ${EnvironmentName}-VPCId        
 
