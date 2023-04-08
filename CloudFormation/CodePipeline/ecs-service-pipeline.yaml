@@ -12,8 +12,8 @@ Parameters:
     Default: aws/codebuild/standard:4.0
     Description: Default AWS CodeBuild image for Ubuntu 18.04
 
-  Conditions:
-    IsTest: !Equals [!Ref EnvironmentName, test]    
+Conditions:
+  IsTest: !Equals [!Ref EnvironmentName, test]    
 
 Resources:
   EcsDeploymentServiceRole:
