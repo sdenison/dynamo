@@ -7,15 +7,13 @@ Parameters:
     Type: String
   ApplicationName:
     Type: String
-  # CFTemplateBucket:
-  #   Type: String
-  # AppKey:
-  #   Type: String
-  #   Default: ffe    
   CodeBuildDockerImage:
     Type: String
     Default: aws/codebuild/standard:4.0
     Description: Default AWS CodeBuild image for Ubuntu 18.04
+
+  Conditions:
+    IsTest: !Equals [!Ref EnvironmentName, test]    
 
 Resources:
   EcsDeploymentServiceRole:
@@ -182,4 +180,48 @@ Resources:
                 - 'codedeploy.amazonaws.com'
             Action: 
               - 'sts:AssumeRole'          
+
+  EcsServicePipelineTest:
+    Type: AWS::CodePipeline::Pipeline
+    Condition: IsTest
+    Properties:
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-Web-Service
+      RoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/service-role/${EnvironmentName}-${ApplicationName}-CodePipelineServiceRole
+      Stages:
+      - Name: Source
+        Actions:
+        - Name: Source
+          InputArtifacts: []
+          ActionTypeId:
+            Category: Source
+            Owner: ThirdParty
+            Version: 1
+            Provider: GitHub
+          OutputArtifacts:
+          - Name: SourceCode
+          Configuration:
+            Owner: sdenison
+            Repo: dynamo
+            Branch: test
+            PollForSourceChanges: true 
+            OAuthToken: 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
+          RunOrder: 1
+        - Name: Deploy
+          Actions:
+          - Name: Deploy
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            InputArtifacts:
+              - Name: SourceCode
+            Configuration:
+              ProjectName: !Ref EcsCopyImageCodeBuildProject
+            RunOrder: 10
+      ArtifactStore:
+        Type: S3
+        Location: !Sub ${Environment}-${ApplicationName}-codepipeline
+
+
 
