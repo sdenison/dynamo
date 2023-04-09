@@ -251,8 +251,8 @@ Resources:
         MaximumPercent: 200
         MinimumHealthyPercent: 50
       DesiredCount: !Ref 'DesiredCount'
-      DeploymentController: 
-        Type: CODE_DEPLOY
+      # DeploymentController: 
+      #   Type: CODE_DEPLOY
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED 

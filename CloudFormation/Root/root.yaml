@@ -27,11 +27,20 @@ Resources:
         EnvironmentName: !Ref EnvironmentName        
         CFTemplateBucket: !Ref CFTemplateBucket
 
+  CodePipelineIam:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/CodePipeline/codepipeline-iam.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
+        ApplicationName: !Ref ApplicationName
+
   CodePipeline:
     Type: AWS::CloudFormation::Stack
     DependsOn:
       - Network
       - ECS
+      - CodePipelineIam
     Properties:
       TemplateURL: !Sub https://${CFTemplateBucket}/CodePipeline/ecs-service-pipeline.yaml
       Parameters:
