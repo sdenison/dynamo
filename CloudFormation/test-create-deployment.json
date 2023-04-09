@@ -1,0 +1,12 @@
+{
+    "applicationName": "test-dynamo-EcsApplication",
+    "deploymentGroupName": "test-dynamo-EcsCodeDeploymentGroup",
+    "revision": {
+        "revisionType": "S3",
+        "s3Location": {
+            "bucket": "sdenison-codebuild",
+            "key": "CodePipeline/dynamo/test-dynamo-build-specs.yaml",
+            "bundleType": "YAML"
+        }
+    }
+}

@@ -1,0 +1,19 @@
+Description:
+  This template deploys the CMS CodeDeploy configuration.
+  Dependant Stacks - S3, Compute
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String
+
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:region:aws_account_id:task-definition/first-run-task-definition:7"
+        LoadBalancerInfo:
+          ContainerName: "sample-app"
+          ContainerPort: 80
+        PlatformVersion: "LATEST"

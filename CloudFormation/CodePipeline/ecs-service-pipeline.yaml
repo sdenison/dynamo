@@ -1,0 +1,223 @@
+Description:
+  This template deploys the CMS CodeDeploy configuration.
+  Dependant Stacks - S3, Compute
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String
+  CodeBuildDockerImage:
+    Type: String
+    Default: aws/codebuild/standard:4.0
+    Description: Default AWS CodeBuild image for Ubuntu 18.04
+
+Conditions:
+  IsTest: !Equals [!Ref EnvironmentName, test]    
+
+Resources:
+  EcsDeploymentServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-${ApplicationName}-EcsDeploymentServiceRole
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents               
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeVpcs
+                  - ec2:CreateNetworkInterfacePermission                   
+                  - ssm:GetParameters
+                  - ssm:GetParameter             
+                  - ssm:PutParameter
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:GetObjectVersion                  
+                  - secretsmanager:GetResourcePolicy
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                  - secretsmanager:ListSecretVersionIds
+                  - ecr:*
+                  - ecs:*
+                  - lambda:UpdateFunctionCode         
+
+  EcsCopyImageCodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-EcsCopyImageCodeBuildProject
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Sub CloudFormation/CodePipeline/${ApplicationName}/${EnvironmentName}-${ApplicationName}-build-specs.yml        
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+        Image: !Ref CodeBuildDockerImage
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: ENVIRONMENT_NAME
+            Value: !Ref EnvironmentName
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
+      ServiceRole: !GetAtt EcsDeploymentServiceRole.Arn
+      VpcConfig: 
+        SecurityGroupIds:
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSecurityGroup
+        Subnets:
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet1
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet2
+        VpcId: 
+          Fn::ImportValue : !Sub ${EnvironmentName}-VPCId        
+
+  EcsDeploymentApplication:
+    Type: AWS::CodeDeploy::Application
+    Properties:
+      ApplicationName: !Sub ${EnvironmentName}-${ApplicationName}-EcsApplication
+      ComputePlatform: ECS
+  
+  # CodeDeploymentGroup:
+  #   Type: AWS::CodeDeploy::DeploymentGroup
+  #   Properties:
+  #     ApplicationName: !Sub ${EnvironmentName}-${ApplicationName}-EcsApplication
+  #     ServiceRoleArn: !GetAtt CodeDeployIAMRole.Arn
+  #     AutoRollbackConfiguration:
+  #       Enabled: true
+  #       Events:
+  #         - DEPLOYMENT_FAILURE
+  #     BlueGreenDeploymentConfiguration:
+  #       DeploymentReadyOption:
+  #         ActionOnTimeout: CONTINUE_DEPLOYMENT
+  #         WaitTimeInMinutes: 0
+  #       TerminateBlueInstancesOnDeploymentSuccess:
+  #         Action: TERMINATE
+  #         TerminationWaitTimeInMinutes: 5
+  #     DeploymentGroupName: !Sub ${EnvironmentName}-${ApplicationName}-EcsCodeDeploymentGroup
+  #     DeploymentStyle:
+  #       DeploymentOption: WITH_TRAFFIC_CONTROL
+  #       DeploymentType: BLUE_GREEN
+  #     LoadBalancerInfo:
+  #       TargetGroupPairInfoList:
+  #         - TargetGroups:
+  #           - Name: !Sub ${EnvironmentName}-ecs-task-dynamo-web-tg-1
+  #           - Name: !Sub ${EnvironmentName}-ecs-task-dyname-web-tg-2
+  #           ProdTrafficRoute:
+  #             ListenerArns:
+  #               - Fn::ImportValue : !Sub ${EnvironmentName}-Listener
+  #     ECSServices:
+  #       - ClusterName: !Sub ${EnvironmentName}-dynamo-fargate-cluster
+  #         ServiceName: !Sub ${EnvironmentName}-ecs-task-dynamo-web-service
+
+  CodeDeployIAMRole: 
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-${ApplicationName}-CodeDeploy
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSCodeDeployRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AWSLambdaExecute
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: '*'
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents               
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeVpcs
+                  - ec2:CreateNetworkInterfacePermission                   
+                  - ssm:GetParameters
+                  - ssm:GetParameter             
+                  - ssm:PutParameter
+                  - s3:*
+                  - secretsmanager:GetResourcePolicy
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                  - secretsmanager:ListSecretVersionIds
+                  - ecr:*
+                  - ecs:*
+                  - lambda:UpdateFunctionCode                 
+      AssumeRolePolicyDocument: 
+        Version: 2012-10-17
+        Statement: 
+          - Effect: Allow
+            Principal: 
+              Service: 
+                - 'codedeploy.amazonaws.com'
+            Action: 
+              - 'sts:AssumeRole'          
+
+  EcsServicePipelineTest:
+    Type: AWS::CodePipeline::Pipeline
+    Condition: IsTest
+    Properties:
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-Web-Service
+      RoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/service-role/${EnvironmentName}-${ApplicationName}-CodePipelineServiceRole
+      Stages:
+        - Name: Source
+          Actions:
+          - Name: Source
+            InputArtifacts: []
+            ActionTypeId:
+              Category: Source
+              Owner: ThirdParty
+              Version: 1
+              Provider: GitHub
+            OutputArtifacts:
+              - Name: SourceCode
+            Configuration:
+              Owner: sdenison
+              Repo: dynamo
+              Branch: test
+              PollForSourceChanges: true 
+              OAuthToken: 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
+            RunOrder: 1
+        - Name: Deploy
+          Actions:
+          - Name: Deploy
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            InputArtifacts:
+              - Name: SourceCode
+            Configuration:
+              ProjectName: !Ref EcsCopyImageCodeBuildProject
+            RunOrder: 10
+      ArtifactStore:
+        Type: S3
+        Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline
+
+
+

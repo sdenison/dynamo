@@ -14,6 +14,12 @@ Parameters:
   PublicSubnet2CIDR:
     Type: String
     Default: 10.90.55.32/27
+  PrivateSubnet1CIDR:
+    Type: String
+    Default: 10.90.55.128/26
+  PrivateSubnet2CIDR:
+    Type: String
+    Default: 10.90.55.192/26    
 
 Resources:
   VPC:
@@ -34,28 +40,75 @@ Resources:
       - Key: Name
         Value: !Sub ${EnvironmentName} - IGW        
 
-  VPCGatewayAttachment:
+  GatewayToInternet:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
-  NatGateway1EIP:
-    Type: AWS::EC2::EIP
-    DependsOn: VPCGatewayAttachment
-    Properties:
-      Domain: vpc      
-
-  NatGateway01:
-    DependsOn:
-    - VPCGatewayAttachment
+  ## NAT GATEWAY
+  NatGateway:
     Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway1EIP.AllocationId
+    DependsOn: NatPublicIP
+    Properties: 
       SubnetId: !Ref PublicSubnet1
+      AllocationId: !GetAtt NatPublicIP.AllocationId
+
+  ## ELASTIC IP
+  NatPublicIP:
+    Type: AWS::EC2::EIP
+    DependsOn: VPC
+    Properties:
+      Domain: vpc
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
       Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-NatGateway01
+      - Key: Name
+        Value: !Sub ${EnvironmentName} Private Routes 
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} - Private Subnet-az1a
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      MapPublicIpOnLaunch: false
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} - Private Subnet-az2a        
+
+  PrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet1
+
+  PrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet2
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -66,7 +119,7 @@ Resources:
           Value: !Sub ${EnvironmentName}-PublicRouteTable
 
   PublicRoute:
-    DependsOn: VPCGatewayAttachment
+    DependsOn: GatewayToInternet
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PublicRouteTable
@@ -136,6 +189,41 @@ Resources:
       - Key: Name
         Value: !Sub ${EnvironmentName}-Public-sg
 
+#-----     Security Group Config     -----#
+  PrivateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Private Security Group
+      VpcId: !Ref  VPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        SourceSecurityGroupId: !Ref PublicSecurityGroup
+        Description: HTTP from Public SG
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        SourceSecurityGroupId: !Ref PublicSecurityGroup
+        Description: HTTPS from Public SG
+      - IpProtocol: tcp
+        FromPort: 8443
+        ToPort: 8443
+        SourceSecurityGroupId: !Ref PublicSecurityGroup
+        Description: HTTPS from Public SG
+      - IpProtocol: tcp
+        FromPort: 8080
+        ToPort: 8080
+        SourceSecurityGroupId: !Ref PublicSecurityGroup
+        Description: HTTP 8080 from Public SG
+      SecurityGroupEgress:
+      - IpProtocol: '-1'
+        CidrIp: 0.0.0.0/0 
+        Description: Outbound to internet
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName}-Private-sg        
+
   DummyTargetGroupPublic:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -166,3 +254,19 @@ Outputs:
     Value: !Ref 'PublicSubnet2'
     Export:
       Name: !Sub ${EnvironmentName}-PublicSubnet2
+  PublicSecurityGroup:
+    Value: !Ref PublicSecurityGroup
+    Export: 
+      Name: !Sub ${EnvironmentName}-PublicSecurityGroup      
+  PrivateSubnet1:
+    Value: !Ref PrivateSubnet1
+    Export:
+      Name: !Sub ${EnvironmentName}-PrivateSubnet1      
+  PrivateSubnet2:
+    Value: !Ref PrivateSubnet2
+    Export:
+      Name: !Sub ${EnvironmentName}-PrivateSubnet2
+  PrivateSecurityGroup:
+    Value: !Ref PrivateSecurityGroup
+    Export: 
+      Name: !Sub ${EnvironmentName}-PrivateSecurityGroup      
