@@ -66,15 +66,10 @@ Resources:
     Properties:
       Name: !Sub ${EnvironmentName}-${ApplicationName}-EcsCopyImageCodeBuildProject
       Source:
-        Auth:
-          Type: OAUTH
-        Type: GITHUB 
-        Location: https://github.com/sdenison/dynamo.git
-        #Location: !Sub sdenison-codebuild/build/${EnvironmentName}-dynamo-build-specs.zip
-        BuildSpec: !Sub CloudFormation/CodePipeline/${ApplicationName}/${EnvironmentName}-${ApplicationName}-build-specs.yml
-      SourceVersion: !Sub ${EnvironmentName}
+        Type: CODEPIPELINE
+        BuildSpec: !Sub CloudFormation/CodePipeline/${ApplicationName}/${EnvironmentName}-${ApplicationName}-build-specs.yml        
       Artifacts:
-        Type: NO_ARTIFACTS
+        Type: CODEPIPELINE
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
@@ -92,7 +87,8 @@ Resources:
         SecurityGroupIds:
           - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSecurityGroup
         Subnets:
-          - Fn::ImportValue : !Sub ${EnvironmentName}-PublicSubnet1
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet1
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet2
         VpcId: 
           Fn::ImportValue : !Sub ${EnvironmentName}-VPCId        
 
@@ -188,24 +184,24 @@ Resources:
       Name: !Sub ${EnvironmentName}-${ApplicationName}-Web-Service
       RoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/service-role/${EnvironmentName}-${ApplicationName}-CodePipelineServiceRole
       Stages:
-      - Name: Source
-        Actions:
         - Name: Source
-          InputArtifacts: []
-          ActionTypeId:
-            Category: Source
-            Owner: ThirdParty
-            Version: 1
-            Provider: GitHub
-          OutputArtifacts:
-          - Name: SourceCode
-          Configuration:
-            Owner: sdenison
-            Repo: dynamo
-            Branch: test
-            PollForSourceChanges: true 
-            OAuthToken: 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
-          RunOrder: 1
+          Actions:
+          - Name: Source
+            InputArtifacts: []
+            ActionTypeId:
+              Category: Source
+              Owner: ThirdParty
+              Version: 1
+              Provider: GitHub
+            OutputArtifacts:
+              - Name: SourceCode
+            Configuration:
+              Owner: sdenison
+              Repo: dynamo
+              Branch: test
+              PollForSourceChanges: true 
+              OAuthToken: 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
+            RunOrder: 1
         - Name: Deploy
           Actions:
           - Name: Deploy
@@ -221,7 +217,7 @@ Resources:
             RunOrder: 10
       ArtifactStore:
         Type: S3
-        Location: !Sub ${Environment}-${ApplicationName}-codepipeline
+        Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline
 
 
 

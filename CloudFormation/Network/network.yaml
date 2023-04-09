@@ -40,39 +40,34 @@ Resources:
       - Key: Name
         Value: !Sub ${EnvironmentName} - IGW        
 
-  VPCGatewayAttachment:
+  GatewayToInternet:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
 
-  NatGateway1EIP:
-    Type: AWS::EC2::EIP
-    DependsOn: VPCGatewayAttachment
-    Properties:
-      Domain: vpc      
+  ## NAT GATEWAY
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    DependsOn: NatPublicIP
+    Properties: 
+      SubnetId: !Ref PublicSubnet1
+      AllocationId: !GetAtt NatPublicIP.AllocationId
 
-  NatGateway2EIP:
+  ## ELASTIC IP
+  NatPublicIP:
     Type: AWS::EC2::EIP
-    DependsOn: VPCGatewayAttachment
+    DependsOn: VPC
     Properties:
-      Domain: vpc      
+      Domain: vpc
 
-  PrivateRouteTable1:
+  PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
       Tags:
       - Key: Name
-        Value: !Sub ${EnvironmentName} Private Routes AZ1      
-
-  PrivateRouteTable2:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-      - Key: Name
-        Value: !Sub ${EnvironmentName} Private Routes AZ2             
+        Value: !Sub ${EnvironmentName} Private Routes 
 
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -89,7 +84,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
       CidrBlock: !Ref PrivateSubnet2CIDR
       MapPublicIpOnLaunch: false
       Tags:
@@ -99,14 +94,21 @@ Resources:
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTable1
+      RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet1
 
   PrivateSubnet2RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref PrivateRouteTable2
+      RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet2
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -117,7 +119,7 @@ Resources:
           Value: !Sub ${EnvironmentName}-PublicRouteTable
 
   PublicRoute:
-    DependsOn: VPCGatewayAttachment
+    DependsOn: GatewayToInternet
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PublicRouteTable
@@ -260,6 +262,10 @@ Outputs:
     Value: !Ref PrivateSubnet1
     Export:
       Name: !Sub ${EnvironmentName}-PrivateSubnet1      
+  PrivateSubnet2:
+    Value: !Ref PrivateSubnet2
+    Export:
+      Name: !Sub ${EnvironmentName}-PrivateSubnet2
   PrivateSecurityGroup:
     Value: !Ref PrivateSecurityGroup
     Export: 
