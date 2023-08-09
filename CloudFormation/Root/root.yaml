@@ -17,10 +17,21 @@ Resources:
       Parameters:
         EnvironmentName: !Ref EnvironmentName
 
+  Route53:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - Network
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/Route53/route53.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
+        DomainName: 'nadacs-internal.com'
+
   ECS:
     Type: AWS::CloudFormation::Stack
     DependsOn:
       - Network
+      - Route53
     Properties:
       TemplateURL: !Sub https://${CFTemplateBucket}/ECS/ecs.yaml
       Parameters:

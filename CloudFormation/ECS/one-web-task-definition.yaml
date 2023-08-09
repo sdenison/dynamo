@@ -117,7 +117,7 @@ Resources:
       GroupDescription: Access to the public facing load balancer
       VpcId:
         Fn::ImportValue:
-          !Sub ${EnvironmentName}-VPCId      
+          !Sub ${EnvironmentName}-VPCID      
       SecurityGroupIngress:
         # Allow access to ALB from anywhere on the internet
         - CidrIp: 0.0.0.0/0

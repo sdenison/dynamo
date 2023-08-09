@@ -1,0 +1,32 @@
+Description:
+  Used to create Route 53 Private DNS zones
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  DomainName:
+    Type: String
+
+Conditions:
+  CreateSpecialHostedZone: !Or
+    - !Equals [!Ref EnvironmentName, test]
+    - !Equals [!Ref EnvironmentName, qa]
+
+Resources:
+  PrivateFFEDNS:
+    Type: AWS::Route53::HostedZone
+    Condition: CreateSpecialHostedZone
+    Properties:
+      HostedZoneConfig:
+        Comment: !Sub ${EnvironmentName} NADACS Private Hosted Zone
+      Name: !Sub '${EnvironmentName}.${DomainName}'
+      VPCs:
+        -
+          VPCId:
+            Fn::ImportValue : !Sub ${EnvironmentName}-VPCID
+          VPCRegion: !Sub ${AWS::Region}
+      HostedZoneTags: 
+        - Key: environment
+          Value: !Ref EnvironmentName
+        - Key: application
+          Value: shared    
