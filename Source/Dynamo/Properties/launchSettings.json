@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Dynamo": {
+      "commandName": "Project",
+      "commandLineArgs": "utilities diagnostics"
+    }
+  }
+}
