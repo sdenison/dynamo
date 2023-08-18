@@ -1,0 +1,95 @@
+Description: Dotnet Lambda function
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String
+
+Resources:
+  RunDotnetLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub "${EnvironmentName}-${ApplicationName}-lambda-role"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - "sts:AssumeRole"
+      Path: /
+      Policies:
+      - PolicyName: !Sub "${EnvironmentName}-${ApplicationName}-dotnet-lambda-policy"
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DeleteNetworkInterface
+                - ec2:DescribeNetworkInterfaces
+                - ssm:GetParameters
+                - ssm:GetParameter
+                - ssm:GetParametersByPath
+                - s3:DeleteObject
+                - s3:GetObject
+                - s3:PutObject
+                - s3:PutObjectAcl
+                - s3:ListBucket          
+                - ses:SendEmail
+                - sqs:GetQueueAttributes
+                - sqs:SetQueueAttributes
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:SendMessage
+                - sqs:ListQueues
+                - sqs:ListQueueTags
+                - sqs:GetQueueUrl
+                - sns:GetTopicAttributes
+                - sns:Publish
+                - sns:Subscribe
+                - sns:CreateTopic
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                - logs:DescribeLogGroups
+                - logs:DescribeLogStreams
+                - cloudwatch:PutMetricData
+              Resource: "*"
+
+  DotnetLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub ${EnvironmentName}-${ApplicationName}-dotnet-lambda
+      Code:
+        S3Bucket: !Sub ${EnvironmentName}-${ApplicationName}-deployment
+        S3Key: !Sub ${EnvironmentName}-${ApplicationName}-dotnet-lambda-functions.zip                
+      Environment:
+        Variables:
+          ENVIRONMENT: !Sub "${EnvironmentName}"
+          "AppSettings__EnvironmentName": !Sub "${EnvironmentName}"
+          "AppSettings__AWSRegion": !Sub "${AWS::Region}"
+      Handler: !Sub "${ApplicationName}.Lambda::${ApplicationName}.Lambda.Function::FunctionHandler"
+      Runtime: dotnet6
+      Role: !GetAtt RunDotnetLambdaRole.Arn
+      Timeout: 900
+      MemorySize: 2048
+      Tags:
+        - Key: CodeDeploy 
+          Value: !Sub ${EnvironmentName}-dynamo-dotnet-lambda
+      VpcConfig:
+        SecurityGroupIds:
+          - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSecurityGroup"
+        SubnetIds:
+          - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet1"
+          - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet2"
+
+Outputs:
+  RunDotnetCoreLambda:
+    Value: 
+      !GetAtt DotnetLambda.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-lambda

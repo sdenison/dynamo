@@ -46,3 +46,14 @@ Resources:
       Parameters:
         EnvironmentName: !Ref EnvironmentName        
         ApplicationName: !Ref ApplicationName
+
+  Lambda:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - Network
+      - ECS
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/Lambda/lambda.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
+        ApplicationName: !Ref ApplicationName        
