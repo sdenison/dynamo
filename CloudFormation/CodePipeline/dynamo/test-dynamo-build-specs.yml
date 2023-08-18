@@ -1,0 +1,23 @@
+---
+version: 0.2
+env:
+  shell: bash
+  parameter-store:
+    ENVIRONMENT_NAME: $ENVIRONMENT_NAME
+    AWS_REGION: $AWS_REGION
+    AWS_ACCOUNT_ID: $AWS_ACCOUNT_ID     
+phases:
+  install:
+    commands:
+      - apt-get -y install jq
+  build:
+    commands:
+      - echo "This is a message from the build script."
+      - docker image ls
+      - ls -lta
+      - docker build . -t dynamo-web-server
+      - docker tag dynamo-web-server $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ENVIRONMENT_NAME-dynamo-repository:latest
+      - docker image ls
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com 
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ENVIRONMENT_NAME-dynamo-repository:latest
+      - aws ecs update-service --cluster $ENVIRONMENT_NAME-dynamo-fargate-cluster --service $ENVIRONMENT_NAME-ecs-task-dynamo-web-service --force-new-deployment

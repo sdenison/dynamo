@@ -141,9 +141,9 @@ Resources:
       Port: 80
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref TargetGroup
+          TargetGroupArn: !Ref TargetGroupBlueGreen1
 
-  TargetGroup:
+  TargetGroupBlueGreen1:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Matcher:
@@ -154,7 +154,7 @@ Resources:
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 10 
       TargetType: ip
-      Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-tg
+      Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-tg-1
       Port: !Ref ContainerPort
       Protocol: HTTP
       UnhealthyThresholdCount: 2
@@ -164,7 +164,30 @@ Resources:
           Value: true
       VpcId:
         Fn::ImportValue:
-          !Sub ${EnvironmentName}-VPCId          
+          !Sub ${EnvironmentName}-VPCId    
+
+  TargetGroupBlueGreen2:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Matcher:
+        HttpCode: 200-299
+      HealthCheckIntervalSeconds: !Ref 'HealthCheckIntervalSeconds'
+      HealthCheckPath: !Ref 'HealthCheckPath'
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 10 
+      TargetType: ip
+      Name: !Sub ${EnvironmentName}-ecs-task-${TaskName}-tg-2
+      Port: !Ref ContainerPort
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      TargetGroupAttributes:
+        -
+          Key: stickiness.enabled
+          Value: true
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${EnvironmentName}-VPCId        
 
   ContainerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -228,6 +251,8 @@ Resources:
         MaximumPercent: 200
         MinimumHealthyPercent: 50
       DesiredCount: !Ref 'DesiredCount'
+      # DeploymentController: 
+      #   Type: CODE_DEPLOY
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED 
@@ -245,14 +270,14 @@ Resources:
       LoadBalancers:
         - ContainerName: !Sub ${EnvironmentName}-ecs-task-container-${TaskName}
           ContainerPort: !Ref ContainerPort
-          TargetGroupArn: !Ref TargetGroup
+          TargetGroupArn: !Ref TargetGroupBlueGreen1
           #LoadBalancerName: !Sub ${EnvironmentName}-ecs-service-${TaskName}
 
   LoadBalancerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
       Actions:
-        - TargetGroupArn: !Ref TargetGroup
+        - TargetGroupArn: !Ref TargetGroupBlueGreen1
           Type: 'forward'
       Conditions:
         - Field: path-pattern
