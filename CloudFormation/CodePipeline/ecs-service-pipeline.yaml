@@ -92,11 +92,42 @@ Resources:
         VpcId: 
           Fn::ImportValue : !Sub ${EnvironmentName}-VPCId        
 
-  EcsDeploymentApplication:
-    Type: AWS::CodeDeploy::Application
+  LambdaCodeBuildProject:
+    Type: AWS::CodeBuild::Project
     Properties:
-      ApplicationName: !Sub ${EnvironmentName}-${ApplicationName}-EcsApplication
-      ComputePlatform: ECS
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-lambda-codebuild-project
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec-deploy.yml
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+        Image: !Ref CodeBuildDockerImage
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: ENVIRONMENT_NAME
+            Value: !Ref EnvironmentName
+          - Name: AWS_ACCOUNT_ID
+            Value: !Ref AWS::AccountId
+          - Name: AWS_REGION
+            Value: !Ref AWS::Region
+      ServiceRole: !GetAtt EcsDeploymentServiceRole.Arn
+      VpcConfig: 
+        SecurityGroupIds:
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSecurityGroup
+        Subnets:
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet1
+          - Fn::ImportValue : !Sub ${EnvironmentName}-PrivateSubnet2
+        VpcId: 
+          Fn::ImportValue : !Sub ${EnvironmentName}-VPCId                
+
+  # EcsDeploymentApplication:
+  #   Type: AWS::CodeDeploy::Application
+  #   Properties:
+  #     ApplicationName: !Sub ${EnvironmentName}-${ApplicationName}-EcsApplication
+  #     ComputePlatform: ECS
   
   # CodeDeploymentGroup:
   #   Type: AWS::CodeDeploy::DeploymentGroup
@@ -204,7 +235,7 @@ Resources:
             RunOrder: 1
         - Name: Deploy
           Actions:
-          - Name: Deploy
+          - Name: DeployEcs
             ActionTypeId:
               Category: Build
               Owner: AWS
@@ -215,6 +246,17 @@ Resources:
             Configuration:
               ProjectName: !Ref EcsCopyImageCodeBuildProject
             RunOrder: 10
+          - Name: DeployLambda
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            InputArtifacts:
+              - Name: SourceCode
+            Configuration:
+              ProjectName: !Ref LambdaCodeBuildProject 
+            RunOrder: 10            
       ArtifactStore:
         Type: S3
         Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline
