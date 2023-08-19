@@ -72,7 +72,7 @@ Resources:
           ENVIRONMENT: !Sub "${EnvironmentName}"
           "AppSettings__EnvironmentName": !Sub "${EnvironmentName}"
           "AppSettings__AWSRegion": !Sub "${AWS::Region}"
-      Handler: !Sub "${ApplicationName}.Lambda::${ApplicationName}.Lambda.Function::FunctionHandler"
+      Handler: "Dynamo.Lambda::Dynamo.Lambda.Function::FunctionHandler"
       Runtime: dotnet6
       Role: !GetAtt RunDotnetLambdaRole.Arn
       Timeout: 900
