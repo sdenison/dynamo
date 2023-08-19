@@ -1,6 +1,6 @@
-sed -i "s/@BUILD_NUMBER@/$CODEBUILD_BUILD_NUMBER/" Solution/Dynamo/appsettings.json 
+sed -i "s/@BUILD_NUMBER@/$CODEBUILD_BUILD_NUMBER/" Source/Dynamo/appsettings.json 
 
-dotnet publish -c Release -o dynamo-lambda-release Solution/Dynamo/Dynamo.csproj
+dotnet publish -c Release -o dynamo-lambda-release Source/Dynamo/Dynamo.csproj
 cd dynamo-lambda-release
 zip -r $ENVIRONMENT_NAME-dynamo-dontnet-lambda-functions.zip
 cp $ENVIRONMENT_NAME-dynamo-dontnet-lambda-functions.zip $ENVIRONMENT_NAME-dynamo-dontnet-lambda-functions-v$CODEBUILD_BUILD_NUMBER.zip
