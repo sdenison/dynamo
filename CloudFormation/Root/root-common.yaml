@@ -6,6 +6,8 @@ Parameters:
     Type: String
   EnvironmentName:
     Type: String
+  ApplicationName:
+    Type: String
 
 Resources:
   ECR:
@@ -14,3 +16,12 @@ Resources:
       TemplateURL: !Sub https://${CFTemplateBucket}/ECR/ecr.yaml
       Parameters:
         EnvironmentName: !Ref EnvironmentName        
+
+  S3:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/S3/s3.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName             
+        ApplicationName: !Ref ApplicationName
+        CFTemplateBucket: !Ref CFTemplateBucket

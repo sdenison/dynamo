@@ -1,0 +1,19 @@
+Description:
+  This template deploys S3 buckets
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String
+  CFTemplateBucket:
+    Type: String
+
+Resources:
+  S3Deployment:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/S3/one-s3-bucket.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        BucketName: !Sub ${EnvironmentName}-${ApplicationName}-deployment
