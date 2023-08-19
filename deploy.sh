@@ -1,4 +1,5 @@
-sed -i "s/@BUILD_NUMBER@/$CODEBUILD_BUILD_NUMBER/" Source/Dynamo/appsettings.json 
+sed -i "s/@BuildNumber@/$CODEBUILD_BUILD_NUMBER/" Source/Dynamo/appsettings.json 
+more Source/Dynamo/appsettings.json
 
 dotnet publish -c Release -o dynamo-lambda-release Source/Dynamo.Lambda/Dynamo.Lambda.csproj
 cd dynamo-lambda-release
