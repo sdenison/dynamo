@@ -1,4 +1,6 @@
-﻿using System.CommandLine;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
+using System.CommandLine;
 using System.Reflection;
 
 namespace Dynamo.Commands.Utilities
@@ -18,6 +20,7 @@ namespace Dynamo.Commands.Utilities
             WriteLine($"Framework Version: {Environment.Version}");
             WriteLine($"OS Version: {Environment.OSVersion}");
             WriteLine($"Machine Name: {Environment.MachineName}");
+            WriteLine($"Build Number: {GetBuildNumber()}");
             WriteLine($"Current User: {Environment.UserName}");
             WriteLine($"DateTime.Now: {DateTime.Now}");
             WriteLine($"UTC DateTime: {DateTime.UtcNow}");
@@ -49,6 +52,16 @@ namespace Dynamo.Commands.Utilities
         private void WriteLine(string message)
         {
             Console.WriteLine(message);
+        }
+
+        private string GetBuildNumber()
+        {
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
+            var release = configuration["Release"];
+            var buildNumber = $"{release}.{configuration["BuildNumber"]}";
+            return buildNumber;
         }
     }
 }

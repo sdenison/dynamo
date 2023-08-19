@@ -204,7 +204,7 @@ Resources:
             RunOrder: 1
         - Name: Deploy
           Actions:
-          - Name: Deploy
+          - Name: DeployEcs
             ActionTypeId:
               Category: Build
               Owner: AWS
