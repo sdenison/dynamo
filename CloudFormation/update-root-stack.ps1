@@ -1,0 +1,2 @@
+aws s3 cp . s3://sdenison-codebuild --recursive
+aws cloudformation update-stack --stack-name dynamo-common --template-body file://Root/root-common.yaml --parameters ParameterKey=EnvironmentName,ParameterValue=test ParameterKey=CFTemplateBucket,ParameterValue="sdenison-codebuild.s3.us-east-2.amazonaws.com" ParameterKey=ApplicationName,ParameterValue="dynamo" --capabilities CAPABILITY_NAMED_IAM 
