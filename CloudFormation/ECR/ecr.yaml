@@ -33,8 +33,39 @@ Resources:
         - Key: environment
           Value: !Sub ${EnvironmentName}
 
+  DynamoLambdaContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Sub "${EnvironmentName}-dynamo-lambda-repository"
+      ImageScanningConfiguration: 
+        ScanOnPush: true
+      RepositoryPolicyText: 
+        Version: 2012-10-17
+        Statement: 
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal: 
+              AWS: !Ref AWS::AccountId
+            Action: 
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+              - ecr:PutImage
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
+      Tags:
+        - Key: OS
+          Value: Linux
+        - Key: environment
+          Value: !Sub ${EnvironmentName}          
+
 Outputs:
   DynamoContainerRepositoryUri:
     Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DynamoContainerRepository}
     Export:
       Name: !Sub ${EnvironmentName}-dynamo-ecr-repository-uri
+  DynamoLambdaContainerRepositoryUri:
+    Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DynamoLambdaContainerRepository}
+    Export:
+      Name: !Sub ${EnvironmentName}-dynamo-lambda-repository-uri
