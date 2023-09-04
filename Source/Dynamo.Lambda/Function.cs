@@ -1,7 +1,7 @@
 ﻿using Amazon.Lambda.Core;
 using System.Text.RegularExpressions;
 
-// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
+//Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
 namespace Dynamo.Lambda
@@ -24,6 +24,5 @@ namespace Dynamo.Lambda
             await Program.InvokeAsync(args);
             return newOut.ToString();
         }
-
     }
 }

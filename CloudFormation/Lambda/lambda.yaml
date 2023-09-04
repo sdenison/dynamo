@@ -73,7 +73,7 @@ Resources:
           "AppSettings__EnvironmentName": !Sub "${EnvironmentName}"
           "AppSettings__AWSRegion": !Sub "${AWS::Region}"
       Handler: "Dynamo.Lambda::Dynamo.Lambda.Function::FunctionHandler"
-      Runtime: dotnet6
+      Runtime: provided.al2
       Role: !GetAtt RunDotnetLambdaRole.Arn
       Timeout: 900
       MemorySize: 2048
@@ -86,6 +86,35 @@ Resources:
         SubnetIds:
           - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet1"
           - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet2"
+
+  DotnetDockerLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub ${EnvironmentName}-${ApplicationName}-dotnet-docker-lambda
+      Code:
+        ImageUri: !Join 
+          - ":"
+          - - Fn::ImportValue: !Sub "${EnvironmentName}-dynamo-lambda-repository-uri"
+            - latest
+
+      Environment:
+        Variables:
+          ENVIRONMENT: !Sub "${EnvironmentName}"
+          "AppSettings__EnvironmentName": !Sub "${EnvironmentName}"
+          "AppSettings__AWSRegion": !Sub "${AWS::Region}"
+      Role: !GetAtt RunDotnetLambdaRole.Arn
+      Timeout: 900
+      MemorySize: 2048
+      PackageType: Image
+      Tags:
+        - Key: CodeDeploy 
+          Value: !Sub ${EnvironmentName}-dynamo-dotnet-lambda
+      VpcConfig:
+        SecurityGroupIds:
+          - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSecurityGroup"
+        SubnetIds:
+          - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet1"
+          - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet2"          
 
 Outputs:
   RunDotnetCoreLambda:
