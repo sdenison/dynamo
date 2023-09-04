@@ -1,3 +1,5 @@
+dotnet --version
+
 sed -i "s/@BuildNumber@/$CODEBUILD_BUILD_NUMBER/" Source/Dynamo/appsettings.json 
 more Source/Dynamo/appsettings.json
 
