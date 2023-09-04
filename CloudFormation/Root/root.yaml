@@ -52,6 +52,7 @@ Resources:
     DependsOn:
       - Network
       - ECS
+      - CodePipeline
     Properties:
       TemplateURL: !Sub https://${CFTemplateBucket}/Lambda/lambda.yaml
       Parameters:
