@@ -92,8 +92,11 @@ Resources:
     Properties:
       FunctionName: !Sub ${EnvironmentName}-${ApplicationName}-dotnet-docker-lambda
       Code:
-        ImageUri: 
-          Fn::ImportValue: !Sub "${EnvironmentName}-dynamo-lambda-repository-uri"
+        ImageUri: !Join 
+          - ":"
+          - - Fn::ImportValue: !Sub "${EnvironmentName}-dynamo-lambda-repository-uri"
+            - latest
+
       Environment:
         Variables:
           ENVIRONMENT: !Sub "${EnvironmentName}"
