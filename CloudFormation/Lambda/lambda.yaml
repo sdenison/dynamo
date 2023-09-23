@@ -96,7 +96,6 @@ Resources:
           - ":"
           - - Fn::ImportValue: !Sub "${EnvironmentName}-dynamo-lambda-repository-uri"
             - latest
-
       Environment:
         Variables:
           ENVIRONMENT: !Sub "${EnvironmentName}"
