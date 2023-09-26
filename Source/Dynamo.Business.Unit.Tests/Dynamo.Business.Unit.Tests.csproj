@@ -13,6 +13,6 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Dynamo.Business\Dynamo.Business.csproj" />
+	  <ProjectReference Include="..\Dynamo.Business\Dynamo.Business.csproj" />
 	</ItemGroup>
 </Project>
