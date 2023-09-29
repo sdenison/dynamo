@@ -9,4 +9,8 @@
     <PackageReference Include="Csla" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dynamo.Business.Shared\Dynamo.Business.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

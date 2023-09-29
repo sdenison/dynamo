@@ -2,6 +2,9 @@
 using Csla.Core;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Dynamo.Business.Shared.Utilities;
+
 namespace Dynamo.Business.Utilities
 {
     [Serializable]
@@ -34,6 +37,57 @@ namespace Dynamo.Business.Utilities
             Id = Guid.NewGuid();
             JobStatus = JobStatus.Initializing;
             base.Child_Create();
+        }
+
+        [Fetch]
+        private void Fetch(Guid id, [Inject] IBackgroundJobDataService dataService)
+        {
+            var data = dataService.Get(id);
+            using (BypassPropertyChecks)
+                Csla.Data.DataMapper.Map(data, this);
+            BusinessRules.CheckRules();
+        }
+
+        [Insert]
+        private void Insert([Inject] IBackgroundJobDataService dataService)
+        {
+            using (BypassPropertyChecks)
+            {
+                var entity = new BackgroundJobEntity
+                {
+                    Id = this.Id,
+                    JobStatus = this.JobStatus,
+                    JobType = this.JobType
+                };
+                var result = dataService.Insert(entity);
+            }
+        }
+
+        [Update]
+        private void Update([Inject] IBackgroundJobDataService dataService)
+        {
+            using (BypassPropertyChecks)
+            {
+                var entity = new BackgroundJobEntity
+                {
+                    JobStatus = this.JobStatus,
+                    JobType = this.JobType
+                };
+                var result = dataService.Update(entity);
+            }
+        }
+
+        [DeleteSelf]
+        private void DeleteSelf([Inject] IBackgroundJobDataService dataService)
+        {
+            Delete(ReadProperty(IdProperty), dataService);
+
+        }
+
+        [Delete]
+        private void Delete(Guid id, [Inject] IBackgroundJobDataService dataService)
+        {
+            dataService.Delete(id);
         }
 
     }
