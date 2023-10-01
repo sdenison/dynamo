@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Utilities\NewFolder\**" />
+		<EmbeddedResource Remove="Utilities\NewFolder\**" />
+			  <Compile Remove="NewFolder\**" />
+	  <EmbeddedResource Remove="NewFolder\**" />
+	  <None Remove="NewFolder\**" />
+<None Remove="Utilities\NewFolder\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Dynamo.Business.Shared\Dynamo.Business.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ServiceStack.Aws" Version="6.10.0" />
+	</ItemGroup>
+
+</Project>
