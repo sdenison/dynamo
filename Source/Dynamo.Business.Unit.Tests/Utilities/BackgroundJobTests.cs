@@ -22,12 +22,16 @@ namespace Dynamo.Business.Unit.Tests.Utilities
             new BackgroundJobEntity
             {
                 Id = Guid.Parse("953526AB-899A-4F8C-A69C-DDB18E02BB49"), JobStatus = JobStatus.Running,
-                JobType = JobType.BusyBox
+                JobType = JobType.BusyBox,
+                Created = DateTime.Now,
+                LastUpdated = DateTime.Now
             },
             new BackgroundJobEntity
             {
                 Id = Guid.Parse("4C492CD6-BC51-4CA9-9FFF-52C2DE79329B"), JobStatus = JobStatus.FinishedSuccess,
-                JobType = JobType.BusyBox
+                JobType = JobType.BusyBox,
+                Created = DateTime.Now,
+                LastUpdated = DateTime.Now
             }
         };
 
