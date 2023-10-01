@@ -76,14 +76,15 @@ namespace Dynamo.Business.Unit.Tests.Utilities
             Assert.IsTrue(job.IsDirty);
             Assert.AreEqual(JobStatus.Initializing, job.JobStatus);
             job.JobStatus = JobStatus.Submitted;
-            var jobAfterInsert = await job.SaveAsync();
+            job = await job.SaveAsync();
             Assert.AreEqual(3, _backgroundJobTable.Count);
             job.JobStatus = JobStatus.FinishedSuccess;
+            Assert.IsTrue(job.IsDirty);
             var jobAfterUpdate = await job.SaveAsync();
             job.Delete();
+            Assert.AreEqual(3, _backgroundJobTable.Count);
             var jobAfterDelete = await job.SaveAsync();
-            //Why is this four.
-            Assert.AreEqual(4, _backgroundJobTable.Count);
+            Assert.AreEqual(2, _backgroundJobTable.Count);
         }
 
         [Test]

@@ -70,6 +70,7 @@ namespace Dynamo.Business.Utilities
             {
                 var entity = new BackgroundJobEntity
                 {
+                    Id = this.Id,
                     JobStatus = this.JobStatus,
                     JobType = this.JobType
                 };
