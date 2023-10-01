@@ -2,16 +2,17 @@
 using Amazon.DynamoDBv2;
 using Dynamo.Business.Shared.Utilities;
 using Dynamo.Business.Utilities;
-using Dynamo.Data.Dynamo.Utilities;
+using Dynamo.Data.DynamoDb.Utilities;
 using NUnit.Framework;
 using ServiceStack.Aws.DynamoDb;
 
-namespace Dynamo.Data.Dynamo.Integration.NewFolder
+namespace Dynamo.Data.DynamoDb.Integration.Utilities
 {
     [TestFixture]
     public class BackgroundJobDataServiceTests
     {
         [Test, Ignore("This integration test can be used to debug DynamoDb issues")]
+        //[Test]
         public void Can_read_and_write_to_dynamodb()
         {
             var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);

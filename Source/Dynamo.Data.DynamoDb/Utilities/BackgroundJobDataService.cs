@@ -2,7 +2,7 @@
 using ServiceStack;
 using ServiceStack.Aws.DynamoDb;
 
-namespace Dynamo.Data.Dynamo.Utilities
+namespace Dynamo.Data.DynamoDb.Utilities
 {
     public class BackgroundJobDataService : Service, IBackgroundJobDataService
     {

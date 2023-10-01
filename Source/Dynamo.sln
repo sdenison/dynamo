@@ -25,11 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{4B5EF2A5-D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Business.Shared", "Dynamo.Business.Shared\Dynamo.Business.Shared.csproj", "{0F67D1D5-8FCE-4833-9E11-1E96619E1861}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamo.Data.Dynamo", "Dynamo.Data.Ef\Dynamo.Data.Dynamo.csproj", "{E43F2605-927E-4560-98DD-DDD36089549F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Data.DynamoDb", "Dynamo.Data.DynamoDb\Dynamo.Data.DynamoDb.csproj", "{E43F2605-927E-4560-98DD-DDD36089549F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6D3361E1-800D-41B6-9607-D15D0247E420}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamo.Data.Dynamo.Integration", "Dynamo.Data.Dynamo.Integration\Dynamo.Data.Dynamo.Integration.csproj", "{3A527A1B-21C1-430F-9DF9-DD51E183DED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Data.DynamoDb.Integration", "Dynamo.Data.Dynamo.Integration\Dynamo.Data.DynamoDb.Integration.csproj", "{3A527A1B-21C1-430F-9DF9-DD51E183DED3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
