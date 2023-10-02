@@ -46,5 +46,23 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var labelType = boxScanner.Scan(input);
             Assert.AreEqual(BoxLabelType.MatchThree, labelType);
         }
+
+        [Test]
+        public void Can_get_checksum_for_multiple_boxes()
+        {
+            string[] input = new string[]
+            {
+                "abcdef",
+                "bababc",
+                "abbcde",
+                "abcccd",
+                "aabcdd",
+                "abcdee",
+                "ababab"
+            };
+            var boxScanner = new BoxScanner();
+            var checkSum = boxScanner.GetCheckSum(input);
+            Assert.AreEqual(12, checkSum);
+        }
     }
 }
