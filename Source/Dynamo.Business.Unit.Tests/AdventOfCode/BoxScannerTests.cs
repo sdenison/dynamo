@@ -66,12 +66,67 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
         }
 
         [Test]
+        public void Can_get_offBy1_when_inputs_do_not_come_close()
+        {
+            var input1 = "asdff";
+            var input2 = "fguij";
+            var boxScanner = new BoxScanner();
+            var offBy1 = boxScanner.OffBy1(input1, input2);
+            Assert.IsFalse(offBy1);
+        }
+
+        [Test]
+        public void Can_get_off_by_number()
+        {
+            var input1 = "fghij";
+            var input2 = "fguij";
+            var boxScanner = new BoxScanner();
+            var offBy1 = boxScanner.OffBy1(input1, input2);
+            Assert.IsTrue(offBy1);
+        }
+
+        [Test]
+        public void Can_get_matching_part_of_string()
+        {
+            var input1 = "fghij";
+            var input2 = "fguij";
+            var boxScanner = new BoxScanner();
+            var matching = boxScanner.GetMatchingPart(input1, input2);
+            Assert.AreEqual("fgij", matching);
+        }
+
+        [Test]
+        public void GetMatchingOffByOneLetter_returns_correct_string()
+        {
+            string[] input = new string[]
+            {
+                "abcde",
+                "fghij",
+                "klmno",
+                "pqrst",
+                "fguij",
+                "axcye",
+                "wvxyz"
+            };
+            var boxScanner = new BoxScanner();
+            var matching = boxScanner.GetMatchingOffByOneLetter(input);
+            Assert.AreEqual("fgij", matching);
+        }
+
+        [Test]
         public void Get_day_1_part_1_answer()
         {
             var boxScanner = new BoxScanner();
             var checkSum = boxScanner.GetCheckSum(day1Part1Input);
             Assert.AreEqual(4693, checkSum);
+        }
 
+        [Test]
+        public void Get_day_1_part_2_answer()
+        {
+            var boxScanner = new BoxScanner();
+            var matching = boxScanner.GetMatchingOffByOneLetter(day1Part1Input);
+            Assert.AreEqual("pebjqsalrdnckzfihvtxysomg", matching);
         }
 
         private string[] day1Part1Input = new string[]

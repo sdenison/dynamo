@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 
@@ -72,6 +73,37 @@ namespace Dynamo.Business.Shared.AdventOfCode
                     threes++;
             }
             return twos * threes;
+        }
+
+        public string GetMatchingOffByOneLetter(string[] inputStrings)
+        {
+            for (var i = 0; i < inputStrings.Length; i++)
+                for (var j = 0; j < inputStrings.Length; j++)
+                    if (OffBy1(inputStrings[i], inputStrings[j]))
+                        return GetMatchingPart(inputStrings[i], inputStrings[j]);
+            return string.Empty;
+        }
+
+        public bool OffBy1(string input1, string input2)
+        {
+            int offBy = 0;
+            for (int i = 0; i < input1.Length; i++)
+            {
+                if (input1[i] != input2[i])
+                    offBy++;
+            }
+            return offBy == 1;
+        }
+
+        public string GetMatchingPart(string input1, string input2)
+        {
+            var matching = new StringBuilder();
+            for (int i = 0; i < input1.Length; i++)
+            {
+                if (input1[i] == input2[i])
+                    matching.Append(input1[i]);
+            }
+            return matching.ToString();
         }
     }
 }

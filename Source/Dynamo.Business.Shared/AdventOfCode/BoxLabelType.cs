@@ -3,8 +3,8 @@
     public enum BoxLabelType
     {
         None,
-        ExactlyTwo,
-        ExactlyThree,
+        MatchTwo,
+        MatchThree,
         Both
     }
 }
