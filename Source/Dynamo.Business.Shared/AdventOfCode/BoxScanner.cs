@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
 using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode
@@ -12,37 +11,33 @@ namespace Dynamo.Business.Shared.AdventOfCode
         {
             var charDictionary = new Dictionary<char, int>();
 
-            foreach (char c in input)
+            foreach (var c in input)
             {
                 if (charDictionary.ContainsKey(c))
-                {
                     charDictionary[c]++;
-                }
                 else
-                {
                     charDictionary.Add(c, 1);
-                }
             }
 
-            bool hasExactlyTwo = false;
-            bool hasExactlyThree = false;
+            var hasExactlyTwo = false;
+            var hasExactlyThree = false;
 
             foreach (var item in charDictionary.Values)
             {
-                if (item == 2)
+                switch (item)
                 {
-                    if (hasExactlyTwo == false)
-                    {
-                        hasExactlyTwo = true;
-                    }
-                }
-
-                if (item == 3)
-                {
-                    if (hasExactlyThree == false)
-                    {
-                        hasExactlyThree = true;
-                    }
+                    case 2:
+                        {
+                            if (hasExactlyTwo == false)
+                                hasExactlyTwo = true;
+                            break;
+                        }
+                    case 3:
+                        {
+                            if (hasExactlyThree == false)
+                                hasExactlyThree = true;
+                            break;
+                        }
                 }
             }
 
@@ -57,52 +52,49 @@ namespace Dynamo.Business.Shared.AdventOfCode
 
         public int GetCheckSum(string[] inputStrings)
         {
-            int twos = 0;
-            int threes = 0;
+            var twos = 0;
+            var threes = 0;
             foreach (var input in inputStrings)
             {
                 var result = Scan(input);
-                if (result == BoxLabelType.Both)
+                switch (result)
                 {
-                    twos++;
-                    threes++;
+                    case BoxLabelType.Both:
+                        twos++;
+                        threes++;
+                        break;
+                    case BoxLabelType.MatchTwo:
+                        twos++;
+                        break;
+                    case BoxLabelType.MatchThree:
+                        threes++;
+                        break;
                 }
-                if (result == BoxLabelType.MatchTwo)
-                    twos++;
-                if (result == BoxLabelType.MatchThree)
-                    threes++;
             }
             return twos * threes;
         }
 
         public string GetMatchingOffByOneLetter(string[] inputStrings)
         {
-            for (var i = 0; i < inputStrings.Length; i++)
-                for (var j = 0; j < inputStrings.Length; j++)
-                    if (OffBy1(inputStrings[i], inputStrings[j]))
-                        return GetMatchingPart(inputStrings[i], inputStrings[j]);
-            return string.Empty;
+            foreach (var t in inputStrings)
+                foreach (var t1 in inputStrings)
+                    if (OffBy1(t, t1))
+                        return GetMatchingPart(t, t1);
+            throw new Exception("No off by one match found in inputStrings");
         }
 
         public bool OffBy1(string input1, string input2)
         {
-            int offBy = 0;
-            for (int i = 0; i < input1.Length; i++)
-            {
-                if (input1[i] != input2[i])
-                    offBy++;
-            }
+            var offBy = input1.Where((t, i) => t != input2[i]).Count();
             return offBy == 1;
         }
 
         public string GetMatchingPart(string input1, string input2)
         {
             var matching = new StringBuilder();
-            for (int i = 0; i < input1.Length; i++)
-            {
+            for (var i = 0; i < input1.Length; i++)
                 if (input1[i] == input2[i])
                     matching.Append(input1[i]);
-            }
             return matching.ToString();
         }
     }
