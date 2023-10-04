@@ -37,10 +37,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         {
             var grid = new FuelCellGrid(300, gridSerialNumber);
             Assert.IsNotNull(grid);
-            //top-left corner 33,45 would be windowX, windowY of 34,46
-            var windowX = x + 1;
-            var windowY = y + 1;
-            var power = grid.GetPowerForWindow(windowX, windowY);
+            var power = grid.GetPowerForWindow(x, y, 3);
             Assert.AreEqual(expectedPower, power);
         }
 
@@ -48,7 +45,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         public void Can_get_max_power_coordinates()
         {
             var grid = new FuelCellGrid(300, 9306);
-            var coordinates = grid.GetMaxPowerCoordinates();
+            var coordinates = grid.GetMaxPowerCoordinates(3);
             Assert.AreEqual(235, coordinates.X);
             Assert.AreEqual(38, coordinates.Y);
         }

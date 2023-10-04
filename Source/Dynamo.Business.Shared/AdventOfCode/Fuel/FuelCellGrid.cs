@@ -18,7 +18,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
             FuelCells = fuelCells;
         }
 
-        public int GetPowerForWindow(int windowX, int windowY)
+        public int GetPowerForWindow_original(int windowX, int windowY)
         {
             //Convert x and y coordinates to zero based box
             var minX = windowX - 1;
@@ -32,21 +32,34 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
             return totalPower;
         }
 
-        public Coordinates GetMaxPowerCoordinates()
+        public int GetPowerForWindow(int leftX, int topY, int windowSize)
+        {
+            //Convert x and y coordinates to zero based box
+            var minX = leftX;
+            var maxX = (leftX) + windowSize;
+            var minY = topY;
+            var maxY = (topY) + windowSize;
+            var totalPower = 0;
+            for (var x = leftX; x < maxX; x++)
+                for (var y = topY; y < maxY; y++)
+                    totalPower += FuelCells[x, y].Power;
+            return totalPower;
+        }
+
+        public Coordinates GetMaxPowerCoordinates(int windowSize)
         {
             var maxPowerX = 0;
             var maxPowerY = 0;
             var maxPower = 0;
-            for (int windowX = 1; windowX < 299; windowX++)
-                for (int windowY = 1; windowY < 299; windowY++)
-                    if (GetPowerForWindow(windowX, windowY) > maxPower)
+            for (int windowX = 1; windowX < 300 - windowSize; windowX++)
+                for (int windowY = 1; windowY < 300 - windowSize; windowY++)
+                    if (GetPowerForWindow(windowX, windowY, windowSize) > maxPower)
                     {
-                        maxPower = GetPowerForWindow(windowX, windowY);
+                        maxPower = GetPowerForWindow(windowX, windowY, windowSize);
                         maxPowerX = windowX;
                         maxPowerY = windowY;
                     }
-
-            return new Coordinates(maxPowerX - 1, maxPowerY - 1);
+            return new Coordinates(maxPowerX, maxPowerY);
         }
     }
 
