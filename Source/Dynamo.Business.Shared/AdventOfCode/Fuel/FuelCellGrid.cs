@@ -8,6 +8,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
     public class FuelCellGrid
     {
         public FuelCell[,] FuelCells { get; }
+        public int GridSize => FuelCells.GetLength(0);
 
         public FuelCellGrid(int gridSize, int gridSerialNumber)
         {
@@ -46,7 +47,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
             return totalPower;
         }
 
-        public Coordinates GetMaxPowerCoordinates(int windowSize)
+        public MaxPowerIdentifier GetMaxPowerCoordinates(int windowSize)
         {
             var maxPowerX = 0;
             var maxPowerY = 0;
@@ -59,7 +60,24 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
                         maxPowerX = windowX;
                         maxPowerY = windowY;
                     }
-            return new Coordinates(maxPowerX, maxPowerY);
+            return new MaxPowerIdentifier(maxPowerX, maxPowerY, windowSize, maxPower);
+        }
+
+
+        public MaxPowerIdentifier GetMaxPower()
+        {
+            var maxPower = 0;
+            MaxPowerIdentifier maxPowerIdentifier = null;
+            for (var windowSize = 1; windowSize <= GridSize; windowSize++)
+            {
+                var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
+                if (maxPowerForWindow.Power > maxPower)
+                {
+                    maxPowerIdentifier = maxPowerForWindow;
+                    maxPower = maxPowerForWindow.Power;
+                }
+            }
+            return maxPowerIdentifier;
         }
     }
 
@@ -72,6 +90,20 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
         {
             X = x;
             Y = y;
+        }
+    }
+
+    public class MaxPowerIdentifier
+    {
+        public Coordinates Coordinates { get; }
+        public int WindowSize { get; }
+        public int Power { get; }
+
+        public MaxPowerIdentifier(int x, int y, int windowSize, int power)
+        {
+            Coordinates = new Coordinates(x, y);
+            WindowSize = windowSize;
+            Power = power;
         }
     }
 }
