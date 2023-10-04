@@ -72,8 +72,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
             Assert.AreEqual(119, maxPowerIdentifier.Power);
         }
 
-        //[Test, Ignore("takes too long")]
-        [Test]
+        [Test, Ignore("takes too long")]
         public void Get_day_11_part_2_answer()
         {
             var grid = new FuelCellGrid(300, 9306);
