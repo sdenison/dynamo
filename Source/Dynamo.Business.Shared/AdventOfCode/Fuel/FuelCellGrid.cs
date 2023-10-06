@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Text;
-
-namespace Dynamo.Business.Shared.AdventOfCode.Fuel
+﻿namespace Dynamo.Business.Shared.AdventOfCode.Fuel
 {
     public class FuelCellGrid
     {
         public FuelCell[,] FuelCells { get; }
         public int GridSize => FuelCells.GetLength(0);
+        //Roughly tracking the number of steps to get the max power
+        public long Calculations { get; set; }
 
         public FuelCellGrid(int gridSize, int gridSerialNumber)
         {
@@ -19,32 +16,33 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
             FuelCells = fuelCells;
         }
 
-        public int GetPowerForWindow_original(int windowX, int windowY)
-        {
-            //Convert x and y coordinates to zero based box
-            var minX = windowX - 1;
-            var maxX = windowX + 1;
-            var minY = windowY - 1;
-            var maxY = windowY + 1;
-            var totalPower = 0;
-            for (var x = minX; x <= maxX; x++)
-                for (var y = minY; y <= maxY; y++)
-                    totalPower += FuelCells[x, y].Power;
-            return totalPower;
-        }
-
         public int GetPowerForWindow(int leftX, int topY, int windowSize)
         {
-            //Convert x and y coordinates to zero based box
-            var minX = leftX;
-            var maxX = (leftX) + windowSize;
-            var minY = topY;
-            var maxY = (topY) + windowSize;
+            var maxX = leftX + windowSize;
+            var maxY = topY + windowSize;
             var totalPower = 0;
             for (var x = leftX; x < maxX; x++)
                 for (var y = topY; y < maxY; y++)
+                {
                     totalPower += FuelCells[x, y].Power;
+                    Calculations++;
+                }
             return totalPower;
+        }
+
+        //Calculating power by subtracting the previous highest row and adding the lowest next row.
+        //Using only the deltas makes things much faster.
+        public int GetNewPowerWithYShiftedBy1(int windowX, int windowY, int windowSize, int currentPower)
+        {
+            if (windowY == 0)
+                return GetPowerForWindow(windowX, 0, windowSize);
+            for (var x = windowX; x < (windowX + windowSize); x++)
+            {
+                currentPower = currentPower - FuelCells[x, windowY - 1].Power;
+                currentPower = currentPower + FuelCells[x, windowY + (windowSize - 1)].Power;
+                Calculations += 2;
+            }
+            return currentPower;
         }
 
         public MaxPowerIdentifier GetMaxPowerCoordinates(int windowSize)
@@ -52,19 +50,63 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
             var maxPowerX = 0;
             var maxPowerY = 0;
             var maxPower = 0;
-            for (int windowX = 1; windowX < 300 - windowSize; windowX++)
-                for (int windowY = 1; windowY < 300 - windowSize; windowY++)
-                    if (GetPowerForWindow(windowX, windowY, windowSize) > maxPower)
+            for (int windowX = 0; windowX < GridSize - windowSize; windowX++)
+            {
+                var powerForWindow = 0;
+                for (int windowY = 0; windowY < GridSize - windowSize; windowY++)
+                {
+                    powerForWindow = GetNewPowerWithYShiftedBy1(windowX, windowY, windowSize, powerForWindow);
+                    if (powerForWindow > maxPower)
                     {
-                        maxPower = GetPowerForWindow(windowX, windowY, windowSize);
+                        maxPower = powerForWindow;
                         maxPowerX = windowX;
                         maxPowerY = windowY;
                     }
+                }
+            }
             return new MaxPowerIdentifier(maxPowerX, maxPowerY, windowSize, maxPower);
         }
 
-
         public MaxPowerIdentifier GetMaxPower()
+        {
+            var maxPower = 0;
+            MaxPowerIdentifier maxPowerIdentifier = null;
+            for (var windowSize = 1; windowSize <= GridSize; windowSize++)
+            {
+                //var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
+                var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
+                if (maxPowerForWindow.Power > maxPower)
+                {
+                    maxPowerIdentifier = maxPowerForWindow;
+                    maxPower = maxPowerForWindow.Power;
+                }
+            }
+            return maxPowerIdentifier;
+        }
+
+        #region Unoptimized 
+        public MaxPowerIdentifier GetMaxPowerCoordinatesOld(int windowSize)
+        {
+            var maxPowerX = 0;
+            var maxPowerY = 0;
+            var maxPower = 0;
+
+            for (int windowX = 0; windowX < GridSize - windowSize; windowX++)
+                for (int windowY = 0; windowY < GridSize - windowSize; windowY++)
+                {
+                    var powerForWindow = GetPowerForWindow(windowX, windowY, windowSize);
+                    if (powerForWindow > maxPower)
+                    {
+                        maxPower = powerForWindow;
+                        maxPowerX = windowX;
+                        maxPowerY = windowY;
+                    }
+                }
+
+            return new MaxPowerIdentifier(maxPowerX, maxPowerY, windowSize, maxPower);
+        }
+
+        public MaxPowerIdentifier GetMaxPowerOld()
         {
             var maxPower = 0;
             MaxPowerIdentifier maxPowerIdentifier = null;
@@ -79,6 +121,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Fuel
             }
             return maxPowerIdentifier;
         }
+        #endregion
     }
 
     public class Coordinates

@@ -17,8 +17,6 @@
 
         public int GetHundredsPlace(int input)
         {
-            if (input < 100)
-                return 0;
             return (input / 100) % 10;
         }
     }
