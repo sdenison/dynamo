@@ -34,12 +34,27 @@
         //Using only the deltas makes things much faster.
         public int GetNewPowerWithYShiftedBy1(int windowX, int windowY, int windowSize, int currentPower)
         {
-            if (windowY == 0)
-                return GetPowerForWindow(windowX, 0, windowSize);
+            //if (windowY == 0)
+            //    return GetPowerForWindow(windowX, 0, windowSize);
             for (var x = windowX; x < (windowX + windowSize); x++)
             {
-                currentPower = currentPower - FuelCells[x, windowY - 1].Power;
-                currentPower = currentPower + FuelCells[x, windowY + (windowSize - 1)].Power;
+                currentPower -= FuelCells[x, windowY - 1].Power;
+                currentPower += FuelCells[x, windowY + (windowSize - 1)].Power;
+                Calculations += 2;
+            }
+            return currentPower;
+        }
+
+        //Calculating power by subtracting the previous highest row and adding the lowest next row.
+        //Using only the deltas makes things much faster.
+        public int GetNewPowerWithXShiftedBy1(int windowX, int windowY, int windowSize, int currentPower)
+        {
+            //if (windowX == 0 && windowY == 0)
+            //    return GetPowerForWindow(windowX, 0, windowSize);
+            for (var y = windowY; y < (windowY + windowSize); y++)
+            {
+                currentPower -= FuelCells[windowX - 1, y].Power;
+                currentPower += FuelCells[windowX + (windowSize - 1), y].Power;
                 Calculations += 2;
             }
             return currentPower;
@@ -50,10 +65,24 @@
             var maxPowerX = 0;
             var maxPowerY = 0;
             var maxPower = 0;
-            for (int windowX = 0; windowX < GridSize - windowSize; windowX++)
+            var xPower = GetPowerForWindow(0, 0, windowSize);
+            if (xPower > maxPower)
             {
-                var powerForWindow = 0;
-                for (int windowY = 0; windowY < GridSize - windowSize; windowY++)
+                maxPower = xPower;
+                maxPowerX = 0;
+                maxPowerY = 0;
+            }
+            for (int windowX = 1; windowX < GridSize - windowSize; windowX++)
+            {
+                xPower = GetNewPowerWithXShiftedBy1(windowX, 0, windowSize, xPower);
+                if (xPower > maxPower)
+                {
+                    maxPower = xPower;
+                    maxPowerX = windowX;
+                    maxPowerY = 0;
+                }
+                var powerForWindow = xPower;
+                for (int windowY = 1; windowY < GridSize - windowSize; windowY++)
                 {
                     powerForWindow = GetNewPowerWithYShiftedBy1(windowX, windowY, windowSize, powerForWindow);
                     if (powerForWindow > maxPower)
@@ -73,7 +102,6 @@
             MaxPowerIdentifier maxPowerIdentifier = null;
             for (var windowSize = 1; windowSize <= GridSize; windowSize++)
             {
-                //var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
                 var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
                 if (maxPowerForWindow.Power > maxPower)
                 {

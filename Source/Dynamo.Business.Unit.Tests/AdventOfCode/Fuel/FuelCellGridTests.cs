@@ -56,7 +56,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         {
             var grid = new FuelCellGrid(300, 18);
             var maxPowerIdentifier = grid.GetMaxPower();
-            Assert.AreEqual(2015977600, grid.Calculations);
+            Assert.AreEqual(1350030150, grid.Calculations);
             Assert.AreEqual(90, maxPowerIdentifier.Coordinates.X);
             Assert.AreEqual(269, maxPowerIdentifier.Coordinates.Y);
             Assert.AreEqual(16, maxPowerIdentifier.WindowSize);
