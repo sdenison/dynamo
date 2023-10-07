@@ -11,8 +11,8 @@ using ServiceStack.Aws.DynamoDb;
 
 namespace Dynamo.Data.DynamoDb.Integration.Utilities
 {
-    [TestFixture, Ignore("Uses live connection to DynamoDB")]
-    //[TestFixture]
+    //[TestFixture, Ignore("Uses live connection to DynamoDB")]
+    [TestFixture]
     public class BackgroundJobDataServiceTests
     {
         [Test]
@@ -41,7 +41,10 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
             //Set up DynamoDb dataService
             var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);
             var db = new PocoDynamo(awsDb);
-            db.RegisterTable<BackgroundJobEntity>();
+            var metadata = db.RegisterTable<BackgroundJobEntity>();
+            var m = metadata.GetTableMetadata(typeof(BackgroundJobEntity));
+            m.Name = "Test-BackgroundJobEntity";
+
             var dataService = new BackgroundJobDataService(db);
 
             //Add dependency injection 
