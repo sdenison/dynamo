@@ -53,7 +53,7 @@
             return currentPower;
         }
 
-        //Calculating power by subtracting the previous highest row and adding the lowest next row.
+        //Calculating power by subtracting the previous leftmost row and adding the rightmost next row.
         //Using only the deltas makes things much faster.
         public int GetNewPowerWithXShiftedBy1(int windowX, int windowY, int windowSize, int currentPower)
         {
@@ -71,10 +71,6 @@
             MaxPowerIdentifier maxPower = new MaxPowerIdentifier(0, 0, 0, 0);
             //Tracks power along the x axis
             //Test the initial power at 0,0
-            if (windowSize == 16)
-            {
-                var x = "got here";
-            }
             var xPower = GetPowerForWindow(0, 0, windowSize);
             if (xPower > maxPower.Power)
                 maxPower = new MaxPowerIdentifier(0, 0, windowSize, xPower);
@@ -102,13 +98,7 @@
 
         public MaxPowerIdentifier GetMaxPowerCoordinates(int windowSize, int currentPower)
         {
-            MaxPowerIdentifier maxPower = new MaxPowerIdentifier(0, 0, 0, 0);
-            //Tracks power along the x axis
-            //Test the initial power at 0,0
-            //var xPower = GetPowerForWindow(0, 0, windowSize, currentPower);
-            if (currentPower > maxPower.Power)
-                maxPower = new MaxPowerIdentifier(0, 0, windowSize, currentPower);
-
+            MaxPowerIdentifier maxPower = new MaxPowerIdentifier(0, 0, windowSize, currentPower);
             //Outer for loop walks along the x-axis
             for (int windowX = 1; windowX < GridSize - windowSize; windowX++)
             {
@@ -133,20 +123,14 @@
         public MaxPowerIdentifier GetMaxPower()
         {
             var maxPower = 0;
-            MaxPowerIdentifier maxPowerIdentifier = null;
+            MaxPowerIdentifier maxPowerIdentifier = new MaxPowerIdentifier(0, 0, 0, 0);
             var currentPower = 0;
             for (var windowSize = 1; windowSize <= GridSize; windowSize++)
             {
                 if (windowSize == 1)
                     currentPower = FuelCells[0, 0].Power;
                 else
-                {
-                    if (windowSize == 16)
-                    {
-                        var x = "got here";
-                    }
                     currentPower = GetPowerForWindow(windowSize, currentPower);
-                }
                 var maxPowerForWindow = GetMaxPowerCoordinates(windowSize, currentPower);
                 if (maxPowerForWindow.Power > maxPower)
                 {
@@ -156,62 +140,6 @@
             }
             return maxPowerIdentifier;
         }
-
-        public MaxPowerIdentifier GetMaxPowerOld()
-        {
-            var maxPower = 0;
-            MaxPowerIdentifier maxPowerIdentifier = null;
-            for (var windowSize = 1; windowSize <= GridSize; windowSize++)
-            {
-                var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
-                if (maxPowerForWindow.Power > maxPower)
-                {
-                    maxPowerIdentifier = maxPowerForWindow;
-                    maxPower = maxPowerForWindow.Power;
-                }
-            }
-            return maxPowerIdentifier;
-        }
-
-        #region Unoptimized 
-        public MaxPowerIdentifier GetMaxPowerCoordinatesUnoptimized(int windowSize)
-        {
-            var maxPowerX = 0;
-            var maxPowerY = 0;
-            var maxPower = 0;
-            var currentPower = FuelCells[0, 0].Power;
-
-            for (int windowX = 0; windowX < GridSize - windowSize; windowX++)
-                for (int windowY = 0; windowY < GridSize - windowSize; windowY++)
-                {
-                    var powerForWindow = GetPowerForWindow(windowX, windowY, windowSize);
-                    if (powerForWindow > maxPower)
-                    {
-                        maxPower = powerForWindow;
-                        maxPowerX = windowX;
-                        maxPowerY = windowY;
-                    }
-                }
-
-            return new MaxPowerIdentifier(maxPowerX, maxPowerY, windowSize, maxPower);
-        }
-
-        public MaxPowerIdentifier GetMaxPowerOldUnoptimized()
-        {
-            var maxPower = 0;
-            MaxPowerIdentifier maxPowerIdentifier = null;
-            for (var windowSize = 1; windowSize <= GridSize; windowSize++)
-            {
-                var maxPowerForWindow = GetMaxPowerCoordinatesUnoptimized(windowSize);
-                if (maxPowerForWindow.Power > maxPower)
-                {
-                    maxPowerIdentifier = maxPowerForWindow;
-                    maxPower = maxPowerForWindow.Power;
-                }
-            }
-            return maxPowerIdentifier;
-        }
-        #endregion
     }
 
     public class Coordinates
