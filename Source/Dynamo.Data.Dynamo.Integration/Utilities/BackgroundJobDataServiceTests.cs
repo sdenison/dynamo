@@ -36,7 +36,7 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
         }
 
         [Test]
-        public void Use_csla_BackgroundJob_and_dynamo_together()
+        public async Task Use_csla_BackgroundJob_and_dynamo_together()
         {
             //Set up DynamoDb dataService
             var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);
@@ -54,20 +54,20 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
             var portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
 
             //Create a new backround service job
-            var job = portal.Create();
+            var job = await portal.CreateAsync();
             Assert.IsTrue(job.IsNew);
-            job = job.Save();
+            job = await job.SaveAsync();
             //Make a change
             job.JobStatus = JobStatus.FinishedSuccess;
             job.JobOutput = "The answer to your question is 42";
             //Pull from the database before changes is saved
-            var jobFromDatabase = portal.Fetch(job.Id);
+            var jobFromDatabase = await portal.FetchAsync(job.Id);
             Assert.AreEqual(JobStatus.Initializing, jobFromDatabase.JobStatus);
             //Actually save 
-            job = job.Save();
+            job = await job.SaveAsync();
             //Delete the job
             //job.Delete();
-            job = job.Save();
+            job = await job.SaveAsync();
         }
     }
 }

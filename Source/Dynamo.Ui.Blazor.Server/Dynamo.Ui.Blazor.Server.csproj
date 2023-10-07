@@ -14,7 +14,9 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Dynamo.Business.Shared\Dynamo.Business.Shared.csproj" />
 		<ProjectReference Include="..\Dynamo.Business\Dynamo.Business.csproj" />
+		<ProjectReference Include="..\Dynamo.Data.DynamoDb\Dynamo.Data.DynamoDb.csproj" />
 		<ProjectReference Include="..\Dynamo.Ui.Blazor.Client\Dynamo.Ui.Blazor.Client.csproj" />
 	</ItemGroup>
 

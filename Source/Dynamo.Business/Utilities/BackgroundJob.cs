@@ -70,6 +70,15 @@ namespace Dynamo.Business.Utilities
             BusinessRules.CheckRules();
         }
 
+        [Fetch]
+        private void Fetch(string id, [Inject] IBackgroundJobDataService dataService)
+        {
+            var data = dataService.Get(Guid.Parse(id));
+            using (BypassPropertyChecks)
+                Csla.Data.DataMapper.Map(data, this);
+            BusinessRules.CheckRules();
+        }
+
         [Insert]
         // [Test, Ignore("takes too long")]
         private void Insert([Inject] IBackgroundJobDataService dataService)

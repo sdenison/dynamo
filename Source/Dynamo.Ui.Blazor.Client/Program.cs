@@ -1,3 +1,4 @@
+using Csla.Configuration;
 using Dynamo.Ui.Blazor.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -7,5 +8,14 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+builder.Services.AddAuthorizationCore();
+builder.Services.AddOptions();
+
+builder.Services.AddCsla(o => o
+    .AddBlazorWebAssembly()
+    .DataPortal(dpo => dpo
+        .EnableSecurityPrincipalFlowFromClient()
+        .UseHttpProxy(options => options.DataPortalUrl = "/api/DataPortal")));
 
 await builder.Build().RunAsync();
