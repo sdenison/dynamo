@@ -19,16 +19,25 @@
 
         public int GetPowerForWindow(int leftX, int topY, int windowSize)
         {
-            var maxX = leftX + windowSize;
-            var maxY = topY + windowSize;
             var totalPower = 0;
-            for (var x = leftX; x < maxX; x++)
-                for (var y = topY; y < maxY; y++)
+            for (var x = leftX; x < leftX + windowSize; x++)
+                for (var y = topY; y < topY + windowSize; y++)
                 {
                     totalPower += FuelCells[x, y].Power;
                     Calculations++;
                 }
             return totalPower;
+        }
+
+        public int GetPowerForWindow(int windowSize, int currentPower)
+        {
+            for (var x = 0; x < windowSize; x++)
+                currentPower += FuelCells[x, windowSize - 1].Power;
+            //Needs to be windowsSize - 1 here so we don't include the corner for both X and Y axis
+            for (var y = 0; y < windowSize - 1; y++)
+                currentPower += FuelCells[windowSize - 1, y].Power;
+            Calculations += (windowSize * 2) - 1;
+            return currentPower;
         }
 
         //Calculating power by subtracting the previous highest row and adding the lowest next row.
@@ -62,6 +71,10 @@
             MaxPowerIdentifier maxPower = new MaxPowerIdentifier(0, 0, 0, 0);
             //Tracks power along the x axis
             //Test the initial power at 0,0
+            if (windowSize == 16)
+            {
+                var x = "got here";
+            }
             var xPower = GetPowerForWindow(0, 0, windowSize);
             if (xPower > maxPower.Power)
                 maxPower = new MaxPowerIdentifier(0, 0, windowSize, xPower);
@@ -87,7 +100,64 @@
             return maxPower;
         }
 
+        public MaxPowerIdentifier GetMaxPowerCoordinates(int windowSize, int currentPower)
+        {
+            MaxPowerIdentifier maxPower = new MaxPowerIdentifier(0, 0, 0, 0);
+            //Tracks power along the x axis
+            //Test the initial power at 0,0
+            //var xPower = GetPowerForWindow(0, 0, windowSize, currentPower);
+            if (currentPower > maxPower.Power)
+                maxPower = new MaxPowerIdentifier(0, 0, windowSize, currentPower);
+
+            //Outer for loop walks along the x-axis
+            for (int windowX = 1; windowX < GridSize - windowSize; windowX++)
+            {
+                //Test the power where y = 0
+                currentPower = GetNewPowerWithXShiftedBy1(windowX, 0, windowSize, currentPower);
+                if (currentPower > maxPower.Power)
+                    maxPower = new MaxPowerIdentifier(windowX, 0, windowSize, currentPower);
+
+                var powerForWindow = currentPower;
+                //Inner for look walks along the y-axis
+                for (int windowY = 1; windowY < GridSize - windowSize; windowY++)
+                {
+                    //Test the power a x,y
+                    powerForWindow = GetNewPowerWithYShiftedBy1(windowX, windowY, windowSize, powerForWindow);
+                    if (powerForWindow > maxPower.Power)
+                        maxPower = new MaxPowerIdentifier(windowX, windowY, windowSize, powerForWindow);
+                }
+            }
+            return maxPower;
+        }
+
         public MaxPowerIdentifier GetMaxPower()
+        {
+            var maxPower = 0;
+            MaxPowerIdentifier maxPowerIdentifier = null;
+            var currentPower = 0;
+            for (var windowSize = 1; windowSize <= GridSize; windowSize++)
+            {
+                if (windowSize == 1)
+                    currentPower = FuelCells[0, 0].Power;
+                else
+                {
+                    if (windowSize == 16)
+                    {
+                        var x = "got here";
+                    }
+                    currentPower = GetPowerForWindow(windowSize, currentPower);
+                }
+                var maxPowerForWindow = GetMaxPowerCoordinates(windowSize, currentPower);
+                if (maxPowerForWindow.Power > maxPower)
+                {
+                    maxPowerIdentifier = maxPowerForWindow;
+                    maxPower = maxPowerForWindow.Power;
+                }
+            }
+            return maxPowerIdentifier;
+        }
+
+        public MaxPowerIdentifier GetMaxPowerOld()
         {
             var maxPower = 0;
             MaxPowerIdentifier maxPowerIdentifier = null;
@@ -109,6 +179,7 @@
             var maxPowerX = 0;
             var maxPowerY = 0;
             var maxPower = 0;
+            var currentPower = FuelCells[0, 0].Power;
 
             for (int windowX = 0; windowX < GridSize - windowSize; windowX++)
                 for (int windowY = 0; windowY < GridSize - windowSize; windowY++)

@@ -71,6 +71,7 @@ namespace Dynamo.Business.Utilities
         }
 
         [Insert]
+        // [Test, Ignore("takes too long")]
         private void Insert([Inject] IBackgroundJobDataService dataService)
         {
             using (BypassPropertyChecks)
