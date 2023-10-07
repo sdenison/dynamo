@@ -58,3 +58,10 @@ Resources:
       Parameters:
         EnvironmentName: !Ref EnvironmentName        
         ApplicationName: !Ref ApplicationName        
+
+  DynamoDB:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/DynamoDb/dynamo-db.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName        
