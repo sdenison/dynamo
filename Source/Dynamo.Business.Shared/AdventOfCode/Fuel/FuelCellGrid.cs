@@ -3,7 +3,7 @@
     public class FuelCellGrid
     {
         public FuelCell[,] FuelCells { get; }
-        public int GridSize => FuelCells.GetLength(0);
+        public int GridSize { get; }
         //Roughly tracking the number of steps to get the max power
         public long Calculations { get; set; }
 
@@ -13,6 +13,7 @@
             for (var x = 0; x < gridSize; x++)
                 for (var y = 0; y < gridSize; y++)
                     fuelCells[x, y] = new FuelCell(x, y, gridSerialNumber);
+            GridSize = gridSize;
             FuelCells = fuelCells;
         }
 
@@ -34,8 +35,6 @@
         //Using only the deltas makes things much faster.
         public int GetNewPowerWithYShiftedBy1(int windowX, int windowY, int windowSize, int currentPower)
         {
-            //if (windowY == 0)
-            //    return GetPowerForWindow(windowX, 0, windowSize);
             for (var x = windowX; x < (windowX + windowSize); x++)
             {
                 currentPower -= FuelCells[x, windowY - 1].Power;
@@ -49,8 +48,6 @@
         //Using only the deltas makes things much faster.
         public int GetNewPowerWithXShiftedBy1(int windowX, int windowY, int windowSize, int currentPower)
         {
-            //if (windowX == 0 && windowY == 0)
-            //    return GetPowerForWindow(windowX, 0, windowSize);
             for (var y = windowY; y < (windowY + windowSize); y++)
             {
                 currentPower -= FuelCells[windowX - 1, y].Power;
@@ -62,38 +59,32 @@
 
         public MaxPowerIdentifier GetMaxPowerCoordinates(int windowSize)
         {
-            var maxPowerX = 0;
-            var maxPowerY = 0;
-            var maxPower = 0;
+            MaxPowerIdentifier maxPower = new MaxPowerIdentifier(0, 0, 0, 0);
+            //Tracks power along the x axis
+            //Test the initial power at 0,0
             var xPower = GetPowerForWindow(0, 0, windowSize);
-            if (xPower > maxPower)
-            {
-                maxPower = xPower;
-                maxPowerX = 0;
-                maxPowerY = 0;
-            }
+            if (xPower > maxPower.Power)
+                maxPower = new MaxPowerIdentifier(0, 0, windowSize, xPower);
+
+            //Outer for loop walks along the x-axis
             for (int windowX = 1; windowX < GridSize - windowSize; windowX++)
             {
+                //Test the power where y = 0
                 xPower = GetNewPowerWithXShiftedBy1(windowX, 0, windowSize, xPower);
-                if (xPower > maxPower)
-                {
-                    maxPower = xPower;
-                    maxPowerX = windowX;
-                    maxPowerY = 0;
-                }
+                if (xPower > maxPower.Power)
+                    maxPower = new MaxPowerIdentifier(windowX, 0, windowSize, xPower);
+
                 var powerForWindow = xPower;
+                //Inner for look walks along the y-axis
                 for (int windowY = 1; windowY < GridSize - windowSize; windowY++)
                 {
+                    //Test the power a x,y
                     powerForWindow = GetNewPowerWithYShiftedBy1(windowX, windowY, windowSize, powerForWindow);
-                    if (powerForWindow > maxPower)
-                    {
-                        maxPower = powerForWindow;
-                        maxPowerX = windowX;
-                        maxPowerY = windowY;
-                    }
+                    if (powerForWindow > maxPower.Power)
+                        maxPower = new MaxPowerIdentifier(windowX, windowY, windowSize, powerForWindow);
                 }
             }
-            return new MaxPowerIdentifier(maxPowerX, maxPowerY, windowSize, maxPower);
+            return maxPower;
         }
 
         public MaxPowerIdentifier GetMaxPower()
@@ -113,7 +104,7 @@
         }
 
         #region Unoptimized 
-        public MaxPowerIdentifier GetMaxPowerCoordinatesOld(int windowSize)
+        public MaxPowerIdentifier GetMaxPowerCoordinatesUnoptimized(int windowSize)
         {
             var maxPowerX = 0;
             var maxPowerY = 0;
@@ -134,13 +125,13 @@
             return new MaxPowerIdentifier(maxPowerX, maxPowerY, windowSize, maxPower);
         }
 
-        public MaxPowerIdentifier GetMaxPowerOld()
+        public MaxPowerIdentifier GetMaxPowerOldUnoptimized()
         {
             var maxPower = 0;
             MaxPowerIdentifier maxPowerIdentifier = null;
             for (var windowSize = 1; windowSize <= GridSize; windowSize++)
             {
-                var maxPowerForWindow = GetMaxPowerCoordinates(windowSize);
+                var maxPowerForWindow = GetMaxPowerCoordinatesUnoptimized(windowSize);
                 if (maxPowerForWindow.Power > maxPower)
                 {
                     maxPowerIdentifier = maxPowerForWindow;

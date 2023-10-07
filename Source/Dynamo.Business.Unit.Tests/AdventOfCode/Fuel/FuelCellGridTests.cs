@@ -50,8 +50,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
             Assert.AreEqual(38, maxPowerIdentifier.Coordinates.Y);
         }
 
-        //[Test, Ignore("takes too long")]
-        [Test]
+        [Test, Ignore("takes too long for NCrunch")]
         public void Can_get_max_power()
         {
             var grid = new FuelCellGrid(300, 18);
@@ -63,8 +62,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
             Assert.AreEqual(113, maxPowerIdentifier.Power);
         }
 
-        //[Test, Ignore("takes too long")]
-        [Test]
+        [Test, Ignore("takes too long for NCrunch")]
         public void Can_get_max_power2()
         {
             var grid = new FuelCellGrid(300, 42);
@@ -75,8 +73,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
             Assert.AreEqual(119, maxPowerIdentifier.Power);
         }
 
-        // [Test, Ignore("takes too long")]
-        [Test]
+        [Test, Ignore("takes too long for NCrunch")]
         public void Get_day_11_part_2_answer()
         {
             var grid = new FuelCellGrid(300, 9306);
