@@ -11,5 +11,6 @@ namespace Dynamo.Business.Shared.Utilities
         public DateTime Created { get; set; }
         public DateTime LastUpdated { get; set; }
         public string JobOutput { get; set; }
+        public string FileName { get; set; }
     }
 }

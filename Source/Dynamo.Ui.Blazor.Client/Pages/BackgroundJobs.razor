@@ -22,11 +22,12 @@ else
         <thead>
         <tr>
             <th>Id</th>
-            <th>JobStatus</th>
-            <th>JobType</th>
+            <th>File Name</th>
+            <th>Job Status</th>
+            <th>Job Type</th>
             <th>Created</th>
-            <th>LastUpdated</th>
-            <th>JobOutput</th>
+            <th>Last Updated</th>
+            <th>Job Output</th>
         </tr>
         </thead>
         <tbody>
@@ -34,6 +35,7 @@ else
         {
             <tr>
                 <td>@job.Id</td>
+                <td>@job.FileName</td>
                 <td>@job.JobStatus</td>
                 <td>@job.JobType</td>
                 <td>@job.Created</td>
@@ -62,7 +64,7 @@ else
         //var uploadResults = await response.Content.ReadFromJsonAsync();
         if (response.IsSuccessStatusCode)
         {
-            var x = "yay!";
+            await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
         }
     }
 

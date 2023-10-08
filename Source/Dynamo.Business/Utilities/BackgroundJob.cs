@@ -50,6 +50,13 @@ namespace Dynamo.Business.Utilities
             set => SetProperty(JobOutputProperty, value);
         }
 
+        public static readonly PropertyInfo<string> FileNameProperty = RegisterProperty<string>(nameof(FileName));
+        public string FileName
+        {
+            get => GetProperty(FileNameProperty);
+            set => SetProperty(FileNameProperty, value);
+        }
+
         [Create]
         private void Create()
         {
@@ -58,6 +65,7 @@ namespace Dynamo.Business.Utilities
             Created = DateTime.Now;
             LastUpdated = DateTime.Now;
             JobOutput = string.Empty;
+            FileName = string.Empty;
             base.Child_Create();
         }
 
@@ -100,6 +108,7 @@ namespace Dynamo.Business.Utilities
                     Created = this.Created,
                     LastUpdated = DateTime.Now,
                     JobOutput = this.JobOutput,
+                    FileName = this.FileName
                 };
                 var result = dataService.Insert(entity);
             }
@@ -118,6 +127,7 @@ namespace Dynamo.Business.Utilities
                     Created = this.Created,
                     LastUpdated = DateTime.Now,
                     JobOutput = this.JobOutput,
+                    FileName = this.FileName
                 };
                 var result = dataService.Update(entity);
             }
