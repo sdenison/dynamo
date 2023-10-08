@@ -39,6 +39,5 @@ else
     protected override async Task OnParametersSetAsync()
     {
         await vm.RefreshAsync(() => BackgroundJobDataPortal.FetchAsync("e7575082-4410-4388-bcf8-7142c0ee1a63"));
-
     }
 }

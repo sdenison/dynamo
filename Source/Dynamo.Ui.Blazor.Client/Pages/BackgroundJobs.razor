@@ -1,0 +1,50 @@
+﻿@page "/backgroundjobs"
+<h3>BackgroundJobs</h3>
+@inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJobList> backgroundJobDataPortal
+@inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
+
+<h1>Background Jobs</h1>
+
+@if (vm.Model == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>
+
+    </p>
+    <table class="table">
+       <thead>
+       <tr>
+           <th>Id</th>
+           <th>JobStatus</th>
+           <th>JobType</th>
+           <th>Created</th>
+           <th>LastUpdated</th>
+           <th>JobOutput</th>
+       </tr>
+       </thead>
+       <tbody>
+            @foreach (var job in vm.Model)
+            {
+                <tr>
+                    <td>@job.Id</td>
+                    <td>@job.JobStatus</td>
+                    <td>@job.JobType</td>
+                    <td>@job.Created</td>
+                    <td>@job.LastUpdated</td>
+                    <td>@job.JobOutput</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
+    }
+}

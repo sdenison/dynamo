@@ -11,8 +11,8 @@ using ServiceStack.Aws.DynamoDb;
 
 namespace Dynamo.Data.DynamoDb.Integration.Utilities
 {
-    [TestFixture, Ignore("Uses live connection to DynamoDB")]
-    //[TestFixture]
+    //[TestFixture, Ignore("Uses live connection to DynamoDB")]
+    [TestFixture]
     public class BackgroundJobDataServiceTests
     {
         [Test]
@@ -68,6 +68,9 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
             //Delete the job
             //job.Delete();
             job = await job.SaveAsync();
+            var listPortal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJobList>>();
+            var jobs = await listPortal.FetchAsync();
+            Assert.IsTrue(jobs.Count > 0);
         }
     }
 }
