@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.CommandLine;
+﻿using System.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Csla;
+using Dynamo.Business.Shared.Utilities;
 using Dynamo.Business.Utilities;
 using Dynamo.Config;
 
@@ -22,6 +21,14 @@ namespace Dynamo.Commands.Utilities
             var dataPortal = provider.GetService<IDataPortal<BackgroundJob>>();
             var backgroundJob = dataPortal.Fetch(jobId);
             backgroundJob.JobStatus = JobStatus.Running;
+            backgroundJob = backgroundJob.Save();
+            if (backgroundJob.JobType == JobType.BusyBox)
+            {
+                BusyBox.Sleep(60);
+            }
+
+            backgroundJob.JobStatus = JobStatus.FinishedSuccess;
+            backgroundJob.JobOutput = "The job ran successfully for 60 seconds";
             backgroundJob = backgroundJob.Save();
         }
 
