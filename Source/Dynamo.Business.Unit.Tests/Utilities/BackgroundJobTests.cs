@@ -16,6 +16,7 @@ namespace Dynamo.Business.Unit.Tests.Utilities
     public class BackgroundJobTests
     {
         IDataPortal<BackgroundJob> _portal;
+        IDataPortal<BackgroundJobList> _listPortal;
 
         private static readonly List<BackgroundJobEntity> _backgroundJobTable = new List<BackgroundJobEntity>
         {
@@ -64,11 +65,19 @@ namespace Dynamo.Business.Unit.Tests.Utilities
             {
                 return _backgroundJobTable.Single(x => x.Id.Equals(id));
             });
+            mockDataService.Setup(x => x.GetAll()).Returns(() =>
+                {
+                    return _backgroundJobTable;
+                }
+            );
             var services = new ServiceCollection();
-            services.AddCsla();
+            services.AddCsla(o => o
+                .DataPortal(dpo => dpo
+                    .UseLocalProxy()));
             services.AddTransient<IBackgroundJobDataService>(o => mockDataService.Object);
             var serviceProvider = services.BuildServiceProvider();
             _portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
+            _listPortal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJobList>>();
         }
 
         [Test]
@@ -95,6 +104,14 @@ namespace Dynamo.Business.Unit.Tests.Utilities
         public async Task Can_fetch_BackgroundJob()
         {
             var job = await _portal.FetchAsync(Guid.Parse("953526AB-899A-4F8C-A69C-DDB18E02BB49"));
+        }
+
+        [Test]
+        public async Task Can_get_list_of_BackgroundJobs()
+        {
+            BackgroundJobList jobs = await _listPortal.FetchAsync();
+            Assert.IsNotNull(jobs);
+            Assert.IsTrue(jobs.Count > 0);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Dynamo.Business.Shared.Utilities
 {
     public interface IBackgroundJobDataService
     {
+        public IReadOnlyList<BackgroundJobEntity> GetAll();
         public BackgroundJobEntity Get(Guid id);
         public BackgroundJobEntity Insert(BackgroundJobEntity entity);
         public BackgroundJobEntity Update(BackgroundJobEntity entity);

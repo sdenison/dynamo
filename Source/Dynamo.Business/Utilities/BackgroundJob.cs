@@ -79,6 +79,13 @@ namespace Dynamo.Business.Utilities
             BusinessRules.CheckRules();
         }
 
+        [FetchChild]
+        private void Fetch(BackgroundJobEntity data)
+        {
+            using (BypassPropertyChecks)
+                Csla.Data.DataMapper.Map(data, this);
+        }
+
         [Insert]
         // [Test, Ignore("takes too long")]
         private void Insert([Inject] IBackgroundJobDataService dataService)
