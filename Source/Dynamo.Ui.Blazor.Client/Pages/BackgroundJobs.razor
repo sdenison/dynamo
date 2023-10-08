@@ -1,9 +1,13 @@
 ﻿@page "/backgroundjobs"
+@using System.Net.Http.Headers
 <h3>BackgroundJobs</h3>
 @inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJobList> backgroundJobDataPortal
 @inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
+@inject HttpClient Http
 
 <h1>Background Jobs</h1>
+
+<InputFile OnChange="@OnInputFileChange"></InputFile>
 
 @if (vm.Model == null)
 {
@@ -15,33 +19,52 @@ else
 
     </p>
     <table class="table">
-       <thead>
-       <tr>
-           <th>Id</th>
-           <th>JobStatus</th>
-           <th>JobType</th>
-           <th>Created</th>
-           <th>LastUpdated</th>
-           <th>JobOutput</th>
-       </tr>
-       </thead>
-       <tbody>
-            @foreach (var job in vm.Model)
-            {
-                <tr>
-                    <td>@job.Id</td>
-                    <td>@job.JobStatus</td>
-                    <td>@job.JobType</td>
-                    <td>@job.Created</td>
-                    <td>@job.LastUpdated</td>
-                    <td>@job.JobOutput</td>
-                </tr>
-            }
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>JobStatus</th>
+            <th>JobType</th>
+            <th>Created</th>
+            <th>LastUpdated</th>
+            <th>JobOutput</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var job in vm.Model)
+        {
+            <tr>
+                <td>@job.Id</td>
+                <td>@job.JobStatus</td>
+                <td>@job.JobType</td>
+                <td>@job.Created</td>
+                <td>@job.LastUpdated</td>
+                <td>@job.JobOutput</td>
+            </tr>
+        }
         </tbody>
     </table>
 }
 
 @code {
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        long maxFileSize = 1024 * 15;
+        var file = e.File;
+        var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+        using var content = new MultipartFormDataContent();
+        content.Add(
+           content: fileContent,
+           name: "\"files\"",
+           fileName: file.Name
+        );
+        var response = await Http.PostAsync("FileUpload", content);
+        //var uploadResults = await response.Content.ReadFromJsonAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            var x = "yay!";
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
