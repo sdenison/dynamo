@@ -116,9 +116,50 @@ Resources:
           - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet1"
           - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet2"          
 
+  # BackgroundJobLambda:
+  #   Type: "AWS::Lambda::Function"
+  #   Properties:
+  #     FunctionName: !Sub "${EnvironmentName}-background-job-lambda"
+  #     Code:
+  #       ImageUri: !Join 
+  #         - ":"
+  #         - - Fn::ImportValue: !Sub "${EnvironmentName}-dynamo-lambda-repository-uri"
+  #           - latest      
+  #     Environment:
+  #       Variables:
+  #         ENVIRONMENT: !Sub "${EnvironmentName}"
+  #         "AppSettings__EnvironmentName": !Sub "${EnvironmentName}"
+  #         "AppSettings__AWSRegion": !Sub "${AWS::Region}"            
+  #     Handler: "Ffe.Lambda::Ffe.Lambda.Function::BackgroundJobHandler"
+  #     Role: !GetAtt RunDotnetLambdaRole.Arn
+  #     Timeout: 900
+  #     MemorySize: 2048
+  #     PackageType: Image
+  #     Tags:
+  #       - Key: CodeDeploy 
+  #         Value: !Sub ${EnvironmentName}-dynamo-dotnet-lambda
+  #     VpcConfig:
+  #       SecurityGroupIds:
+  #         - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSecurityGroup"
+  #       SubnetIds:
+  #         - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet1"
+  #         - "Fn::ImportValue": !Sub "${EnvironmentName}-PrivateSubnet2"                
+
 Outputs:
   RunDotnetCoreLambda:
     Value: 
       !GetAtt DotnetLambda.Arn
     Export:
       Name: !Sub ${EnvironmentName}-${ApplicationName}-lambda
+  RunDotnetDockerLambda:
+    Value: 
+      !GetAtt DotnetDockerLambda.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-docker-lambda      
+
+  # BackgroundJobLambda:
+  #   Value: 
+
+  #     !GetAtt BackgroundJobLambda.Arn
+  #   Export:
+  #     Name: !Sub ${EnvironmentName}-background-job-lambda      

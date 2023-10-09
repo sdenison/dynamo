@@ -68,6 +68,8 @@ Resources:
 
   S3FileStore:
     Type: AWS::CloudFormation::Stack
+    DependsOn:
+         - Lambda
     Properties:
       TemplateURL: !Sub https://${CFTemplateBucket}/S3/file-store-bucket.yaml
       Parameters:

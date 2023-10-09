@@ -42,13 +42,19 @@ Resources:
       Tags:
         - Key: environment
           Value: !Ref EnvironmentName
-      # NotificationConfiguration:
-      #   LambdaConfigurations:
-      #   - Event: s3:ObjectCreated:*
-      #     Filter:
-      #       S3Key:
-      #         Rules:
-      #           - Name: prefix
-      #             Value: AccenturePlanTransferReport/
-      #     Function:
-      #       Fn::ImportValue: !Sub ${EnvironmentName}-plan-transfer-lambda          
+      NotificationConfiguration:
+        LambdaConfigurations:
+        - Event: s3:ObjectCreated:*
+          Function:
+            Fn::ImportValue: !Sub ${EnvironmentName}-${ApplicationName}-docker-lambda
+            # Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
+
+  S3Permission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::ImportValue: !Sub ${EnvironmentName}-${ApplicationName}-docker-lambda
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      SourceArn: !GetAtt FileStoreBucket.Arn
