@@ -123,44 +123,6 @@ Resources:
         VpcId: 
           Fn::ImportValue : !Sub ${EnvironmentName}-VPCId                
 
-  # EcsDeploymentApplication:
-  #   Type: AWS::CodeDeploy::Application
-  #   Properties:
-  #     ApplicationName: !Sub ${EnvironmentName}-${ApplicationName}-EcsApplication
-  #     ComputePlatform: ECS
-  
-  # CodeDeploymentGroup:
-  #   Type: AWS::CodeDeploy::DeploymentGroup
-  #   Properties:
-  #     ApplicationName: !Sub ${EnvironmentName}-${ApplicationName}-EcsApplication
-  #     ServiceRoleArn: !GetAtt CodeDeployIAMRole.Arn
-  #     AutoRollbackConfiguration:
-  #       Enabled: true
-  #       Events:
-  #         - DEPLOYMENT_FAILURE
-  #     BlueGreenDeploymentConfiguration:
-  #       DeploymentReadyOption:
-  #         ActionOnTimeout: CONTINUE_DEPLOYMENT
-  #         WaitTimeInMinutes: 0
-  #       TerminateBlueInstancesOnDeploymentSuccess:
-  #         Action: TERMINATE
-  #         TerminationWaitTimeInMinutes: 5
-  #     DeploymentGroupName: !Sub ${EnvironmentName}-${ApplicationName}-EcsCodeDeploymentGroup
-  #     DeploymentStyle:
-  #       DeploymentOption: WITH_TRAFFIC_CONTROL
-  #       DeploymentType: BLUE_GREEN
-  #     LoadBalancerInfo:
-  #       TargetGroupPairInfoList:
-  #         - TargetGroups:
-  #           - Name: !Sub ${EnvironmentName}-ecs-task-dynamo-web-tg-1
-  #           - Name: !Sub ${EnvironmentName}-ecs-task-dyname-web-tg-2
-  #           ProdTrafficRoute:
-  #             ListenerArns:
-  #               - Fn::ImportValue : !Sub ${EnvironmentName}-Listener
-  #     ECSServices:
-  #       - ClusterName: !Sub ${EnvironmentName}-dynamo-fargate-cluster
-  #         ServiceName: !Sub ${EnvironmentName}-ecs-task-dynamo-web-service
-
   CodeDeployIAMRole: 
     Type: AWS::IAM::Role
     Properties:

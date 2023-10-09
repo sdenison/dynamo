@@ -1,0 +1,44 @@
+Description:
+  This template creates an S3 bucket.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String    
+  VersioningStatus:
+    Type: String
+    AllowedValues:
+      - Enabled
+      - Suspended
+    Default: Suspended
+  NoVersioningConfiguration:
+    Type: String
+    Default: 'false'
+
+Conditions:
+  NoVersioningConfiguration: !Equals [!Ref NoVersioningConfiguration, true]
+
+Resources:
+  FileStoreBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${EnvironmentName}-${ApplicationName}-file-store2
+      AccessControl: Private
+      VersioningConfiguration:
+        Fn::If:
+        - NoVersioningConfiguration
+        - !Ref AWS::NoValue
+        - Status: !Ref VersioningStatus
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      Tags:
+        - Key: environment
+          Value: !Ref EnvironmentName

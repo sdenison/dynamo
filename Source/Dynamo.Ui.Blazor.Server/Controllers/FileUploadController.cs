@@ -30,7 +30,7 @@ namespace Dynamo.Ui.Blazor.Server.Controllers
             await file.CopyToAsync(memoryStream);
             var s3Obj = new S3Object()
             {
-                BucketName = "test-dynamo-file-store",
+                BucketName = "test-dynamo-file-store2",
                 InputStream = memoryStream,
                 Name = backgroundJob.Id.ToString()
             };
@@ -39,7 +39,6 @@ namespace Dynamo.Ui.Blazor.Server.Controllers
                 throw new FileLoadException("Could not upload file to S3 bucket");
             backgroundJob = await backgroundJob.SaveAsync();
             return Ok(backgroundJob);
-            //}
         }
     }
 }

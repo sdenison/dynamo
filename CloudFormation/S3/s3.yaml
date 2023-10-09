@@ -18,10 +18,11 @@ Resources:
         EnvironmentName: !Ref EnvironmentName
         BucketName: !Sub ${EnvironmentName}-${ApplicationName}-deployment
 
-  S3FileStore:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub https://${CFTemplateBucket}/S3/one-s3-bucket.yaml
-      Parameters:
-        EnvironmentName: !Ref EnvironmentName
-        BucketName: !Sub ${EnvironmentName}-${ApplicationName}-file-store
+  # S3FileStore:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: !Sub https://${CFTemplateBucket}/S3/one-s3-bucket.yaml
+  #     Parameters:
+  #       EnvironmentName: !Ref EnvironmentName
+  #       BucketName: !Sub ${EnvironmentName}-${ApplicationName}-file-store
+  #       ApplicationName: !Ref ApplicationName
