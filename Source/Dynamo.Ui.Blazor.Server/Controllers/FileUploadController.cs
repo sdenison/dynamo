@@ -1,5 +1,7 @@
 ﻿using Dynamo.Business.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Dynamo.IO.S3.Models;
+using Dynamo.IO.S3.Services;
 
 namespace Dynamo.Ui.Blazor.Server.Controllers
 {
@@ -8,9 +10,12 @@ namespace Dynamo.Ui.Blazor.Server.Controllers
     public class FileUploadController : ControllerBase
     {
         private Csla.IDataPortal<BackgroundJob> _dataPortal;
-        public FileUploadController(Csla.IDataPortal<BackgroundJob> dataPortal)
+        private IStorageService _storageService;
+
+        public FileUploadController(Csla.IDataPortal<BackgroundJob> dataPortal, IStorageService storageService)
         {
             _dataPortal = dataPortal;
+            _storageService = storageService;
         }
 
         [HttpPost]
@@ -18,14 +23,23 @@ namespace Dynamo.Ui.Blazor.Server.Controllers
         {
             var backgroundJob = await _dataPortal.CreateAsync();
 
-            foreach (var file in files)
-            {
-                backgroundJob.FileName = file.FileName;
-                backgroundJob = await backgroundJob.SaveAsync();
-                return Ok(backgroundJob);
-            }
+            var file = files.First();
 
-            return Ok(null);
+            backgroundJob.FileName = file.FileName;
+            await using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            var s3Obj = new S3Object()
+            {
+                BucketName = "test-dynamo-file-store",
+                InputStream = memoryStream,
+                Name = backgroundJob.Id.ToString()
+            };
+            var result = await _storageService.UploadFileAsync(s3Obj);
+            if (result.StatusCode < 200 || result.StatusCode >= 300)
+                throw new FileLoadException("Could not upload file to S3 bucket");
+            backgroundJob = await backgroundJob.SaveAsync();
+            return Ok(backgroundJob);
+            //}
         }
     }
 }

@@ -5,6 +5,7 @@ using Csla.Configuration;
 using Dynamo.Business.Shared.Utilities;
 using Dynamo.Business.Utilities;
 using Dynamo.Data.DynamoDb.Utilities;
+using Dynamo.IO.S3.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using ServiceStack.Aws.DynamoDb;
 
@@ -57,6 +58,9 @@ var dataService = new BackgroundJobDataService(db);
 //var services = new ServiceCollection();
 builder.Services.AddCsla();
 builder.Services.AddTransient<IBackgroundJobDataService>(o => dataService);
+var storageService = new StorageService();
+builder.Services.AddTransient<IStorageService>(o => storageService);
+;
 //var serviceProvider = services.BuildServiceProvider();
 //var portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
 
