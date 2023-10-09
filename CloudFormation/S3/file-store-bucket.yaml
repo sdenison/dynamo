@@ -20,6 +20,16 @@ Conditions:
   NoVersioningConfiguration: !Equals [!Ref NoVersioningConfiguration, true]
 
 Resources:
+  S3Permission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Sub ${EnvironmentName}-background-job-lambda
+        #Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      #SourceArn: !GetAtt FileStoreBucket.Arn
+
   FileStoreBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -42,19 +52,10 @@ Resources:
       Tags:
         - Key: environment
           Value: !Ref EnvironmentName
-      NotificationConfiguration:
-        LambdaConfigurations:
-        - Event: s3:ObjectCreated:*
-          Function:
-            Fn::ImportValue: !Sub ${EnvironmentName}-${ApplicationName}-docker-lambda
-            # Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
+      # NotificationConfiguration:
+      #   LambdaConfigurations:
+      #   - Event: s3:ObjectCreated:*
+      #     Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
+          # Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
+             # Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
 
-  S3Permission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName:
-        Fn::ImportValue: !Sub ${EnvironmentName}-${ApplicationName}-docker-lambda
-      Action: lambda:InvokeFunction
-      Principal: s3.amazonaws.com
-      SourceAccount: !Ref AWS::AccountId
-      SourceArn: !GetAtt FileStoreBucket.Arn

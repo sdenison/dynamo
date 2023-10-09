@@ -25,3 +25,8 @@ phases:
       - docker tag lambda:latest 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-lambda-repository:latest
       - docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-lambda-repository:latest
       - aws lambda update-function-code --image-uri 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-lambda-repository:latest --function-name $ENVIRONMENT_NAME-dynamo-dotnet-docker-lambda 
+
+      - docker build -f Dockerfile.Lambda . -t background-job-lambda
+      - docker tag background-job-lambda:latest 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-background-job:latest
+      - docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-background-job:latest
+      - aws lambda update-function-code --image-uri 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-background-job:latest --function-name $ENVIRONMENT_NAME-background-job-lambda
