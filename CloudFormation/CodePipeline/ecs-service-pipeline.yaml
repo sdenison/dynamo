@@ -208,17 +208,17 @@ Resources:
             Configuration:
               ProjectName: !Ref EcsCopyImageCodeBuildProject
             RunOrder: 10
-          - Name: DeployLambda
-            ActionTypeId:
-              Category: Build
-              Owner: AWS
-              Provider: CodeBuild
-              Version: '1'
-            InputArtifacts:
-              - Name: SourceCode
-            Configuration:
-              ProjectName: !Ref LambdaCodeBuildProject 
-            RunOrder: 10            
+          # - Name: DeployLambda
+          #   ActionTypeId:
+          #     Category: Build
+          #     Owner: AWS
+          #     Provider: CodeBuild
+          #     Version: '1'
+          #   InputArtifacts:
+          #     - Name: SourceCode
+          #   Configuration:
+          #     ProjectName: !Ref LambdaCodeBuildProject 
+          #   RunOrder: 10            
       ArtifactStore:
         Type: S3
         Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline
