@@ -42,3 +42,13 @@ Resources:
       Tags:
         - Key: environment
           Value: !Ref EnvironmentName
+      # NotificationConfiguration:
+      #   LambdaConfigurations:
+      #   - Event: s3:ObjectCreated:*
+      #     Filter:
+      #       S3Key:
+      #         Rules:
+      #           - Name: prefix
+      #             Value: AccenturePlanTransferReport/
+      #     Function:
+      #       Fn::ImportValue: !Sub ${EnvironmentName}-plan-transfer-lambda          
