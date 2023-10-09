@@ -52,10 +52,10 @@ Resources:
       Tags:
         - Key: environment
           Value: !Ref EnvironmentName
-      # NotificationConfiguration:
-      #   LambdaConfigurations:
-      #   - Event: s3:ObjectCreated:*
-      #     Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
+      NotificationConfiguration:
+        LambdaConfigurations:
+        - Event: s3:ObjectCreated:*
+          Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
           # Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
              # Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
 
