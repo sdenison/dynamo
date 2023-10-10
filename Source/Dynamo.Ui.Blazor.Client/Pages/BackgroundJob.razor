@@ -1,0 +1,43 @@
+﻿@page "/backgroundjob"
+@using Dynamo.Business.Utilities
+@inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJob> BackgroundJobDataPortal
+@inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJob> vm
+
+<PageTitle>Background Jobs</PageTitle>
+
+<h3>Background Jobs</h3>
+
+@if (vm.Model == null)
+{
+    <p>Loading Background Job</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>JobStatus</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@vm.Model.Id</td>
+            <td>@vm.Model.JobStatus</td>
+        </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+
+    // protected override async void OnInitialized()
+    // {
+    //     vm.Model = await BackgroundJobDataPortal.FetchAsync("e7575082-4410-4388-bcf8-7142c0ee1a63");
+    // }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await vm.RefreshAsync(() => BackgroundJobDataPortal.FetchAsync("e7575082-4410-4388-bcf8-7142c0ee1a63"));
+    }
+}

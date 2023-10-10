@@ -1,0 +1,23 @@
+Description:
+  This template deploys Docker repositories
+
+Parameters:
+  EnvironmentName:
+    Type: String
+
+Resources:
+  BackgroundJobTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${EnvironmentName}-BackgroundJob
+      KeySchema:
+        - AttributeName: Id
+          KeyType: HASH
+      AttributeDefinitions:
+           - AttributeName: Id 
+             AttributeType: S
+      DeletionProtectionEnabled: false
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1

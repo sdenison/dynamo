@@ -60,6 +60,33 @@ Resources:
         - Key: environment
           Value: !Sub ${EnvironmentName}          
 
+  DynamoBackgroundJobRepository:
+    Type: AWS::ECR::Repository
+    Properties: 
+      RepositoryName: !Sub "${EnvironmentName}-dynamo-background-job"
+      ImageScanningConfiguration: 
+        ScanOnPush: true
+      RepositoryPolicyText: 
+        Version: 2012-10-17
+        Statement: 
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal: 
+              AWS: !Ref AWS::AccountId
+            Action: 
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+              - ecr:PutImage
+              - ecr:InitiateLayerUpload
+              - ecr:UploadLayerPart
+              - ecr:CompleteLayerUpload
+      Tags:
+        - Key: OS
+          Value: Linux
+        - Key: environment
+          Value: !Sub ${EnvironmentName}               
+
 Outputs:
   DynamoContainerRepositoryUri:
     Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DynamoContainerRepository}
@@ -69,3 +96,7 @@ Outputs:
     Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DynamoLambdaContainerRepository}
     Export:
       Name: !Sub ${EnvironmentName}-dynamo-lambda-repository-uri
+  DynamoBackgroundJobRepositoryUri:
+    Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${DynamoBackgroundJobRepository}
+    Export:
+      Name: !Sub ${EnvironmentName}-dynamo-background-job-repository-uri      
