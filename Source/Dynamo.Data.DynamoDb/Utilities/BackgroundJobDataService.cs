@@ -35,5 +35,10 @@ namespace Dynamo.Data.DynamoDb.Utilities
             Dynamo.DeleteItem<BackgroundJobEntity>(id.ToString());
             return true;
         }
+
+        public IEnumerable<BackgroundJobEntity> GetAll()
+        {
+            return Dynamo.ScanAll<BackgroundJobEntity>().OrderByDescending(x => x.LastUpdated);
+        }
     }
 }

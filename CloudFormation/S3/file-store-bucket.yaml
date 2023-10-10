@@ -1,0 +1,61 @@
+Description:
+  This template creates an S3 bucket.
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  ApplicationName:
+    Type: String    
+  VersioningStatus:
+    Type: String
+    AllowedValues:
+      - Enabled
+      - Suspended
+    Default: Suspended
+  NoVersioningConfiguration:
+    Type: String
+    Default: 'false'
+
+Conditions:
+  NoVersioningConfiguration: !Equals [!Ref NoVersioningConfiguration, true]
+
+Resources:
+  S3Permission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Sub ${EnvironmentName}-background-job-lambda
+        #Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceAccount: !Ref AWS::AccountId
+      #SourceArn: !GetAtt FileStoreBucket.Arn
+
+  FileStoreBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${EnvironmentName}-${ApplicationName}-file-store2
+      AccessControl: Private
+      VersioningConfiguration:
+        Fn::If:
+        - NoVersioningConfiguration
+        - !Ref AWS::NoValue
+        - Status: !Ref VersioningStatus
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      Tags:
+        - Key: environment
+          Value: !Ref EnvironmentName
+      NotificationConfiguration:
+        LambdaConfigurations:
+        - Event: s3:ObjectCreated:*
+          Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
+          # Function: arn:aws:lambda:us-east-2:477374169746:function:test-background-job-lambda
+             # Fn::ImportValue: !Sub ${EnvironmentName}-background-job-lambda
+

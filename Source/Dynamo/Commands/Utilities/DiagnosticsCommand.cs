@@ -36,6 +36,7 @@ namespace Dynamo.Commands.Utilities
             var memoryUsedByProcess = (double)System.Diagnostics.Process.GetCurrentProcess().WorkingSet64 / 1048576.0;
             WriteLine($"Memory used by this process in megabytes: {memoryUsedByProcess}");
             WriteLine($"writeToLog = {writeToLog}");
+            WriteLine($"This is an updated image 2");
         }
 
         private Option<bool> CreateWriteToLogOption()

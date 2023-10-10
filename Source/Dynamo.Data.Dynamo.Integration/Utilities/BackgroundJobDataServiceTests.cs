@@ -11,8 +11,8 @@ using ServiceStack.Aws.DynamoDb;
 
 namespace Dynamo.Data.DynamoDb.Integration.Utilities
 {
-    [TestFixture, Ignore("Uses live connection to DynamoDB")]
-    //[TestFixture]
+    //[TestFixture, Ignore("Uses live connection to DynamoDB")]
+    [TestFixture]
     public class BackgroundJobDataServiceTests
     {
         [Test]
@@ -36,12 +36,14 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
         }
 
         [Test]
-        public void Use_csla_BackgroundJob_and_dynamo_together()
+        public async Task Use_csla_BackgroundJob_and_dynamo_together()
         {
             //Set up DynamoDb dataService
             var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);
             var db = new PocoDynamo(awsDb);
             db.RegisterTable<BackgroundJobEntity>();
+            var metadata = db.GetTableMetadata(typeof(BackgroundJobEntity));
+            metadata.Name = "test-BackgroundJob";
             var dataService = new BackgroundJobDataService(db);
 
             //Add dependency injection 
@@ -52,20 +54,23 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
             var portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
 
             //Create a new backround service job
-            var job = portal.Create();
+            var job = await portal.CreateAsync();
             Assert.IsTrue(job.IsNew);
-            job = job.Save();
+            job = await job.SaveAsync();
             //Make a change
             job.JobStatus = JobStatus.FinishedSuccess;
             job.JobOutput = "The answer to your question is 42";
             //Pull from the database before changes is saved
-            var jobFromDatabase = portal.Fetch(job.Id);
+            var jobFromDatabase = await portal.FetchAsync(job.Id);
             Assert.AreEqual(JobStatus.Initializing, jobFromDatabase.JobStatus);
             //Actually save 
-            job = job.Save();
+            job = await job.SaveAsync();
             //Delete the job
             //job.Delete();
-            job = job.Save();
+            job = await job.SaveAsync();
+            var listPortal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJobList>>();
+            var jobs = await listPortal.FetchAsync();
+            Assert.IsTrue(jobs.Count > 0);
         }
     }
 }

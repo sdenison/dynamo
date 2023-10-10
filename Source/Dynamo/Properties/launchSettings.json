@@ -1,8 +1,8 @@
 {
-  "profiles": {
-    "Dynamo": {
-      "commandName": "Project",
-      "commandLineArgs": "utilities diagnostics"
-    }
-  }
+	"profiles": {
+		"Dynamo": {
+			"commandName": "Project",
+			"commandLineArgs": "utilities runbackgroundjob --job-id 36127bd8-1a02-41ec-b523-01b05fa57372"
+		}
+	}
 }

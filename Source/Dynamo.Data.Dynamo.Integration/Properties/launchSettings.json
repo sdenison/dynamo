@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Dynamo.Data.DynamoDb.Integration": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "AppSettings__EnvironmentName": "dev"
+      }
+    }
+  }
+}

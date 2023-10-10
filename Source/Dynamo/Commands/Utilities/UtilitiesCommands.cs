@@ -7,6 +7,7 @@ namespace Dynamo.Commands.Utilities
         public UtilitiesCommands() : base("utilities", "Utilities command")
         {
             Add(new DiagnosticsCommand());
+            Add(new RunBackgroundJobCommand());
         }
     }
 }
