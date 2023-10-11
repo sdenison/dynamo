@@ -35,5 +35,39 @@ namespace Dynamo.Business.Shared.AdventOfCode.Cloth
             }
             return overlappingCoordinates.ToList();
         }
+
+        public List<Claim> FindClaimsWithNoOverlap(List<Claim> claims)
+        {
+            var coordinateDictionary = new Dictionary<Coordinate, List<Claim>>();
+            var claimsWithNoOverlap = new List<Claim>();
+
+            foreach (var claim in claims)
+            {
+                var claimCoordinates = ApplyClaim(claim);
+                foreach (var coordinate in claimCoordinates)
+                {
+                    if (coordinateDictionary.ContainsKey(coordinate))
+                        coordinateDictionary[coordinate].Add(claim);
+                    else
+                        coordinateDictionary.Add(coordinate, new List<Claim>() { claim });
+                }
+            }
+            foreach (var claim in claims)
+            {
+                var overlaps = false;
+                var claimCoordinates = ApplyClaim(claim);
+                foreach (var coordinate in claimCoordinates)
+                {
+                    var claimsAtCoordinate = coordinateDictionary[coordinate];
+                    if (claimsAtCoordinate.Count > 1)
+                        overlaps = true;
+                }
+
+                if (overlaps == false)
+                    claimsWithNoOverlap.Add(claim);
+
+            }
+            return claimsWithNoOverlap;
+        }
     }
 }

@@ -86,5 +86,15 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Cloth
             var overlappingClaims = sheet.FindOverlap(claims);
             Assert.AreEqual(111935, overlappingClaims.Count);
         }
+
+        [Test]
+        public void Can_get_day_3_part_2_puzzle_answer()
+        {
+            var claims = TestDataProvider.GetClaims();
+            var sheet = new Sheet();
+            var claimsWithNoOverlap = sheet.FindClaimsWithNoOverlap(claims);
+            Assert.AreEqual(1, claimsWithNoOverlap.Count);
+            Assert.AreEqual(650, claimsWithNoOverlap[0].Id);
+        }
     }
 }
