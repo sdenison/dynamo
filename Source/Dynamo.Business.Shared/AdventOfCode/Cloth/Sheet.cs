@@ -25,8 +25,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Cloth
                 {
                     if (usedCoordinates.Contains(coordinate))
                     {
-                        if (!overlappingCoordinates.Contains(coordinate))
-                            overlappingCoordinates.Add(coordinate);
+                        overlappingCoordinates.Add(coordinate);
                     }
                     else
                     {

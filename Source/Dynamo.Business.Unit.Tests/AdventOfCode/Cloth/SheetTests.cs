@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Security;
 using Dynamo.Business.Shared.AdventOfCode.Cloth;
+using NuGet.Frameworks;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Cloth
@@ -76,5 +78,13 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Cloth
             Assert.AreEqual(4, overlappingClaims[3].Y);
         }
 
+        [Test]
+        public void Can_get_day_3_part_1_puzzle_answer()
+        {
+            var claims = TestDataProvider.GetClaims();
+            var sheet = new Sheet();
+            var overlappingClaims = sheet.FindOverlap(claims);
+            Assert.AreEqual(111935, overlappingClaims.Count);
+        }
     }
 }
