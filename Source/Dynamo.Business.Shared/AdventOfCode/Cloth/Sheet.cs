@@ -22,16 +22,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Cloth
             {
                 var claimCoordinates = ApplyClaim(claim);
                 foreach (var coordinate in claimCoordinates)
-                {
                     if (usedCoordinates.Contains(coordinate))
-                    {
                         overlappingCoordinates.Add(coordinate);
-                    }
                     else
-                    {
                         usedCoordinates.Add(coordinate);
-                    }
-                }
             }
             return overlappingCoordinates.ToList();
         }
