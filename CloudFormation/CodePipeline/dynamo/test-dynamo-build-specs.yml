@@ -20,13 +20,15 @@ phases:
       - docker tag dynamo-web-server $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ENVIRONMENT_NAME-dynamo-repository:latest
       - aws ecs update-service --cluster $ENVIRONMENT_NAME-dynamo-fargate-cluster --service $ENVIRONMENT_NAME-ecs-task-dynamo-web-service --force-new-deployment
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ENVIRONMENT_NAME-dynamo-repository:latest
-      - docker image ls
+
+      # Regular dotnet Lambda that accepts a string
       - docker build -f Dockerfile.Lambda . -t lambda
       - docker tag lambda:latest 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-lambda-repository:latest
       - docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-lambda-repository:latest
       - aws lambda update-function-code --image-uri 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-lambda-repository:latest --function-name $ENVIRONMENT_NAME-dynamo-dotnet-docker-lambda 
 
-      - docker build -f Dockerfile.Lambda . -t background-job-lambda
+      # Background job Lambda that accepts an S3 json event object 
+      - docker build -f Dockerfile.BackgroundJobLambda . -t background-job-lambda
       - docker tag background-job-lambda:latest 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-background-job:latest
       - docker push 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-background-job:latest
       - aws lambda update-function-code --image-uri 477374169746.dkr.ecr.us-east-2.amazonaws.com/test-dynamo-background-job:latest --function-name $ENVIRONMENT_NAME-background-job-lambda

@@ -64,6 +64,8 @@ builder.Services.AddTransient<IStorageService>(o => storageService);
 //var serviceProvider = services.BuildServiceProvider();
 //var portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
 
+builder.Services.AddBlazorBootstrap(); // Add this line
+
 // If using Kestrel:
 builder.Services.Configure<KestrelServerOptions>(options =>
 {
