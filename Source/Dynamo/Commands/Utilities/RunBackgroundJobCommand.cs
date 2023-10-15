@@ -21,34 +21,45 @@ namespace Dynamo.Commands.Utilities
 
         public void RunBackgroundJob(string jobId)
         {
-            var provider = DependencyInjection.GetBaseServices();
-            var dataPortal = provider.GetService<IDataPortal<BackgroundJob>>();
-            var backgroundJob = dataPortal.Fetch(jobId);
-
-            var storageService = new StorageService();
-            var s3Request = new Dynamo.IO.S3.Models.S3Object()
+            try
             {
-                BucketName = "test-dynamo-file-store2",
-                Name = backgroundJob.Id.ToString()
-            };
-            var fileStream = storageService.DownloadFileAsync(s3Request).Result;
-            MemoryStream memoryStream = new MemoryStream();
-            fileStream.CopyTo(memoryStream);
+                Console.WriteLine($"Running job for file {jobId}");
+                var provider = DependencyInjection.GetBaseServices();
+                var dataPortal = provider.GetService<IDataPortal<BackgroundJob>>();
+                var backgroundJob = dataPortal.Fetch(jobId);
 
-            backgroundJob.JobStatus = JobStatus.Running;
-            backgroundJob = backgroundJob.Save();
+                var storageService = new StorageService();
+                var s3Request = new Dynamo.IO.S3.Models.S3Object()
+                {
+                    BucketName = "test-dynamo-file-store2",
+                    Name = backgroundJob.Id.ToString()
+                };
+                var fileStream = storageService.DownloadFileAsync(s3Request).Result;
+                MemoryStream memoryStream = new MemoryStream();
+                fileStream.CopyTo(memoryStream);
 
-            if (backgroundJob.JobType == JobType.BusyBox)
-            {
-                var stopWatch = new Stopwatch();
-                stopWatch.Start();
-                var secondsToSleep = BusyBox.GetSecondFromStream(memoryStream);
-                BusyBox.Sleep(secondsToSleep);
-                backgroundJob.JobStatus = JobStatus.FinishedSuccess;
-                stopWatch.Stop();
-                backgroundJob.JobOutput = $"The job ran successfully for {secondsToSleep} seconds. stopWatch.Elapsed = {stopWatch.Elapsed}";
+                backgroundJob.JobStatus = JobStatus.Running;
+                backgroundJob = backgroundJob.Save();
+
+                if (backgroundJob.JobType == JobType.BusyBox)
+                {
+                    var stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    var secondsToSleep = BusyBox.GetSecondFromStream(memoryStream);
+                    BusyBox.Sleep(secondsToSleep);
+                    backgroundJob.JobStatus = JobStatus.FinishedSuccess;
+                    stopWatch.Stop();
+                    backgroundJob.JobOutput =
+                        $"The job ran successfully for {secondsToSleep} seconds. stopWatch.Elapsed = {stopWatch.Elapsed}";
+                }
+
+                backgroundJob = backgroundJob.Save();
             }
-            backgroundJob = backgroundJob.Save();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"Baseexception Error: {ex.GetBaseException().Message}");
+            }
         }
 
         private Option<string> CreateJobIdOption()
