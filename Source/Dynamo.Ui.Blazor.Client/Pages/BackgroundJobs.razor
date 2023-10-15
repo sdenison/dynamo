@@ -1,13 +1,17 @@
 ﻿@page "/backgroundjobs"
 @using System.Net.Http.Headers
-<h3>BackgroundJobs</h3>
 @inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJobList> backgroundJobDataPortal
 @inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
 @inject HttpClient Http
 
 <h1>Background Jobs</h1>
 
-<InputFile OnChange="@OnInputFileChange"></InputFile>
+<Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight" />
+
+<div class="mb-3">
+    <label for="formFile" class="form-label">Upload a file</label>
+    <InputFile class="form-control" OnChange="@OnInputFileChange"></InputFile> 
+</div>
 
 @if (vm.Model == null)
 {
@@ -15,8 +19,8 @@
 }
 else
 {
+   <Button class="float-end" Color="ButtonColor.Primary" onclick="@RefreshGrid">Refresh</Button>
     <p>
-
     </p>
     <table class="table">
         <thead>
@@ -48,6 +52,9 @@ else
 }
 
 @code {
+    List<ToastMessage> _messages = new List<ToastMessage>();
+    private System.Timers.Timer _timer;
+
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
         long maxFileSize = 1024 * 15;
@@ -65,10 +72,18 @@ else
         if (response.IsSuccessStatusCode)
         {
             await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
+            var message = new ToastMessage(ToastType.Success, $"File {file.Name} successfully uploaded...");
+            message.AutoHide = true;
+            _messages.Add(message);
         }
     }
 
     protected override async Task OnParametersSetAsync()
+    {
+        await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
+    }
+
+    protected async Task RefreshGrid()
     {
         await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
     }
