@@ -9,7 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-builder.Services.AddAuthorizationCore();
+//builder.Services.AddAuthorizationCore();
 builder.Services.AddOptions();
 
 builder.Services.AddCsla(o => o
@@ -17,5 +17,7 @@ builder.Services.AddCsla(o => o
     .DataPortal(dpo => dpo
         .EnableSecurityPrincipalFlowFromClient()
         .UseHttpProxy(options => options.DataPortalUrl = "/api/DataPortal")));
+
+builder.Services.AddBlazorBootstrap();
 
 await builder.Build().RunAsync();
