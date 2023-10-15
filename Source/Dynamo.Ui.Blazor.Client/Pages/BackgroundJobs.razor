@@ -22,6 +22,31 @@ else
    <Button class="float-end" Color="ButtonColor.Primary" onclick="@RefreshGrid">Refresh</Button>
     <p>
     </p>
+    <Grid TItem="Business.Utilities.BackgroundJob" 
+       class="table table-hover table-bordered table-striped" 
+       DataProvider="BackgroundDataProvider" 
+       Responsive="true"
+       AllowPaging="true"
+       PageSize="10">
+        <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="File Name" PropertyName="FileName">
+            @context.FileName
+        </GridColumn>
+        <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Status" PropertyName="JobStatus">
+            @context.JobStatus
+        </GridColumn>
+        <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Type" PropertyName="JobType">
+            @context.JobType
+        </GridColumn>
+        <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Created" PropertyName="Created">
+            @context.Created
+        </GridColumn>
+        <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Last Updated" PropertyName="LastUpdated">
+            @context.LastUpdated
+        </GridColumn>
+        <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Output" PropertyName="JobOutput">
+            @context.JobOutput
+        </GridColumn>
+    </Grid>
     <table class="table">
         <thead>
         <tr>
@@ -77,6 +102,11 @@ else
             _messages.Add(message);
         }
     }
+
+    private async Task<GridDataProviderResult<Business.Utilities.BackgroundJob>> BackgroundDataProvider(GridDataProviderRequest<Business.Utilities.BackgroundJob> request)
+    {
+        return await Task.FromResult(request.ApplyTo(vm.Model));
+    } 
 
     protected override async Task OnParametersSetAsync()
     {
