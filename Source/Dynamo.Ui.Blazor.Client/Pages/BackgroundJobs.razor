@@ -1,15 +1,35 @@
 ﻿@page "/backgroundjobs"
 @using System.Net.Http.Headers
+@using System.Reflection
+@using Csla
+@using Dynamo.Business.Shared
+@using Dynamo.Business.Shared.Utilities
+@using Dynamo.Business.Shared.ExtensionMethods
+@using System.ComponentModel
 @inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJobList> backgroundJobDataPortal
 @inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
 @inject HttpClient Http
+
 
 <h1>Background Jobs</h1>
 
 <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight" />
 
 <div class="mb-3">
-    <label for="formFile" class="form-label">Upload a file</label>
+    <strong>Job Type</strong>:
+</div>
+
+<InputSelect class="form-select mb-3" @bind-Value="_jobType">
+    @foreach (var jobType in Enum.GetValues(typeof(JobType)))
+    {
+        <option value="@_jobType">@_jobType.GetDescription()</option>
+    }
+</InputSelect>
+
+<div class="mb-3">
+    <strong>Upload File</strong>:
+</div>
+<div class="mb-3">
     <InputFile class="form-control" OnChange="@OnInputFileChange"></InputFile> 
 </div>
 
@@ -59,6 +79,7 @@ else
     List<ToastMessage> _messages = new List<ToastMessage>();
     private System.Timers.Timer _timer;
     private int pageSize = 5;
+    private JobType _jobType;
 
     private void ChangeSize(int size) => pageSize = size;
 
@@ -72,7 +93,8 @@ else
         content.Add(
            content: fileContent,
            name: "\"files\"",
-           fileName: file.Name
+           fileName: $"{file.Name}|{_jobType}"
+
         );
         var response = await Http.PostAsync("FileUpload", content);
         //var uploadResults = await response.Content.ReadFromJsonAsync();
@@ -94,4 +116,6 @@ else
     {
         await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
     }
+
+
 }

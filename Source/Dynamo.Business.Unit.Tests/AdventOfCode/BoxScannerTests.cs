@@ -1,4 +1,5 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode;
+using Dynamo.Business.Shared.AdventOfCode.Warehouse;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode

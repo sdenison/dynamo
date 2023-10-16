@@ -25,6 +25,8 @@ namespace Dynamo.Ui.Blazor.Server.Controllers
 
             var file = files.First();
 
+            //var fileName = file.
+
             backgroundJob.FileName = file.FileName;
             await using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);
