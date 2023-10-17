@@ -18,6 +18,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Guard
             var eventString = "[1518-11-01 00:00] Guard #10 begins shift";
             var guardEvent = new GuardEvent(eventString);
 
+            Assert.AreEqual(1518, guardEvent.Year);
             Assert.AreEqual(11, guardEvent.Month);
             Assert.AreEqual(1, guardEvent.Day);
             Assert.AreEqual(0, guardEvent.Hour);
@@ -42,6 +43,57 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Guard
             Assert.AreEqual(0, timeLine.GuardEvents.ToList()[0].Minute);
             Assert.AreEqual(0, timeLine.GuardEvents.ToList()[16].Hour);
             Assert.AreEqual(55, timeLine.GuardEvents.ToList()[16].Minute);
+        }
+
+        [Test]
+        public void Can_create_date_in_1500s()
+        {
+            var datetime = new DateTime(1518, 6, 16);
+            Assert.AreEqual(1518, datetime.Year);
+        }
+
+        [Test]
+        public void Can_get_example_answer()
+        {
+            var timeline = new GuardEventTimeline(GetEventStringsOutOfOrder());
+            var guardThatSleptTheMost = timeline.GetGuardWithMostMinutesAsleep();
+            Assert.AreEqual(10, guardThatSleptTheMost.GuardId);
+            var timeTheySleptTheMost = guardThatSleptTheMost.TimeTheySleptTheMost();
+            Assert.AreEqual(24, timeTheySleptTheMost.Minute);
+        }
+
+        [Test]
+        public void Can_get_Day_4_part_1_answer()
+        {
+            var timeline = new GuardEventTimeline(TestDataProvider.GetPuzzleInput());
+            var guardThatSleptTheMost = timeline.GetGuardWithMostMinutesAsleep();
+            Assert.AreEqual(863, guardThatSleptTheMost.GuardId);
+            var timeTheySleptTheMost = guardThatSleptTheMost.TimeTheySleptTheMost();
+            Assert.AreEqual(46, timeTheySleptTheMost.Minute);
+            //Puzzle answerr is 863 * 46
+        }
+
+        [Test]
+        public void Can_get_guard_asleep_most_frequently_on_same_minute()
+        {
+            var timeline = new GuardEventTimeline(GetEventStringsOutOfOrder());
+            var guard = timeline.GetGuardWithMostMinutesAsleepForOneTime();
+            var mostMinutesAsleep = guard.Sleeping[guard.TimeTheySleptTheMost()];
+            var timeSleepingMost = guard.Sleeping.Single(x => x.Value == mostMinutesAsleep);
+            Assert.AreEqual(99, guard.GuardId);
+            Assert.AreEqual(45, timeSleepingMost.Key.Minute);
+        }
+
+        [Test]
+        public void Can_get_Day_4_part_2_answer()
+        {
+            var timeline = new GuardEventTimeline(TestDataProvider.GetPuzzleInput());
+            var guard = timeline.GetGuardWithMostMinutesAsleepForOneTime();
+            var mostMinutesAsleep = guard.Sleeping[guard.TimeTheySleptTheMost()];
+            var timeSleepingMost = guard.Sleeping.Single(x => x.Value == mostMinutesAsleep);
+            Assert.AreEqual(373, guard.GuardId);
+            Assert.AreEqual(40, timeSleepingMost.Key.Minute);
+            //Puzzle answer is 373 * 40
         }
 
         private string[] GetEventStringsInOrder()

@@ -3,19 +3,23 @@ namespace Dynamo.Business.Shared.AdventOfCode.Guard
 {
     public class GuardEvent : IComparable
     {
+        public int Year { get; }
         public int Month { get; }
         public int Day { get; }
         public int Hour { get; }
         public int Minute { get; }
+        public DateTime EventDateTime { get; }
         public EventType EventType { get; }
-        public int GuardId { get; }
+        public int GuardId { get; set; }
 
         public GuardEvent(string eventString)
         {
+            Year = int.Parse(eventString.Substring(1, 4));
             Month = int.Parse(eventString.Substring(6, 2));
             Day = int.Parse(eventString.Substring(9, 2));
             Hour = int.Parse(eventString.Substring(12, 2));
             Minute = int.Parse(eventString.Substring(15, 2));
+            EventDateTime = new DateTime(Year, Month, Day, Hour, Minute, 0);
             var eventType = eventString.Substring(19);
             if (eventType.StartsWith("Guard"))
             {
