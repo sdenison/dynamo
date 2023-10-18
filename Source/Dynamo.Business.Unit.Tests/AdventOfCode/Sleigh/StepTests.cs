@@ -24,15 +24,70 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
             var steps = GetTestData();
             var instructions = new Instructions();
             instructions.AddInstructions(steps);
-            Assert.AreEqual("C", instructions.Steps.ToList()[0].StepName);
-            Assert.AreEqual("A", instructions.Steps.ToList()[0].Steps.ToList()[0].StepName);
+            var cStep = instructions.Steps.First();
+            Assert.AreEqual("C", cStep.StepName);
+            var aStep = cStep.Steps.First();
+            Assert.AreEqual("A", aStep.StepName);
             Assert.AreEqual("B", instructions.Steps.ToList()[0].Steps.ToList()[0].Steps.ToList()[0].StepName);
             Assert.AreEqual("E", instructions.Steps.ToList()[0].Steps.ToList()[0].Steps.ToList()[0].Steps.ToList()[0].StepName);
             Assert.AreEqual("D", instructions.Steps.ToList()[0].Steps.ToList()[0].Steps.ToList()[1].StepName);
             Assert.AreEqual("E", instructions.Steps.ToList()[0].Steps.ToList()[0].Steps.ToList()[1].Steps.ToList()[0].StepName);
-            Assert.AreEqual("F", instructions.Steps.ToList()[0].Steps.ToList()[1].StepName);
+            var fStep = cStep.Steps.ToList()[1];
+            Assert.AreEqual("F", fStep.StepName);
             Assert.AreEqual("E", instructions.Steps.ToList()[0].Steps.ToList()[1].Steps.ToList()[0].StepName);
+
+            var eStep = instructions.Steps.ToList()[0].Steps.ToList()[1].Steps.ToList()[0];
+            Assert.AreEqual("E", eStep.StepName);
+            Assert.AreEqual(3, eStep.BlockedBySteps.Count);
+
+            Assert.IsFalse(fStep.CanRun());
+            Assert.IsTrue(cStep.CanRun());
+
+            var nextStepThatCanRun = instructions.GetNextStepName();
+            Assert.AreEqual("C", nextStepThatCanRun);
+
+            var nextStep = instructions.GetNextStep();
+            Assert.AreEqual("C", nextStep.StepName);
+            nextStep.Run();
+            nextStep = instructions.GetNextStep();
+            Assert.AreEqual("A", nextStep.StepName);
+            nextStep.Run();
+            nextStep = instructions.GetNextStep();
+            Assert.AreEqual("B", nextStep.StepName);
+            nextStep.Run();
+            nextStep = instructions.GetNextStep();
+            Assert.AreEqual("D", nextStep.StepName);
+            nextStep.Run();
+            nextStep = instructions.GetNextStep();
+            Assert.AreEqual("F", nextStep.StepName);
+            nextStep.Run();
+            nextStep = instructions.GetNextStep();
+            Assert.AreEqual("E", nextStep.StepName);
+            nextStep.Run();
+            nextStep = instructions.GetNextStep();
+            Assert.IsNull(nextStep);
         }
+
+        [Test]
+        public void Can_make_string_of_steps_in_order()
+        {
+            var steps = GetTestData();
+            var instructions = new Instructions();
+            instructions.AddInstructions(steps);
+            var stepNames = instructions.GetStepNamesInOrder();
+            Assert.AreEqual("CABDFE", stepNames);
+        }
+
+        [Test]
+        public void Can_get_day_7_part_1_answer()
+        {
+            var steps = TestDataProvider.GetPuzzleInput();
+            var instructions = new Instructions();
+            instructions.AddInstructions(steps);
+            var stepNames = instructions.GetStepNamesInOrder();
+            Assert.AreEqual("HEGMPOAWBFCDITVXYZRKUQNSLJ", stepNames);
+        }
+
 
         private string[] GetTestData()
         {

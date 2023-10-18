@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
@@ -8,18 +10,46 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 
     {
         public SortedSet<Step> Steps { get; set; } = new SortedSet<Step>();
+        public List<Step> BlockedBySteps { get; set; } = new List<Step>();
         public string StepName { get; set; }
 
-        public Step(string stepName, Step blockedStep)
-        {
-            StepName = stepName;
-            Steps.Add(blockedStep);
-        }
+        public bool HasRun { get; set; } = false;
 
         public Step(string stepName)
         {
             StepName = stepName;
         }
+
+        public void Run()
+        {
+            HasRun = true;
+        }
+
+        public bool IsBlocked()
+        {
+            return BlockedBySteps.Any(x => x.HasRun == false);
+        }
+
+        public bool CanRun()
+        {
+            return !BlockedBySteps.Any(x => x.HasRun == false);
+        }
+
+        public List<Step> GetStepsThatCanRun()
+        {
+            List<Step> stepsThatCanRun = new List<Step>();
+            if (HasRun == true)
+            {
+                foreach (var step in this.Steps)
+                    stepsThatCanRun.AddRange(step.GetStepsThatCanRun());
+            }
+            if (this.CanRun() && this.HasRun == false)
+            {
+                stepsThatCanRun.Add(this);
+            }
+            return stepsThatCanRun;
+        }
+
 
         public Step GetStep(string stepName)
         {
@@ -37,7 +67,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 
         public int CompareTo(Step other)
         {
-            return StepName.CompareTo(other.StepName);
+            return String.Compare(StepName, other.StepName, StringComparison.Ordinal);
         }
     }
 }
