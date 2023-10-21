@@ -20,9 +20,9 @@
 </div>
 
 <InputSelect class="form-select mb-3" @bind-Value="_jobType">
-    @foreach (var jobType in Enum.GetValues(typeof(JobType)))
+    @foreach (JobType jobType in Enum.GetValues(typeof(JobType)))
     {
-        <option value="@_jobType">@_jobType.GetDescription()</option>
+        <option value="@jobType">@jobType.GetDescription()</option>
     }
 </InputSelect>
 
@@ -94,7 +94,6 @@ else
            content: fileContent,
            name: "\"files\"",
            fileName: $"{file.Name}|{_jobType}"
-
         );
         var response = await Http.PostAsync("FileUpload", content);
         //var uploadResults = await response.Content.ReadFromJsonAsync();

@@ -125,6 +125,12 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             Assert.AreEqual("pebjqsalrdnckzfihvtxysomg", matching);
         }
 
+        [Test]
+        public void Get_day_1_part_2_answer_from_text_file()
+        {
+            var stream = FileGetter.GetMemoryStreamFromFile("BoxScans.txt");
+        }
+
         private string[] day1Part1Input = new string[]
         {
             "pnebjqralgdgckzfifvtxywomu",

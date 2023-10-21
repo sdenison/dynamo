@@ -41,11 +41,15 @@ namespace Dynamo.Commands.Utilities
                 backgroundJob.JobStatus = JobStatus.Running;
                 backgroundJob = backgroundJob.Save();
 
+
+
                 if (backgroundJob.JobType == JobType.BusyBox)
                 {
                     var stopWatch = new Stopwatch();
                     stopWatch.Start();
-                    var secondsToSleep = BusyBox.GetSecondFromStream(memoryStream);
+                    var fileContents = FileReader.ReadFileContents(memoryStream);
+                    var secondsToSleep = int.Parse(fileContents[0]);
+                    //var secondsToSleep = BusyBox.GetSecondFromStream(memoryStream);
                     BusyBox.Sleep(secondsToSleep);
                     backgroundJob.JobStatus = JobStatus.FinishedSuccess;
                     stopWatch.Stop();

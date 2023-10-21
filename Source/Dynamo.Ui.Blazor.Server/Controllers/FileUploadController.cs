@@ -1,4 +1,5 @@
-﻿using Dynamo.Business.Utilities;
+﻿using Dynamo.Business.Shared.Utilities;
+using Dynamo.Business.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Dynamo.IO.S3.Models;
 using Dynamo.IO.S3.Services;
@@ -27,7 +28,8 @@ namespace Dynamo.Ui.Blazor.Server.Controllers
 
             //var fileName = file.
 
-            backgroundJob.FileName = file.FileName;
+            backgroundJob.FileName = file.FileName.Split('|')[0];
+            backgroundJob.JobType = Enum.Parse<JobType>(file.FileName.Split('|')[1]);
             await using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);
             var s3Obj = new S3Object()
