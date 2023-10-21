@@ -12,17 +12,22 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
         public SortedSet<Step> Steps { get; set; } = new SortedSet<Step>();
         public List<Step> BlockedBySteps { get; set; } = new List<Step>();
         public string StepName { get; set; }
-
+        public int SecondsToRun { get; set; }
+        public bool IsRunning { get; set; }
         public bool HasRun { get; set; } = false;
 
-        public Step(string stepName)
+        public Step(string stepName, int addedSeconds = 0)
         {
             StepName = stepName;
+            var ordinal = (int)stepName.ToUpper()[0] - (int)'A' + 1;
+            SecondsToRun = addedSeconds + ordinal;
+            IsRunning = false;
         }
 
         public void Run()
         {
             HasRun = true;
+            IsRunning = false;
         }
 
         public bool IsBlocked()

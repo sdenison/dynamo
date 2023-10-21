@@ -10,7 +10,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
     {
         public SortedSet<Step> Steps { get; set; } = new SortedSet<Step>();
 
-        public void AddInstruction(string instruction)
+        public void AddInstruction(string instruction, int addedSeconds = 0)
         {
             var blockingStepName = instruction.Split(' ')[1];
             var stepName = instruction.Split(' ')[7];
@@ -25,7 +25,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 
             if (existingBlockingStep == null)
             {
-                existingBlockingStep = new Step(blockingStepName);
+                existingBlockingStep = new Step(blockingStepName, addedSeconds);
                 Steps.Add(existingBlockingStep);
             }
 
@@ -36,7 +36,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
                 if (existingBlockedStep != null)
                     break;
             }
-            existingBlockedStep ??= new Step(stepName);
+            existingBlockedStep ??= new Step(stepName, addedSeconds);
             existingBlockedStep.BlockedBySteps.Add(existingBlockingStep);
             existingBlockingStep.Steps.Add(existingBlockedStep);
         }
@@ -52,11 +52,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
         {
             List<Step> stepsThatCanRun = new List<Step>();
             foreach (var step in Steps)
-            {
                 stepsThatCanRun.AddRange(step.GetStepsThatCanRun());
-            }
-
-            //List<Step> stepsThatCanRunOrdered = Steps.ToList()[0].GetStepsThatCanRun().OrderBy(x => x.StepName).ToList();
             List<Step> stepsThatCanRunOrdered = stepsThatCanRun.OrderBy(x => x.StepName).ToList();
             if (stepsThatCanRunOrdered.Count == 0)
                 return null;
@@ -75,11 +71,54 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
             return stepNames.ToString();
         }
 
-        public void AddInstructions(string[] instructions)
+
+        public List<Step> GetNextSteps()
+        {
+            List<Step> stepsThatCanRun = new List<Step>();
+            foreach (var step in Steps)
+                stepsThatCanRun.AddRange(step.GetStepsThatCanRun());
+            List<Step> stepsThatCanRunOrdered = stepsThatCanRun.OrderBy(x => x.StepName).ToList();
+            if (stepsThatCanRunOrdered.Count == 0)
+                return null;
+            return stepsThatCanRunOrdered;
+        }
+
+        public int GetSecondsTakenToRun(int addedSeconds, int numberOfWorkers)
+        {
+            List<Worker> workers = new List<Worker>();
+            for (int i = 0; i < numberOfWorkers; i++)
+                workers.Add(new Worker());
+
+            var secondsRunning = 0;
+            while (GetNextSteps() != null)
+            {
+                var nextSteps = GetNextSteps().Where(x => x.IsRunning == false);
+                foreach (var step in nextSteps)
+                {
+                    var foundWorker = false;
+                    foreach (var worker in workers)
+                    {
+                        if (worker.Done())
+                        {
+                            worker.StartWork(step);
+                            break;
+                        }
+                    }
+                }
+                secondsRunning++;
+                foreach (var worker in workers)
+                    worker.TakeStep();
+            }
+            return secondsRunning;
+        }
+
+        //public Step Get
+
+        public void AddInstructions(string[] instructions, int addedSeconds = 0)
         {
             foreach (string instruction in instructions)
             {
-                AddInstruction(instruction);
+                AddInstruction(instruction, addedSeconds);
             }
         }
     }

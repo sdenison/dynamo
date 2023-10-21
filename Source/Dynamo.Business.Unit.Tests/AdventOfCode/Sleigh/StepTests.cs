@@ -88,6 +88,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
             Assert.AreEqual("HEGMPOAWBFCDITVXYZRKUQNSLJ", stepNames);
         }
 
+        [Test]
+        public void Can_add_workers_and_variable_seconds_for_steps()
+        {
+            var steps = GetTestData();
+            var instructions = new Instructions();
+            instructions.AddInstructions(steps);
+            var secondsTaken = instructions.GetSecondsTakenToRun(0, 2);
+            Assert.AreEqual(15, secondsTaken);
+        }
+
 
         private string[] GetTestData()
         {
