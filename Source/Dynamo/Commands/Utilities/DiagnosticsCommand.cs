@@ -13,9 +13,9 @@ namespace Dynamo.Commands.Utilities
             this.SetHandler((writeToLog) => { DisplayDiagnosticInformation(writeToLog); }, writeToLogOption);
         }
 
-        public void DisplayDiagnosticInformation(bool writeToLog)
+        public static void DisplayDiagnosticInformation(bool writeToLog)
         {
-            var assemblyName = Assembly.GetEntryAssembly().FullName;
+            var assemblyName = Assembly.GetEntryAssembly()?.FullName;
             WriteLine($"Assembly Name: {assemblyName}");
             WriteLine($"Framework Version: {Environment.Version}");
             WriteLine($"OS Version: {Environment.OSVersion}");
@@ -43,19 +43,21 @@ namespace Dynamo.Commands.Utilities
         {
             //When set to true the dignostics will write to log if possible.
             var description = "Write to log";
-            var writeToLogOption = new Option<bool>(new string[2] { "--write-to-log", "-w" }, description);
-            writeToLogOption.IsRequired = false;
-            writeToLogOption.Arity = ArgumentArity.ZeroOrOne;
+            var writeToLogOption = new Option<bool>(new string[2] { "--write-to-log", "-w" }, description)
+            {
+                IsRequired = false,
+                Arity = ArgumentArity.ZeroOrOne
+            };
             Add(writeToLogOption);
             return writeToLogOption;
         }
 
-        private void WriteLine(string message)
+        private static void WriteLine(string message)
         {
             Console.WriteLine(message);
         }
 
-        private string GetBuildNumber()
+        private static string GetBuildNumber()
         {
             IConfiguration configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)

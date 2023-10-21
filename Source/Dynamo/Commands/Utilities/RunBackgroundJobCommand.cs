@@ -26,13 +26,13 @@ namespace Dynamo.Commands.Utilities
                 Console.WriteLine($"Running job for file {jobId}");
                 var provider = DependencyInjection.GetBaseServices();
                 var dataPortal = provider.GetService<IDataPortal<BackgroundJob>>();
-                var backgroundJob = dataPortal.Fetch(jobId);
+                var backgroundJob = dataPortal?.Fetch(jobId);
 
                 var storageService = new StorageService();
                 var s3Request = new Dynamo.IO.S3.Models.S3Object()
                 {
                     BucketName = "test-dynamo-file-store2",
-                    Name = backgroundJob.Id.ToString()
+                    Name = backgroundJob?.Id.ToString()
                 };
                 var fileStream = storageService.DownloadFileAsync(s3Request).Result;
                 MemoryStream memoryStream = new MemoryStream();
