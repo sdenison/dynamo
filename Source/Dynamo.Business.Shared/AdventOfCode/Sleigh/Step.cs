@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text;
-
 namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 {
     public class Step : IComparable<Step>
@@ -19,7 +16,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
         public Step(string stepName, int addedSeconds = 0)
         {
             StepName = stepName;
-            var ordinal = (int)stepName.ToUpper()[0] - (int)'A' + 1;
+            var ordinal = stepName.ToUpper()[0] - 'A' + 1;
             SecondsToRun = addedSeconds + ordinal;
             IsRunning = false;
         }
@@ -30,14 +27,9 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
             IsRunning = false;
         }
 
-        public bool IsBlocked()
-        {
-            return BlockedBySteps.Any(x => x.HasRun == false);
-        }
-
         public bool CanRun()
         {
-            return !BlockedBySteps.Any(x => x.HasRun == false);
+            return BlockedBySteps.All(x => x.HasRun);
         }
 
         public List<Step> GetStepsThatCanRun()
@@ -66,7 +58,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
                 if (innerStep != null)
                     return innerStep;
             }
-
             return null;
         }
 

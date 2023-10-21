@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 {
     public class Instructions
     {
-        public SortedSet<Step> Steps { get; set; } = new SortedSet<Step>();
+        public SortedSet<Step> Steps => Step0.Steps;
+        public Step Step0 { get; set; } = new Step("0");
 
         public void AddInstruction(string instruction, int addedSeconds = 0)
         {
@@ -16,7 +16,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
             var stepName = instruction.Split(' ')[7];
 
             Step existingBlockingStep = null;
-            foreach (var step in Steps)
+            foreach (var step in Step0.Steps)
             {
                 existingBlockingStep = step.GetStep(blockingStepName);
                 if (existingBlockingStep != null)
@@ -26,11 +26,11 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
             if (existingBlockingStep == null)
             {
                 existingBlockingStep = new Step(blockingStepName, addedSeconds);
-                Steps.Add(existingBlockingStep);
+                Step0.Steps.Add(existingBlockingStep);
             }
 
             Step existingBlockedStep = null;
-            foreach (var step in Steps)
+            foreach (var step in Step0.Steps)
             {
                 existingBlockedStep = step.GetStep(stepName);
                 if (existingBlockedStep != null)
@@ -43,7 +43,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 
         public string GetNextStepName()
         {
-            List<Step> stepsThatCanRun = Steps.ToList()[0].GetStepsThatCanRun();
+            List<Step> stepsThatCanRun = Step0.Steps.ToList()[0].GetStepsThatCanRun();
             List<string> stepsThatCanRunString = stepsThatCanRun.OrderBy(x => x.StepName).Select(x => x.StepName).Distinct().ToList();
             return stepsThatCanRunString[0];
         }
@@ -51,7 +51,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
         public Step GetNextStep()
         {
             List<Step> stepsThatCanRun = new List<Step>();
-            foreach (var step in Steps)
+            foreach (var step in Step0.Steps)
                 stepsThatCanRun.AddRange(step.GetStepsThatCanRun());
             List<Step> stepsThatCanRunOrdered = stepsThatCanRun.OrderBy(x => x.StepName).ToList();
             if (stepsThatCanRunOrdered.Count == 0)
@@ -75,7 +75,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
         public List<Step> GetNextSteps()
         {
             List<Step> stepsThatCanRun = new List<Step>();
-            foreach (var step in Steps)
+            foreach (var step in Step0.Steps)
                 stepsThatCanRun.AddRange(step.GetStepsThatCanRun());
             List<Step> stepsThatCanRunOrdered = stepsThatCanRun.OrderBy(x => x.StepName).ToList();
             if (stepsThatCanRunOrdered.Count == 0)

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
+﻿namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 {
     public class Worker
     {
         public Step Step { get; set; }
-
-        public Worker() { }
 
         public void StartWork(Step step)
         {
