@@ -98,10 +98,9 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
             Assert.AreEqual(1226, secondsTaken);
         }
 
-
-        private string[] GetTestData()
+        private static string[] GetTestData()
         {
-            return new string[]
+            return new[]
             {
                 "Step C must be finished before step A can begin.",
                 "Step C must be finished before step F can begin.",

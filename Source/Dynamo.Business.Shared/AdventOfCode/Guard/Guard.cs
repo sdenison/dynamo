@@ -6,7 +6,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Guard
     public class Guard
     {
         public int GuardId { get; }
-        public Dictionary<Time, int> Sleeping { get; set; } = new Dictionary<Time, int>();
+        public Dictionary<Time?, int> Sleeping { get; set; } = new Dictionary<Time?, int>();
         public List<GuardEvent> GuardEvents { get; }
 
         public Guard(int guardId)
@@ -23,10 +23,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Guard
             return minutesAsleep;
         }
 
-        public Time TimeTheySleptTheMost()
+        public Time? TimeTheySleptTheMost()
         {
             var maxTimesSlept = 0;
-            Time timeTheySleptTheMost = null;
+            Time? timeTheySleptTheMost = null;
 
             foreach (var time in Sleeping.Keys)
             {
@@ -43,7 +43,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Guard
         {
             if (guardEvent.EventType == EventType.WakeUp)
             {
-                var lastSleep = GuardEvents[GuardEvents.Count - 1];
+                var lastSleep = GuardEvents[^1];
                 if (lastSleep.EventType != EventType.FallAsleep)
                     throw new Exception("Last event should have been FallAsleep");
 

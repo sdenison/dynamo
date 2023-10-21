@@ -6,8 +6,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 {
     public class Step : IComparable<Step>
     {
-        public SortedSet<Step> Steps { get; set; } = new SortedSet<Step>();
-        public List<Step> BlockedBySteps { get; set; } = new List<Step>();
+        public SortedSet<Step?> Steps { get; set; } = new SortedSet<Step?>();
+        public List<Step?> BlockedBySteps { get; set; } = new List<Step?>();
         public string StepName { get; set; }
         public int SecondsToRun { get; set; }
         public bool IsRunning { get; set; }
@@ -17,7 +17,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
         {
             var stepsThatCanRun = new List<Step>();
             foreach (var step in Steps)
-                stepsThatCanRun.AddRange(step.GetAllStepsThatCanRun());
+                stepsThatCanRun.AddRange(step?.GetAllStepsThatCanRun());
             var stepsThatCanRunOrdered = stepsThatCanRun.OrderBy(x => x.StepName).ToList();
             return stepsThatCanRunOrdered.Count == 0 ? null : stepsThatCanRunOrdered;
         }
@@ -51,7 +51,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
 
         public bool CanRun()
         {
-            return BlockedBySteps.All(x => x.HasRun);
+            return BlockedBySteps.All(x => x != null && x.HasRun);
         }
 
         public List<Step> GetAllStepsThatCanRun()
@@ -59,7 +59,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
             List<Step> stepsThatCanRun = new List<Step>();
             if (HasRun == true)
                 foreach (var step in this.Steps)
-                    stepsThatCanRun.AddRange(step.GetAllStepsThatCanRun());
+                    stepsThatCanRun.AddRange(step?.GetAllStepsThatCanRun());
             if (this.CanRun() && this.HasRun == false)
                 stepsThatCanRun.Add(this);
             return stepsThatCanRun;
@@ -71,7 +71,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
                 return this;
             foreach (var step in Steps)
             {
-                var innerStep = step.GetStep(stepName);
+                var innerStep = step?.GetStep(stepName);
                 if (innerStep != null)
                     return innerStep;
             }
@@ -83,10 +83,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
             var blockingStepName = instruction.Split(' ')[1];
             var stepName = instruction.Split(' ')[7];
 
-            Step existingBlockingStep = null;
+            Step? existingBlockingStep = null;
             foreach (var step in Steps)
             {
-                existingBlockingStep = step.GetStep(blockingStepName);
+                existingBlockingStep = step?.GetStep(blockingStepName);
                 if (existingBlockingStep != null)
                     break;
             }
@@ -97,10 +97,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Sleigh
                 Steps.Add(existingBlockingStep);
             }
 
-            Step existingBlockedStep = null;
+            Step? existingBlockedStep = null;
             foreach (var step in Steps)
             {
-                existingBlockedStep = step.GetStep(stepName);
+                existingBlockedStep = step?.GetStep(stepName);
                 if (existingBlockedStep != null)
                     break;
             }
