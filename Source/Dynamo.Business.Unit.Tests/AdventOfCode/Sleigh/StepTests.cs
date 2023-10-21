@@ -98,6 +98,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
             Assert.AreEqual(15, secondsTaken);
         }
 
+        [Test]
+        public void Can_get_day_7_part_2_answer()
+        {
+            var steps = TestDataProvider.GetPuzzleInput();
+            var instructions = new Instructions();
+            instructions.AddInstructions(steps, 60);
+            var secondsTaken = instructions.GetSecondsTakenToRun(60, 5);
+            Assert.AreEqual(1226, secondsTaken);
+        }
+
 
         private string[] GetTestData()
         {
