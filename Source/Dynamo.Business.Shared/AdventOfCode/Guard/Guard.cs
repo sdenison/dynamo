@@ -26,7 +26,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Guard
         public Time TimeTheySleptTheMost()
         {
             var maxTimesSlept = 0;
-            Time timeTheySleptTheMost = null;// = Sleeping.Keys.First();
+            Time timeTheySleptTheMost = null;
 
             foreach (var time in Sleeping.Keys)
             {

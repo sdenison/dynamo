@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Dynamo.Business.Shared.AdventOfCode.Sleigh;
 using NUnit.Framework;
 
@@ -12,8 +11,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
         public void Can_parse_step_string()
         {
             string stepString = "Step C must be finished before step A can begin.";
-            var instructions = new Instructions();
-            instructions.AddInstruction(stepString);
+            var instructions = new JobRunner(stepString);
             Assert.AreEqual("C", instructions.Steps.ToList()[0].StepName);
             Assert.AreEqual("A", instructions.Steps.ToList()[0].Steps.ToList()[0].StepName);
         }
@@ -22,8 +20,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
         public void Can_get_steps_for_test_data()
         {
             var steps = GetTestData();
-            var instructions = new Instructions();
-            instructions.AddInstructions(steps);
+            var instructions = new JobRunner(steps);
             var cStep = instructions.Steps.First();
             Assert.AreEqual("C", cStep.StepName);
             var aStep = cStep.Steps.First();
@@ -43,28 +40,25 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
             Assert.IsFalse(fStep.CanRun());
             Assert.IsTrue(cStep.CanRun());
 
-            var nextStepThatCanRun = instructions.GetNextStepName();
-            Assert.AreEqual("C", nextStepThatCanRun);
-
-            var nextStep = instructions.GetNextStep();
+            var nextStep = instructions.Step0.GetNextStep();
             Assert.AreEqual("C", nextStep.StepName);
             nextStep.Run();
-            nextStep = instructions.GetNextStep();
+            nextStep = instructions.Step0.GetNextStep();
             Assert.AreEqual("A", nextStep.StepName);
             nextStep.Run();
-            nextStep = instructions.GetNextStep();
+            nextStep = instructions.Step0.GetNextStep();
             Assert.AreEqual("B", nextStep.StepName);
             nextStep.Run();
-            nextStep = instructions.GetNextStep();
+            nextStep = instructions.Step0.GetNextStep();
             Assert.AreEqual("D", nextStep.StepName);
             nextStep.Run();
-            nextStep = instructions.GetNextStep();
+            nextStep = instructions.Step0.GetNextStep();
             Assert.AreEqual("F", nextStep.StepName);
             nextStep.Run();
-            nextStep = instructions.GetNextStep();
+            nextStep = instructions.Step0.GetNextStep();
             Assert.AreEqual("E", nextStep.StepName);
             nextStep.Run();
-            nextStep = instructions.GetNextStep();
+            nextStep = instructions.Step0.GetNextStep();
             Assert.IsNull(nextStep);
         }
 
@@ -72,8 +66,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
         public void Can_make_string_of_steps_in_order()
         {
             var steps = GetTestData();
-            var instructions = new Instructions();
-            instructions.AddInstructions(steps);
+            var instructions = new JobRunner(steps);
             var stepNames = instructions.GetStepNamesInOrder();
             Assert.AreEqual("CABDFE", stepNames);
         }
@@ -82,8 +75,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
         public void Can_get_day_7_part_1_answer()
         {
             var steps = TestDataProvider.GetPuzzleInput();
-            var instructions = new Instructions();
-            instructions.AddInstructions(steps);
+            var instructions = new JobRunner(steps);
             var stepNames = instructions.GetStepNamesInOrder();
             Assert.AreEqual("HEGMPOAWBFCDITVXYZRKUQNSLJ", stepNames);
         }
@@ -92,9 +84,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
         public void Can_add_workers_and_variable_seconds_for_steps()
         {
             var steps = GetTestData();
-            var instructions = new Instructions();
-            instructions.AddInstructions(steps);
-            var secondsTaken = instructions.GetSecondsTakenToRun(0, 2);
+            var instructions = new JobRunner(steps);
+            var secondsTaken = instructions.GetSecondsTakenToRun(2);
             Assert.AreEqual(15, secondsTaken);
         }
 
@@ -102,9 +93,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Sleigh
         public void Can_get_day_7_part_2_answer()
         {
             var steps = TestDataProvider.GetPuzzleInput();
-            var instructions = new Instructions();
-            instructions.AddInstructions(steps, 60);
-            var secondsTaken = instructions.GetSecondsTakenToRun(60, 5);
+            var instructions = new JobRunner(steps, 60);
+            var secondsTaken = instructions.GetSecondsTakenToRun(5);
             Assert.AreEqual(1226, secondsTaken);
         }
 

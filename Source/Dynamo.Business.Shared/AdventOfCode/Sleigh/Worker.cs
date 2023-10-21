@@ -2,15 +2,9 @@
 {
     public class Worker
     {
-        public Step Step { get; set; }
+        public Step? Step { get; set; }
 
-        public void StartWork(Step step)
-        {
-            Step = step;
-            Step.IsRunning = true;
-        }
-
-        public bool Done()
+        public bool IsReadyToWork()
         {
             if (Step == null)
                 return true;
@@ -23,14 +17,18 @@
                 return false;
         }
 
+        public void StartWork(Step step)
+        {
+            Step = step;
+            Step.IsRunning = true;
+        }
+
         public void TakeStep()
         {
-            if (Step != null && Step.IsRunning && !Done())
-            {
-                Step.SecondsToRun -= 1;
-                if (Step.SecondsToRun == 0)
-                    Step.Run();
-            }
+            if (Step == null || !Step.IsRunning || IsReadyToWork()) return;
+            Step.SecondsToRun -= 1;
+            if (Step.SecondsToRun == 0)
+                Step.Run();
         }
     }
 }
