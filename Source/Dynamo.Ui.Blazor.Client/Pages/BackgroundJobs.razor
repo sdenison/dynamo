@@ -85,7 +85,7 @@ else
 
     private async Task OnInputFileChange(InputFileChangeEventArgs e)
     {
-        long maxFileSize = 1024 * 15;
+        long maxFileSize = 1024 * 1024;
         var file = e.File;
         var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
         fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
