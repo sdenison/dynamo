@@ -82,11 +82,10 @@ namespace Dynamo.Commands.Utilities
                         break;
                     case JobType.Day4Step1:
                         var timeline = new GuardEventTimeline(fileContents);
-                        var guard = timeline.GetGuardWithMostMinutesAsleepForOneTime();
-                        var mostMinutesAsleep = guard.Sleeping[guard.TimeTheySleptTheMost()];
-                        var timeSleepingMost = guard.Sleeping.Single(x => x.Value == mostMinutesAsleep);
+                        var guard = timeline.GetGuardWithMostMinutesAsleep();
+                        var timeTheySleptTheMost = guard.TimeTheySleptTheMost();
                         backgroundJob.JobOutput =
-                            $"The ID of the guard is {guard.GuardId} and the minute is {timeSleepingMost.Key.Minute}. Puzzle answer = {guard.GuardId * timeSleepingMost.Key.Minute}";
+                            $"The ID of the guard is {guard.GuardId} and the minute is {timeTheySleptTheMost.Minute}. Puzzle answer = {guard.GuardId * timeTheySleptTheMost.Minute}";
                         break;
                     case JobType.Day4Step2:
                         var timeline2 = new GuardEventTimeline(fileContents);
