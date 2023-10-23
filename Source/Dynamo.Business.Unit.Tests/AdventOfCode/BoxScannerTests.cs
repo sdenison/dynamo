@@ -1,4 +1,5 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode;
+using Dynamo.Business.Shared.AdventOfCode.Warehouse;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode
@@ -122,6 +123,12 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var boxScanner = new BoxScanner();
             var matching = boxScanner.GetMatchingOffByOneLetter(day1Part1Input);
             Assert.AreEqual("pebjqsalrdnckzfihvtxysomg", matching);
+        }
+
+        [Test]
+        public void Get_day_1_part_2_answer_from_text_file()
+        {
+            var stream = FileGetter.GetMemoryStreamFromFile("BoxScans.txt");
         }
 
         private string[] day1Part1Input = new string[]

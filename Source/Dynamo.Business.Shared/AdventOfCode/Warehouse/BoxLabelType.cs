@@ -1,4 +1,4 @@
-﻿namespace Dynamo.Business.Shared.AdventOfCode
+﻿namespace Dynamo.Business.Shared.AdventOfCode.Warehouse
 {
     public enum BoxLabelType
     {
