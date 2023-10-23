@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dynamo.Business.Utilities
+﻿namespace Dynamo.Business.Shared.Utilities
 {
     public enum JobStatus
     {

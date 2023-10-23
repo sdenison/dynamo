@@ -63,5 +63,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Cloth
             }
             return claimsWithNoOverlap;
         }
+
+        public static List<Claim> ParseClaims(string[] claimStrings)
+        {
+            var claims = new List<Claim>();
+            foreach (var claim in claimStrings)
+                claims.Add(Claim.Parse(claim));
+            return claims;
+        }
     }
 }
