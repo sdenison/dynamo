@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Marbles
 {
@@ -9,6 +11,14 @@ namespace Dynamo.Business.Shared.AdventOfCode.Marbles
         public int LastMarbleValue { get; }
         public List<Player> Players { get; }
         public List<Marble> Marbles { get; }
+
+        public int HighScore
+        {
+            get
+            {
+                return Players.OrderByDescending(x => x.Score).First().Score;
+            }
+        }
 
 
         public Game(string gameDescription) : this(int.Parse(gameDescription.Split(' ')[0]), int.Parse(gameDescription.Split(' ')[6]))
@@ -50,6 +60,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Marbles
                     {
                         Players[currentPlayerId].CapturedMarbles.Add(marble);
                         var marbleToRemoveId = circle.IndexOf(currentMarble) - 7;
+                        if (marbleToRemoveId < 0)
+                            marbleToRemoveId = (circle.Count - 1) - ((marbleToRemoveId + 1) * -1);
                         var marbleToRemove = circle[marbleToRemoveId];
                         Players[currentPlayerId].CapturedMarbles.Add(marbleToRemove);
                         circle.Remove(marbleToRemove);
@@ -66,7 +78,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Marbles
                     }
                 }
                 currentPlayerId++;
-                if (currentPlayerId == NumberOfPlayers - 1)
+                if (currentPlayerId == NumberOfPlayers)
                     currentPlayerId = 0;
             }
         }
