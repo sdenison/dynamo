@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -27,7 +28,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             var gameDescription = "9 players; last marble is worth 25 points";
             var game = new Game(gameDescription);
             game.PlayGame();
-            var highScore = game.Players.OrderByDescending(x => x.Score).First().Score;
+            //var highScore = game.Players.OrderByDescending(x => x.Score).First().Score;
+            var highScore = game.HighScore;
             Assert.AreEqual(32, highScore);
         }
 
@@ -42,5 +44,25 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             game.PlayGame();
             Assert.AreEqual(highScore, game.HighScore);
         }
+
+        [Test]
+        public void Can_get_day_9_part_1_answer()
+        {
+            var game = new Game("426 players; last marble is worth 72058 points");
+            game.PlayGame();
+            Assert.AreEqual(424112, game.HighScore);
+        }
+
+        //[Test]
+        //public void Can_get_day_9_part_2_answer()
+        //{
+        //    var stopWatch = new Stopwatch();
+        //    stopWatch.Start();
+        //    var game = new Game("426 players; last marble is worth 7205800 points");
+        //    game.PlayGame();
+        //    stopWatch.Stop();
+        //    var numberOfSeconds = stopWatch.ElapsedMilliseconds / 1000;
+        //    Assert.AreEqual(3487352628, game.HighScore);
+        //}
     }
 }
