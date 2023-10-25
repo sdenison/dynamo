@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Dynamo.Business.Shared.AdventOfCode.Marbles;
 using NUnit.Framework;
 
@@ -28,7 +22,6 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             var gameDescription = "9 players; last marble is worth 25 points";
             var game = new Game(gameDescription);
             game.PlayGame();
-            //var highScore = game.Players.OrderByDescending(x => x.Score).First().Score;
             var highScore = game.HighScore;
             Assert.AreEqual(32, highScore);
         }
@@ -53,16 +46,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             Assert.AreEqual(424112, game.HighScore);
         }
 
-        //[Test]
-        //public void Can_get_day_9_part_2_answer()
-        //{
-        //    var stopWatch = new Stopwatch();
-        //    stopWatch.Start();
-        //    var game = new Game("426 players; last marble is worth 7205800 points");
-        //    game.PlayGame();
-        //    stopWatch.Stop();
-        //    var numberOfSeconds = stopWatch.ElapsedMilliseconds / 1000;
-        //    Assert.AreEqual(3487352628, game.HighScore);
-        //}
+        [Test]
+        public void Can_get_day_9_part_2_answer()
+        {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            var game = new Game("426 players; last marble is worth 7205800 points");
+            game.PlayGame();
+            stopWatch.Stop();
+            var numberOfSeconds = stopWatch.ElapsedMilliseconds / 1000;
+            Assert.AreEqual(3487352628, game.HighScore);
+        }
     }
 }
