@@ -34,16 +34,14 @@ namespace Dynamo.Business.Shared.AdventOfCode.Marbles
         {
             //The circle initializes with the first two marbles already played.
             var circle = new Circle();
-            var currentPlayerId = 1;
-            for (var marbleValue = 2; marbleValue <= LastMarbleValue; marbleValue++)
+            var playerId = 1;
+            for (var marbleValue = 1; marbleValue <= LastMarbleValue; marbleValue++)
             {
                 if (marbleValue % 23 == 0)
-                    Players[currentPlayerId] += marbleValue + circle.CollectMarble().Value;
+                    Players[playerId % NumberOfPlayers] += marbleValue + circle.CollectMarble().Value;
                 else
                     circle.AddMarble(marbleValue);
-                currentPlayerId++;
-                if (currentPlayerId == NumberOfPlayers)
-                    currentPlayerId = 0;
+                playerId++;
             }
         }
     }

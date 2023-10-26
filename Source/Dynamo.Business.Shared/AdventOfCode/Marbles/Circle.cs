@@ -6,14 +6,11 @@
 
         public Circle()
         {
-            //Sets up the circular linked list by hooking up marble 0 to marble 1 and vice versa
+            //Sets up the circular linked list by hooking up marble 0 to itself
             var marble0 = new Marble(0);
-            var marble1 = new Marble(1);
-            marble0.NextMarble = marble1;
-            marble0.PreviousMarble = marble1;
-            marble1.NextMarble = marble0;
-            marble1.PreviousMarble = marble0;
-            CurrentMarble = marble1;
+            marble0.NextMarble = marble0;
+            marble0.PreviousMarble = marble0;
+            CurrentMarble = marble0;
         }
 
         public void AddMarble(int marbleValue)
