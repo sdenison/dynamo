@@ -31,8 +31,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         public void Can_create_nodes_from_first_example()
         {
             var nodeDefinitionString = "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2";
-            var nodeDefinition = nodeDefinitionString.Split(" ").Select(x => int.Parse(x)).ToArray();
-            var node = new Node(nodeDefinition);
+            var node = new Node(nodeDefinitionString);
             Assert.AreEqual(3, node.Metadata.Count);
             Assert.AreEqual(1, node.Metadata[0]);
             Assert.AreEqual(1, node.Metadata[1]);
@@ -49,8 +48,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         public void Can_get_day_8_part_1_answer()
         {
             var nodeDefinitionString = TestDataProvider.GetTestData();
-            var nodeDefinition = nodeDefinitionString.Split(" ").Select(x => int.Parse(x)).ToArray();
-            var node = new Node(nodeDefinition);
+            var node = new Node(nodeDefinitionString);
             Assert.AreEqual(35911, node.SumAllMetadata);
         }
 
@@ -58,8 +56,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         public void Can_get_day_8_part_2_answer()
         {
             var nodeDefinitionString = TestDataProvider.GetTestData();
-            var nodeDefinition = nodeDefinitionString.Split(" ").Select(x => int.Parse(x)).ToArray();
-            var node = new Node(nodeDefinition);
+            var node = new Node(nodeDefinitionString);
             Assert.AreEqual(17206, node.Value);
         }
     }

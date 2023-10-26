@@ -13,6 +13,7 @@ using Dynamo.Business.Shared.AdventOfCode.Guard;
 using Dynamo.Business.Shared.AdventOfCode.Sleigh;
 using Dynamo.Business.Shared.AdventOfCode.Fuel;
 using Dynamo.Business.Shared.AdventOfCode.Marbles;
+using Dynamo.Business.Shared.AdventOfCode.Navigation;
 
 namespace Dynamo.Commands.Utilities
 {
@@ -104,6 +105,14 @@ namespace Dynamo.Commands.Utilities
                         var instructions2 = new JobRunner(fileContents, 60);
                         var secondsTaken = instructions2.GetSecondsTakenToRun(5);
                         backgroundJob.JobOutput = $"The number of seconds taken was {secondsTaken}.";
+                        break;
+                    case JobType.Day8Step1:
+                        var node = new Node(fileContents[0]);
+                        backgroundJob.JobOutput = $"The sum of all the meta data is {node.SumAllMetadata}.";
+                        break;
+                    case JobType.Day8Step2:
+                        var node2 = new Node(fileContents[0]);
+                        backgroundJob.JobOutput = $"The value of the tree is {node2.Value}.";
                         break;
                     case JobType.Day9:
                         var gameDescription = fileContents[0];

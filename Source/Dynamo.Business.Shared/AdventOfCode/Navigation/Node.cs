@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Navigation
 {
@@ -42,6 +43,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Navigation
                 }
                 return value;
             }
+        }
+
+        public Node(string nodeDefinitionString) : this(nodeDefinitionString.Split(' ').Select(x => int.Parse(x)).ToArray())
+        {
         }
 
         public Node(int[] nodeDefinition)
