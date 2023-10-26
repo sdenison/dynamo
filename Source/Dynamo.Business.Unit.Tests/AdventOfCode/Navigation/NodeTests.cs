@@ -15,5 +15,13 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             Assert.AreEqual(99, node.Metadata[0]);
         }
 
+        [Test]
+        public void Can_create_a_node_with_one_child()
+        {
+            var nodeDefinition = new[] { 1, 1, 0, 1, 99, 2 };
+            var node = new Node(nodeDefinition);
+            Assert.AreEqual(2, node.Metadata[0]);
+            Assert.AreEqual(99, node.ChildNodes[0].Metadata[0]);
+        }
     }
 }
