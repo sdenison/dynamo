@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Navigation
 {
@@ -15,6 +12,35 @@ namespace Dynamo.Business.Shared.AdventOfCode.Navigation
             get
             {
                 return 2 + ChildNodes.Sum(x => x.Size) + Metadata.Count;
+            }
+        }
+        public long SumAllMetadata
+        {
+            get
+            {
+                long metaDataSum = 0;
+                foreach (var childNode in ChildNodes)
+                    metaDataSum += childNode.SumAllMetadata;
+                return Metadata.Sum() + metaDataSum;
+            }
+        }
+
+        public long Value
+        {
+            get
+            {
+                if (ChildNodes.Count == 0)
+                    return Metadata.Sum();
+                long value = 0;
+                foreach (var metaData in Metadata)
+                {
+                    if (metaData == 0)
+                        continue;
+                    if (metaData > ChildNodes.Count)
+                        continue;
+                    value += ChildNodes[metaData - 1].Value;
+                }
+                return value;
             }
         }
 
