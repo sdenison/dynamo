@@ -20,6 +20,10 @@ namespace Dynamo.Business.Shared.Utilities
         Day7Step1,
         [Description("Day 7 Step 2")]
         Day7Step2,
+        [Description("Day 8 Step 1")]
+        Day8Step1,
+        [Description("Day 8 Step 2")]
+        Day8Step2,
         [Description("Day 9")]
         Day9,
         [Description("Day 11 Step 1")]
