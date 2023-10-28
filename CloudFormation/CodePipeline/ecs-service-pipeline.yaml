@@ -193,7 +193,7 @@ Resources:
               Repo: dynamo
               Branch: test
               PollForSourceChanges: true 
-              OAuthToken: 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
+              OAuthToken: !Sub '{{resolve:secretsmanager:/${EnvironmentName}/githuboauthkey:SecretString:githuboauthkey}}'
             RunOrder: 1
         - Name: Deploy
           Actions:
@@ -208,17 +208,6 @@ Resources:
             Configuration:
               ProjectName: !Ref EcsCopyImageCodeBuildProject
             RunOrder: 10
-          # - Name: DeployLambda
-          #   ActionTypeId:
-          #     Category: Build
-          #     Owner: AWS
-          #     Provider: CodeBuild
-          #     Version: '1'
-          #   InputArtifacts:
-          #     - Name: SourceCode
-          #   Configuration:
-          #     ProjectName: !Ref LambdaCodeBuildProject 
-          #   RunOrder: 10            
       ArtifactStore:
         Type: S3
         Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline

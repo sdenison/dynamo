@@ -1,22 +1,18 @@
-﻿@page "/backgroundjobs"
+﻿@page "/adventofcode2018"
 @using System.Net.Http.Headers
-@using System.Reflection
-@using Csla
-@using Dynamo.Business.Shared
 @using Dynamo.Business.Shared.Utilities
 @using Dynamo.Business.Shared.ExtensionMethods
-@using System.ComponentModel
 @inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJobList> backgroundJobDataPortal
 @inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
 @inject HttpClient Http
 
 
-<h1>Background Jobs</h1>
+<h1>2018 Advent of Code Puzzle Solver</h1>
 
 <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight" />
 
 <div class="mb-3">
-    <strong>Job Type</strong>:
+    <strong>Puzzle:</strong>:
 </div>
 
 <InputSelect class="form-select mb-3" @bind-Value="_jobType">
@@ -27,7 +23,7 @@
 </InputSelect>
 
 <div class="mb-3">
-    <strong>Upload File</strong>:
+    <strong>Upload Puzzle Input</strong>:
 </div>
 <div class="mb-3">
     <InputFile class="form-control" OnChange="@OnInputFileChange"></InputFile> 
@@ -52,18 +48,18 @@ else
                    @context.FileName
                </GridColumn>
                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Status" PropertyName="JobStatus">
-                   @context.JobStatus
+                   @context.JobStatus.GetDescription()
                </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Type" PropertyName="JobType">
-                   @context.JobType
+               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Puzzle" PropertyName="JobType">
+                   @context.JobType.GetDescription()
                </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Created" PropertyName="Created">
+               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="File Uploaded" PropertyName="Created">
                    @context.Created
                </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Last Updated" PropertyName="LastUpdated">
+               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Answer Found" PropertyName="LastUpdated">
                    @context.LastUpdated
                </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Output" PropertyName="JobOutput">
+               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Puzzle Output" PropertyName="JobOutput">
                    @context.JobOutput
                </GridColumn>
            </Grid>
@@ -115,6 +111,4 @@ else
     {
         await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
     }
-
-
 }
