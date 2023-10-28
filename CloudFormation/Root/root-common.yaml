@@ -25,3 +25,10 @@ Resources:
         EnvironmentName: !Ref EnvironmentName             
         ApplicationName: !Ref ApplicationName
         CFTemplateBucket: !Ref CFTemplateBucket
+
+  SecretsManager:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/SecretsManager/secrets.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName             
