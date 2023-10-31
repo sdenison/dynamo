@@ -8,6 +8,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Navigation
         public int X { get; }
         public int Y { get; }
         public string Name { get; }
+        public bool IsInfinite { get; set; } = false;
+
         public int GetManhattanDistance(int x, int y)
         {
             return Math.Abs(X - x) + Math.Abs(Y - y);
