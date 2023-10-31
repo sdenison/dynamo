@@ -52,6 +52,15 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             Assert.AreEqual(16, grid.GetAreaWithGridPointsInDistance(32));
         }
 
+        [Test]
+        public void Solve_day_6_part_2()
+        {
+            var testData = GetPuzzleData();
+            var coordinates = Grid.ParseCoordinates(testData);
+            var grid = new Grid(coordinates);
+            Assert.AreEqual(40376, grid.GetAreaWithGridPointsInDistance(10000));
+        }
+
         private static string[] GetTestData()
         {
             return new string[]
