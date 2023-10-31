@@ -69,5 +69,20 @@ namespace Dynamo.Business.Shared.AdventOfCode.Navigation
             }
             return largestArea;
         }
+
+        public int GetAreaWithGridPointsInDistance(int minimumDistance)
+        {
+            var area = 0;
+            for (var x = 0; x < _maxXSize; x++)
+                for (var y = 0; y < _maxYSize; y++)
+                {
+                    var totalDistance = 0;
+                    foreach (var coordinate in Coordinates)
+                        totalDistance += coordinate.GetManhattanDistance(x, y);
+                    if (totalDistance < minimumDistance)
+                        area++;
+                }
+            return area;
+        }
     }
 }

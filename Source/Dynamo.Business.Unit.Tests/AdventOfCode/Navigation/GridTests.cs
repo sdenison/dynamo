@@ -43,6 +43,15 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             Assert.AreEqual(4215, grid.GetLargesAreaNotInfinite());
         }
 
+        [Test]
+        public void Can_get_area_where_close_to_coordinates()
+        {
+            var testData = GetTestData();
+            var coordinates = Grid.ParseCoordinates(testData);
+            var grid = new Grid(coordinates);
+            Assert.AreEqual(16, grid.GetAreaWithGridPointsInDistance(32));
+        }
+
         private static string[] GetTestData()
         {
             return new string[]
