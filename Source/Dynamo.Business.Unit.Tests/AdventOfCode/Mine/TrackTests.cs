@@ -13,14 +13,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
         [Test]
         public void Can_create_a_track()
         {
-            var trackString = new string[]{
+            var trackString = new string[]
+            {
                 @"/->-\        ",
                 @"|   |  /----\",
                 @"| /-+--+-\  |",
                 @"| | |  | v  | ",
                 @"\-+-/  \-+--/",
                 @"  \------/"
-            }
+            };
+
         }
     }
 }

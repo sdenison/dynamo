@@ -19,7 +19,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
 
             Sections = new List<TrackSection>();
             Carts = new List<Cart>();
-            Sections.Add(new TrackSection(startPoint, TrackSectionType.TopLeft));
             var hasMorePoints = true;
             var currentPoint = startPoint;
             var forwardSlashCount = 0;
@@ -69,7 +68,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 if (currentPoint.PointChar == '|')
                 {
-                    Sections.Add(new TrackSection(currentPoint, TrackSectionType.Horizontal));
+                    Sections.Add(new TrackSection(currentPoint, TrackSectionType.Vertical));
                     if (currentDirection == CurrentDirection.Down)
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                     else

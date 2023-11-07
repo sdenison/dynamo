@@ -13,7 +13,6 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
                 @"| | |  | v  | ",
                 @"\-+-/  \-+--/",
                 @"  \------/"
-
             };
         }
         internal static string[] GetPuzzleData()
