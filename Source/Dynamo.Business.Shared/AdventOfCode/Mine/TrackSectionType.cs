@@ -1,8 +1,7 @@
 ﻿namespace Dynamo.Business.Shared.AdventOfCode.Mine
 {
-    public enum PointType
+    public enum TrackSectionType
     {
-        Nothing,
         TopLeft,
         TopRight,
         LowerLeft,

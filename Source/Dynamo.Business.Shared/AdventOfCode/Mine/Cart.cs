@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dynamo.Business.Shared.AdventOfCode.Mine
+﻿namespace Dynamo.Business.Shared.AdventOfCode.Mine
 {
-    internal class Cart
+    public class Cart
     {
+        public TrackSection TrackSection { get; set; }
+        public CurrentDirection Direction { get; set; }
+
+        public Cart(TrackSection trackSection, CurrentDirection direction)
+        {
+            TrackSection = trackSection;
+            Direction = direction;
+        }
     }
 }

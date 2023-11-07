@@ -8,6 +8,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
     public class Mine
     {
         public Point[,] Points { get; }
+        public List<Track> Tracks { get; }
 
         public Mine(string[] mineLayout)
         {
@@ -18,6 +19,18 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 for (var x = 0; x < xLength; x++)
                     Points[x, y] = new Point(x, y, mineLayout[x][y]);
 
+            Tracks = new List<Track>();
+            for (var y = 0; y < yLength; y++)
+                for (var x = 0; x < xLength; x++)
+                {
+                    if (Points[x, y].PointChar == '/')
+                    {
+                        var alreadyExists = false;
+                        foreach (var track in Tracks)
+                            if (track.Points.Contains(Points[x, y]))
+
+                    }
+                }
 
         }
     }
