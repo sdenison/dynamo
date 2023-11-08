@@ -1,24 +1,21 @@
-﻿using System.Transactions;
-
-namespace Dynamo.Business.Shared.AdventOfCode.Mine
+﻿namespace Dynamo.Business.Shared.AdventOfCode.Mine
 {
     public class Cart
     {
         public TrackSection TrackSection { get; set; }
         public Point Point => TrackSection.Point;
         public Rotation Rotation { get; set; }
-        public int IntersectionInt { get; set; }
+        public NextMove NextMove { get; set; }
 
         public Cart(TrackSection trackSection, Rotation rotation)
         {
             TrackSection = trackSection;
             Rotation = rotation;
-            IntersectionInt = 0;
+            NextMove = NextMove.GoLeft;
         }
 
         public void MoveBy1()
         {
-
             TrackSection nextSection = null;
             if (Rotation == Rotation.Clockwise)
                 nextSection = TrackSection.Next;
@@ -29,15 +26,14 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 TrackSection = nextSection;
             else
             {
-                if (IntersectionInt == 1)
+                if (NextMove == NextMove.GoStraight)
                 {
                     if (Rotation == Rotation.Clockwise)
                         TrackSection = TrackSection.Next;
                     else
                         TrackSection = TrackSection.Previous;
-                    IntersectionInt++;
+                    NextMove = NextMove.GoRight;
                     return;
-                    //return TrackSection;
                 }
 
                 TrackSection interSectingSection = null;
@@ -51,61 +47,34 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                     (Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Bottom && TrackSection.Side == Side.Left) ||
                     (Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Left && TrackSection.Side == Side.Top))
                 {
-                    //We're hitting the left of the intersection
-                    switch (IntersectionInt)
+                    switch (NextMove)
                     {
-                        case 0:
+                        case NextMove.GoLeft:
                             Rotation = Rotation.Clockwise;
-                            TrackSection = interSectingSection;
-                            IntersectionInt++;
+                            NextMove = NextMove.GoStraight;
                             break;
-                        case 2:
+                        case NextMove.GoRight:
                             Rotation = Rotation.CounterClockwise;
-                            TrackSection = interSectingSection;
-                            IntersectionInt = 0;
+                            NextMove = NextMove.GoLeft;
                             break;
                     }
                 }
                 else
                 {
-                    switch (IntersectionInt)
+                    switch (NextMove)
                     {
-                        case 0:
+                        case NextMove.GoLeft:
                             Rotation = Rotation.CounterClockwise;
-                            TrackSection = interSectingSection;
-                            IntersectionInt++;
+                            NextMove = NextMove.GoStraight;
                             break;
-                        case 2:
+                        case NextMove.GoRight:
                             Rotation = Rotation.Clockwise;
-                            TrackSection = interSectingSection;
-                            IntersectionInt = 0;
+                            NextMove = NextMove.GoLeft;
                             break;
                     }
                 }
-
-                //if ((Rotation == Rotation.Clockwise && interSectingSection.Side == Side.Bottom && TrackSection.Side == Side.Right) ||
-                //    (Rotation == Rotation.Clockwise && interSectingSection.Side == Side.Left && TrackSection.Side == Side.Top) ||
-                //    (Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Bottom && TrackSection.Side == Side.Left) ||
-                //    (Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.))
-                //{
-                //    //We're hitting the left of the intersection
-                //    switch (IntersectionInt)
-                //    {
-                //        case 0:
-                //            Rotation = Rotation.CounterClockwise;
-                //            TrackSection = interSectingSection;
-                //            IntersectionInt++;
-                //            break;
-                //        case 2:
-                //            Rotation = Rotation.Clockwise;
-                //            TrackSection = interSectingSection;
-                //            IntersectionInt = 0;
-                //            break;
-                //    }
-                //}
-                //}
+                TrackSection = interSectingSection;
             }
-            // return TrackSection;
         }
     }
 
@@ -113,5 +82,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
     {
         Clockwise,
         CounterClockwise
+    }
+
+    public enum NextMove
+    {
+        GoLeft,
+        GoStraight,
+        GoRight
     }
 }

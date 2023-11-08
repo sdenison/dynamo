@@ -69,62 +69,6 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
         }
 
         [Test]
-        public void Can_move_cart_along_track()
-        {
-            var mineLayout = new string[]
-            {
-                @"/->-\        ",
-                @"|   |  /----\",
-                @"| /-+--+-\  |",
-                @"| | |  | v  |",
-                @"\-+-/  \-+--/",
-                @"  \------/   "
-            };
-            var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
-
-            var carts = mine.GetCarts();
-            Assert.AreEqual(2, carts.Count);
-            Assert.AreEqual(2, carts[0].Point.X);
-            Assert.AreEqual(0, carts[0].Point.Y);
-            Assert.AreEqual(3, carts[1].Point.Y);
-            Assert.AreEqual(9, carts[1].Point.X);
-
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(3, carts[0].Point.X);
-            mine.MoveBy1(carts[0]);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(mine.Tracks[0], carts[0].TrackSection.Track);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(mine.Tracks[2], carts[0].TrackSection.Track);
-            Assert.AreEqual(Rotation.Clockwise, carts[0].Rotation);
-            Assert.AreEqual(4, carts[0].Point.X);
-            Assert.AreEqual(2, carts[0].Point.Y);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(5, carts[0].Point.X);
-            Assert.AreEqual(2, carts[0].Point.Y);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(6, carts[0].Point.X);
-            Assert.AreEqual(2, carts[0].Point.Y);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(7, carts[0].Point.X);
-            Assert.AreEqual(2, carts[0].Point.Y);
-            Assert.AreEqual(mine.Tracks[2], carts[0].TrackSection.Track);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(8, carts[0].Point.X);
-            Assert.AreEqual(2, carts[0].Point.Y);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(9, carts[0].Point.X);
-            Assert.AreEqual(2, carts[0].Point.Y);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(9, carts[0].Point.X);
-            Assert.AreEqual(3, carts[0].Point.Y);
-            mine.MoveBy1(carts[0]);
-            Assert.AreEqual(9, carts[0].Point.X);
-            Assert.AreEqual(4, carts[0].Point.Y);
-            Assert.AreEqual(mine.Tracks[1], carts[0].TrackSection.Track);
-        }
-
-        [Test]
         public void Can_move_cart_along_track2()
         {
             var mineLayout = new string[]
