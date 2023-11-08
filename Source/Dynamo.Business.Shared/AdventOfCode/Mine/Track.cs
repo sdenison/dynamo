@@ -132,31 +132,47 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
                     if (currentDirection == CurrentDirection.Right)
+                    {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                        currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
+                    }
                     else
+                    {
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                        currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
+                    }
                     Sections.Add(currentSection);
-                    currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
                 }
                 else if (currentPoint.PointChar == '^')
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
                     if (currentDirection == CurrentDirection.Down)
+                    {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                        currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
+                    }
                     else
+                    {
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                        currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
+                    }
+                    Carts.Add(new Cart(currentSection, Rotation.Clockwise));
                     Sections.Add(currentSection);
-                    currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                 }
                 else if (currentPoint.PointChar == 'v')
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
                     if (currentDirection == CurrentDirection.Down)
+                    {
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                        currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
+                    }
                     else
+                    {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                        currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
+                    }
                     Sections.Add(currentSection);
-                    currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                 }
                 previousSection = currentSection;
                 if (currentPoint == startPoint)
