@@ -75,10 +75,11 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
 
         public TrackSection MoveBy1(Cart cart)
         {
-            cart.TrackSection = cart.TrackSection.Next;
+            if (cart.Rotation == Rotation.Clockwise)
+                cart.TrackSection = cart.TrackSection.Next;
+            else
+                cart.TrackSection = cart.TrackSection.Previous;
             return cart.TrackSection;
         }
-
-
     }
 }

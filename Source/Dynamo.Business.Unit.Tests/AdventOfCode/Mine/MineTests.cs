@@ -87,6 +87,9 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             Assert.AreEqual(0, carts[0].Point.Y);
             Assert.AreEqual(3, carts[1].Point.Y);
             Assert.AreEqual(9, carts[1].Point.X);
+
+            mine.MoveBy1(carts[0]);
+            Assert.AreEqual(3, carts[0].Point.X);
         }
     }
 }

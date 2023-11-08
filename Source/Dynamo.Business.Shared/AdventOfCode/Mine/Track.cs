@@ -76,7 +76,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 else if (currentPoint.PointChar == '-')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
                     Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Right)
                         currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
