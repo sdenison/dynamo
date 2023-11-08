@@ -11,6 +11,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
     {
         public List<TrackSection> Sections { get; }
         public List<Cart> Carts { get; }
+        public Dictionary<Point, Track> Intersections { get; set; }
 
         public Track(Point startPoint, Point[,] allPoints)
         {
@@ -19,6 +20,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
 
             Sections = new List<TrackSection>();
             Carts = new List<Cart>();
+            Intersections = new Dictionary<Point, Track>();
             var hasMorePoints = true;
             var currentPoint = startPoint;
             var forwardSlashCount = 0;

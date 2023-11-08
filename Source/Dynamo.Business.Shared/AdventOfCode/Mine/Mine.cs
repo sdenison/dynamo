@@ -1,6 +1,7 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Mine
@@ -40,6 +41,25 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                     }
                 }
 
+            for (var i = 0; i < Tracks.Count; i++)
+            {
+                for (var j = i + 1; j < Tracks.Count; j++)
+                {
+                    foreach (var sectionA in Tracks[i].Sections.Where(x => x.Type == TrackSectionType.Intersection))
+                    {
+                        foreach (var sectionB in Tracks[j].Sections.Where(x => x.Type == TrackSectionType.Intersection))
+                        {
+                            if (sectionA.Point == sectionB.Point)
+                            {
+                                sectionA.IntersectionTrack = Tracks[j];
+                                sectionB.IntersectionTrack = Tracks[i];
+                                Tracks[i].Intersections.Add(sectionA.Point, Tracks[j]);
+                                Tracks[j].Intersections.Add(sectionA.Point, Tracks[i]);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

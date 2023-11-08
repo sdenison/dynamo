@@ -4,6 +4,7 @@
     {
         public Point Point { get; }
         public TrackSectionType Type { get; }
+        public Track IntersectionTrack { get; set; }
 
         public TrackSection(Point point, TrackSectionType trackSectionType)
         {
