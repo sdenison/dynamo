@@ -28,12 +28,14 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             var currentDirection = CurrentDirection.Right;
 
 
-            var startingSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this);
+            var side = Side.Top;
+            var startingSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this, side);
             var currentSection = startingSection;
             var previousSection = currentSection;
 
             Sections.Add(currentSection);
             currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
+
 
             while (hasMorePoints)
             {
@@ -41,17 +43,19 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 {
                     if (forwardSlashCount == 0)
                     {
-                        currentSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this, previousSection);
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this, previousSection, side);
                         Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
                         currentDirection = CurrentDirection.Right;
+                        side = Side.Top;
                     }
                     else
                     {
-                        currentSection = new TrackSection(currentPoint, TrackSectionType.LowerRight, this, previousSection);
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.LowerRight, this, previousSection, side);
                         Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
                         currentDirection = CurrentDirection.Left;
+                        side = Side.Bottom;
                     }
                     forwardSlashCount++;
                 }
@@ -59,24 +63,26 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 {
                     if (backSlashCount == 0)
                     {
-                        currentSection = new TrackSection(currentPoint, TrackSectionType.TopRight, this, previousSection);
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.TopRight, this, previousSection, side);
                         Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                         currentDirection = CurrentDirection.Down;
+                        side = Side.Right;
                     }
                     else
                     {
                         currentSection = new TrackSection(currentPoint, TrackSectionType.LowerLeft, this,
-                            previousSection);
+                            previousSection, side);
                         Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                         currentDirection = CurrentDirection.Up;
+                        side = Side.Left;
                     }
                     backSlashCount++;
                 }
                 else if (currentPoint.PointChar == '-')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection, side);
                     Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Right)
                         currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
@@ -85,7 +91,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 else if (currentPoint.PointChar == '|')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection, side);
                     Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Down)
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
@@ -94,7 +100,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 else if (currentPoint.PointChar == '+')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Intersection, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Intersection, this, previousSection, side);
                     Sections.Add(currentSection);
 
                     switch (currentDirection)
@@ -115,7 +121,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 else if (currentPoint.PointChar == '>')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection, side);
                     Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Right)
                     {
@@ -130,7 +136,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 else if (currentPoint.PointChar == '<')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection, side);
                     if (currentDirection == CurrentDirection.Right)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
@@ -145,7 +151,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
                 else if (currentPoint.PointChar == '^')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection, side);
                     if (currentDirection == CurrentDirection.Down)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
@@ -156,12 +162,11 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                     }
-                    Carts.Add(new Cart(currentSection, Rotation.Clockwise));
                     Sections.Add(currentSection);
                 }
                 else if (currentPoint.PointChar == 'v')
                 {
-                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection, side);
                     if (currentDirection == CurrentDirection.Down)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
@@ -191,5 +196,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
         Right,
         Up,
         Down
+    }
+
+    public enum Side
+    {
+        Top,
+        Right,
+        Bottom,
+        Left
     }
 }

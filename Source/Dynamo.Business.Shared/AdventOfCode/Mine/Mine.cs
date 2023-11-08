@@ -52,8 +52,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                         {
                             if (sectionA.Point == sectionB.Point)
                             {
-                                sectionA.IntersectionTrack = Tracks[j];
-                                sectionB.IntersectionTrack = Tracks[i];
+                                sectionA.IntersectingTrackSection = Tracks[j].Sections.Single(x => x.Point == sectionA.Point);
+                                sectionB.IntersectingTrackSection = Tracks[i].Sections.Single(x => x.Point == sectionB.Point);
                                 Tracks[i].Intersections.Add(sectionA.Point, Tracks[j]);
                                 Tracks[j].Intersections.Add(sectionA.Point, Tracks[i]);
                             }
@@ -73,13 +73,114 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             return carts.OrderBy(c => c.Point.Y).ThenBy(c => c.Point.X).ToList();
         }
 
-        public TrackSection MoveBy1(Cart cart)
+        public void MoveBy1(Cart cart)
         {
-            if (cart.Rotation == Rotation.Clockwise)
-                cart.TrackSection = cart.TrackSection.Next;
+            if (cart.TrackSection.Next.Type != TrackSectionType.Intersection)
+                if (cart.Rotation == Rotation.Clockwise)
+                    cart.TrackSection = cart.TrackSection.Next;
+                else
+                    cart.TrackSection = cart.TrackSection.Previous;
             else
-                cart.TrackSection = cart.TrackSection.Previous;
-            return cart.TrackSection;
+            {
+                if (cart.IntersectionInt == 1)
+                {
+                    if (cart.Rotation == Rotation.Clockwise)
+                        cart.TrackSection = cart.TrackSection.Next;
+                    else
+                        cart.TrackSection = cart.TrackSection.Previous;
+                    cart.IntersectionInt++;
+                    return;
+                    //return cart.TrackSection;
+                }
+
+                TrackSection interSectingSection = null;
+                if (cart.Rotation == Rotation.Clockwise)
+                    interSectingSection = cart.TrackSection.Next.IntersectingTrackSection;
+                else
+                    interSectingSection = cart.TrackSection.Previous.IntersectingTrackSection;
+
+                if (cart.TrackSection.Next.Type == TrackSectionType.Horizontal)
+                {
+                    if ((cart.Rotation == Rotation.Clockwise && interSectingSection.Side == Side.Left) ||
+                        (cart.Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Right))
+                    {
+                        //We're hitting the left of the intersection
+                        switch (cart.IntersectionInt)
+                        {
+                            case 0:
+                                cart.Rotation = Rotation.Clockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt++;
+                                break;
+                            case 2:
+                                cart.Rotation = Rotation.CounterClockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt = 0;
+                                break;
+                        }
+                    }
+
+                    if ((cart.Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Left) ||
+                        (cart.Rotation == Rotation.Clockwise && interSectingSection.Side == Side.Right))
+                    {
+                        //We're hitting the left of the intersection
+                        switch (cart.IntersectionInt)
+                        {
+                            case 0:
+                                cart.Rotation = Rotation.CounterClockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt++;
+                                break;
+                            case 2:
+                                cart.Rotation = Rotation.Clockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt = 0;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    if ((cart.Rotation == Rotation.Clockwise && interSectingSection.Side == Side.Top) ||
+                        (cart.Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Bottom))
+                    {
+                        //We're hitting the left of the intersection
+                        switch (cart.IntersectionInt)
+                        {
+                            case 0:
+                                cart.Rotation = Rotation.Clockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt++;
+                                break;
+                            case 2:
+                                cart.Rotation = Rotation.CounterClockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt = 0;
+                                break;
+                        }
+                    }
+
+                    if ((cart.Rotation == Rotation.CounterClockwise && interSectingSection.Side == Side.Top) ||
+                        (cart.Rotation == Rotation.Clockwise && interSectingSection.Side == Side.Bottom))
+                    {
+                        //We're hitting the left of the intersection
+                        switch (cart.IntersectionInt)
+                        {
+                            case 0:
+                                cart.Rotation = Rotation.CounterClockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt++;
+                                break;
+                            case 2:
+                                cart.Rotation = Rotation.Clockwise;
+                                cart.TrackSection = interSectingSection;
+                                cart.IntersectionInt = 0;
+                                break;
+                        }
+                    }
+                }
+            }
+            // return cart.TrackSection;
         }
     }
 }
