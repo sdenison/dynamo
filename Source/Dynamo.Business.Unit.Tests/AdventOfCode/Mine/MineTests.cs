@@ -1,4 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Linq;
+using System.Xml.Serialization;
 using Dynamo.Business.Shared.AdventOfCode.Mine;
 using NUnit.Framework;
 
@@ -63,6 +65,28 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[1].Sections[14].Type);
             Assert.AreEqual(TrackSectionType.Intersection, mine.Tracks[1].Sections[15].Type);
             Assert.AreEqual(mine.Tracks[2], mine.Tracks[1].Sections[15].IntersectionTrack);
+        }
+
+        [Test]
+        public void Can_move_cart_along_track()
+        {
+            var mineLayout = new string[]
+            {
+                @"/->-\        ",
+                @"|   |  /----\",
+                @"| /-+--+-\  |",
+                @"| | |  | v  |",
+                @"\-+-/  \-+--/",
+                @"  \------/   "
+            };
+            var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
+
+            var carts = mine.GetCarts();
+            Assert.AreEqual(2, carts.Count);
+            Assert.AreEqual(2, carts[0].Point.X);
+            Assert.AreEqual(0, carts[0].Point.Y);
+            Assert.AreEqual(3, carts[1].Point.Y);
+            Assert.AreEqual(9, carts[1].Point.X);
         }
     }
 }

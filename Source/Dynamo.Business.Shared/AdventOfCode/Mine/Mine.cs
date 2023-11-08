@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Mine
@@ -61,5 +62,23 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
             }
         }
+
+        public List<Cart> GetCarts()
+        {
+            var carts = new List<Cart>();
+            foreach (var track in Tracks)
+            {
+                carts.AddRange(track.Carts);
+            }
+            return carts.OrderBy(c => c.Point.Y).ThenBy(c => c.Point.X).ToList();
+        }
+
+        public TrackSection MoveBy1(Cart cart)
+        {
+            cart.TrackSection = cart.TrackSection.Next;
+            return cart.TrackSection;
+        }
+
+
     }
 }

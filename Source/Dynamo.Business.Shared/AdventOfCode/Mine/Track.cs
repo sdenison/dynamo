@@ -23,62 +23,80 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             Intersections = new Dictionary<Point, Track>();
             var hasMorePoints = true;
             var currentPoint = startPoint;
-            var forwardSlashCount = 0;
+            var forwardSlashCount = 1;
             var backSlashCount = 0;
             var currentDirection = CurrentDirection.Right;
+
+
+            var startingSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this);
+            var currentSection = startingSection;
+            var previousSection = currentSection;
+
+            Sections.Add(currentSection);
+            currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
+
             while (hasMorePoints)
             {
                 if (currentPoint.PointChar == '/')
                 {
                     if (forwardSlashCount == 0)
                     {
-                        Sections.Add(new TrackSection(currentPoint, TrackSectionType.TopLeft));
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this, previousSection);
+                        Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
                         currentDirection = CurrentDirection.Right;
                     }
                     else
                     {
-                        Sections.Add(new TrackSection(currentPoint, TrackSectionType.LowerRight));
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.LowerRight, this, previousSection);
+                        Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
                         currentDirection = CurrentDirection.Left;
                     }
                     forwardSlashCount++;
                 }
-                if (currentPoint.PointChar == '\\')
+                else if (currentPoint.PointChar == '\\')
                 {
                     if (backSlashCount == 0)
                     {
-                        Sections.Add(new TrackSection(currentPoint, TrackSectionType.TopRight));
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.TopRight, this, previousSection);
+                        Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                         currentDirection = CurrentDirection.Down;
                     }
                     else
                     {
-                        Sections.Add(new TrackSection(currentPoint, TrackSectionType.LowerLeft));
+                        currentSection = new TrackSection(currentPoint, TrackSectionType.LowerLeft, this,
+                            previousSection);
+                        Sections.Add(currentSection);
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                         currentDirection = CurrentDirection.Up;
                     }
                     backSlashCount++;
                 }
-                if (currentPoint.PointChar == '-')
+                else if (currentPoint.PointChar == '-')
                 {
-                    Sections.Add(new TrackSection(currentPoint, TrackSectionType.Horizontal));
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this);
+                    Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Right)
                         currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
                     else
                         currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
                 }
-                if (currentPoint.PointChar == '|')
+                else if (currentPoint.PointChar == '|')
                 {
-                    Sections.Add(new TrackSection(currentPoint, TrackSectionType.Vertical));
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
+                    Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Down)
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                     else
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                 }
-                if (currentPoint.PointChar == '+')
+                else if (currentPoint.PointChar == '+')
                 {
-                    Sections.Add(new TrackSection(currentPoint, TrackSectionType.Intersection));
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Intersection, this, previousSection);
+                    Sections.Add(currentSection);
+
                     switch (currentDirection)
                     {
                         case CurrentDirection.Left:
@@ -95,36 +113,58 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                             break;
                     }
                 }
-                if (currentPoint.PointChar == '>')
+                else if (currentPoint.PointChar == '>')
                 {
-                    var newSection = new TrackSection(currentPoint, TrackSectionType.Horizontal);
-                    Carts.Add(new Cart(newSection, CurrentDirection.Right));
-                    Sections.Add(newSection);
-                    currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
+                    Sections.Add(currentSection);
+                    if (currentDirection == CurrentDirection.Right)
+                    {
+                        Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                        currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
+                    }
+                    else
+                    {
+                        Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                        currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
+                    }
                 }
-                if (currentPoint.PointChar == '<')
+                else if (currentPoint.PointChar == '<')
                 {
-                    var newSection = new TrackSection(currentPoint, TrackSectionType.Horizontal);
-                    Carts.Add(new Cart(newSection, CurrentDirection.Left));
-                    Sections.Add(newSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection);
+                    if (currentDirection == CurrentDirection.Right)
+                        Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                    else
+                        Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                    Sections.Add(currentSection);
                     currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
                 }
-                if (currentPoint.PointChar == '^')
+                else if (currentPoint.PointChar == '^')
                 {
-                    var newSection = new TrackSection(currentPoint, TrackSectionType.Vertical);
-                    Carts.Add(new Cart(newSection, CurrentDirection.Up));
-                    Sections.Add(newSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
+                    if (currentDirection == CurrentDirection.Down)
+                        Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                    else
+                        Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                    Sections.Add(currentSection);
                     currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                 }
-                if (currentPoint.PointChar == 'v')
+                else if (currentPoint.PointChar == 'v')
                 {
-                    var newSection = new TrackSection(currentPoint, TrackSectionType.Vertical);
-                    Carts.Add(new Cart(newSection, CurrentDirection.Down));
-                    Sections.Add(newSection);
+                    currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection);
+                    if (currentDirection == CurrentDirection.Down)
+                        Carts.Add(new Cart(currentSection, Rotation.Clockwise));
+                    else
+                        Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
+                    Sections.Add(currentSection);
                     currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                 }
+                previousSection = currentSection;
                 if (currentPoint == startPoint)
+                {
+                    startingSection.Previous = currentSection;
+                    currentSection.Next = startingSection;
                     hasMorePoints = false;
+                }
             }
         }
     }

@@ -3,12 +3,19 @@
     public class Cart
     {
         public TrackSection TrackSection { get; set; }
-        public CurrentDirection Direction { get; set; }
+        public Point Point => TrackSection.Point;
+        public Rotation Rotation { get; set; }
 
-        public Cart(TrackSection trackSection, CurrentDirection direction)
+        public Cart(TrackSection trackSection, Rotation rotation)
         {
             TrackSection = trackSection;
-            Direction = direction;
+            Rotation = rotation;
         }
+    }
+
+    public enum Rotation
+    {
+        Clockwise,
+        CounterClockwise
     }
 }
