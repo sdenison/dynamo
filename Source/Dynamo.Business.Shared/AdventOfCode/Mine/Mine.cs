@@ -19,7 +19,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             Points = new Point[xLength, yLength];
             for (var y = 0; y < yLength; y++)
                 for (var x = 0; x < xLength; x++)
-                    Points[x, y] = new Point(x, y, mineLayout[y][x]);
+                    Points[x, y] = new Point(x, y, mineLayout[y].PadLeft(xLength)[x]);
 
             Tracks = new List<Track>();
             for (var y = 0; y < yLength; y++)
@@ -71,6 +71,45 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 carts.AddRange(track.Carts);
             }
             return carts.OrderBy(c => c.Point.Y).ThenBy(c => c.Point.X).ToList();
+        }
+
+        public Point GetFirstCollision()
+        {
+            Point returnValue = null;
+            while (returnValue == null)
+            {
+                returnValue = MoveBy1();
+                if (returnValue != null)
+                    return returnValue;
+            }
+            return null;
+        }
+
+        public Point MoveBy1()
+        {
+            var carts = GetCarts();
+            foreach (var cart in carts)
+            {
+                cart.MoveBy1();
+                var collision = GetCollisions();
+                if (collision != null)
+                    return collision;
+            }
+
+            return null;
+        }
+
+        public Point GetCollisions()
+        {
+            foreach (var cartA in GetCarts())
+            {
+                foreach (var cartB in GetCarts())
+                {
+                    if (cartA.Point == cartB.Point && cartA != cartB)
+                        return cartA.Point;
+                }
+            }
+            return null;
         }
     }
 }

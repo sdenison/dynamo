@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Mine
 {
@@ -27,7 +22,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             var backSlashCount = 0;
             var currentDirection = CurrentDirection.Right;
 
-
             var side = Side.Top;
             var startingSection = new TrackSection(currentPoint, TrackSectionType.TopLeft, this, side);
             var currentSection = startingSection;
@@ -35,8 +29,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
 
             Sections.Add(currentSection);
             currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
-
-
             while (hasMorePoints)
             {
                 if (currentPoint.PointChar == '/')
@@ -137,6 +129,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 else if (currentPoint.PointChar == '<')
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Horizontal, this, previousSection, side);
+                    Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Right)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
@@ -147,26 +140,26 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
                         currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
                     }
-                    Sections.Add(currentSection);
                 }
                 else if (currentPoint.PointChar == '^')
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection, side);
+                    Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Down)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
-                        currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
+                        currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
                     }
                     else
                     {
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
-                        currentPoint = allPoints[currentPoint.X, currentPoint.Y + 1];
+                        currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                     }
-                    Sections.Add(currentSection);
                 }
                 else if (currentPoint.PointChar == 'v')
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Vertical, this, previousSection, side);
+                    Sections.Add(currentSection);
                     if (currentDirection == CurrentDirection.Down)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
@@ -177,7 +170,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
                         currentPoint = allPoints[currentPoint.X, currentPoint.Y - 1];
                     }
-                    Sections.Add(currentSection);
                 }
                 previousSection = currentSection;
                 if (currentPoint == startPoint)

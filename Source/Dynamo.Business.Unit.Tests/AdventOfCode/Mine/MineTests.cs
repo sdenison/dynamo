@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Xml.Serialization;
 using Dynamo.Business.Shared.AdventOfCode.Mine;
 using NUnit.Framework;
@@ -135,18 +136,35 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             cart.MoveBy1();
             Assert.AreEqual(6, cart.Point.X);
             Assert.AreEqual(2, cart.Point.Y);
+        }
 
-            for (var i = 0; i < 10000; i++)
+        [Test]
+        public void Can_get_first_collision_for_test_data_given()
+        {
+            var mineLayout = new string[]
             {
-                try
-                {
-                    cart.MoveBy1();
-                }
-                catch (Exception ex)
-                {
-                    var x = i;
-                }
-            }
+                @"/->-\        ",
+                @"|   |  /----\",
+                @"| /-+--+-\  |",
+                @"| | |  | v  |",
+                @"\-+-/  \-+--/",
+                @"  \------/   "
+            };
+            var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
+            var firstCollision = mine.GetFirstCollision();
+            Assert.AreEqual(7, firstCollision.X);
+            Assert.AreEqual(3, firstCollision.Y);
+            var numbers = TestDataProvider.GetPuzzleData();
+        }
+
+        [Test]
+        public void Can_get_day_13_part_1_puzzle_answer()
+        {
+            var mineLayout = TestDataProvider.GetTestData2();
+            var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
+            var firstCollision = mine.GetFirstCollision();
+            Assert.AreEqual(144, firstCollision.X);
+            Assert.AreEqual(51, firstCollision.Y);
         }
     }
 }

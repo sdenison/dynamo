@@ -1,4 +1,8 @@
 ﻿
+using System;
+using System.IO;
+using System.Text;
+
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
 {
     internal static class TestDataProvider
@@ -15,6 +19,34 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
                 @"  \------/"
             };
         }
+
+
+        internal static string[] GetTestData2()
+        {
+            var stream = Tests.FileGetter.GetMemoryStreamFromFile("MineLayout.txt");
+            stream.Position = 0;
+            string[] stringArray = ReadMemoryStreamToStringArray(stream, Encoding.UTF8);
+            return stringArray;
+        }
+
+        static string[] ReadMemoryStreamToStringArray(MemoryStream memoryStream, Encoding encoding)
+        {
+            // Reset the memoryStream position to the beginning
+            memoryStream.Seek(0, SeekOrigin.Begin);
+
+            // Read the data from the memory stream into a byte array
+            byte[] buffer = new byte[memoryStream.Length];
+            memoryStream.Read(buffer, 0, buffer.Length);
+
+            // Convert the byte array to a string using the specified encoding
+            string content = encoding.GetString(buffer);
+
+            // Split the content into an array of strings based on a delimiter, e.g., newline
+            string[] stringArray = content.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
+            return stringArray;
+        }
+
         internal static string[] GetPuzzleData()
         {
             return new string[]
