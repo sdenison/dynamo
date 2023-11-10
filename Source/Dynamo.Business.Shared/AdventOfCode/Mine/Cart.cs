@@ -34,15 +34,13 @@
             //Everything else is logic for the intersections
             if (NextMove == NextMove.GoStraight)
             {
-                if (Rotation == Rotation.Clockwise)
-                    TrackSection = TrackSection.Next;
-                else
-                    TrackSection = TrackSection.Previous;
+                TrackSection = nextSection;
                 NextMove = NextMove.GoRight;
                 return;
             }
 
             var interSectingSection = nextSection.IntersectingTrackSection;
+            TrackSection = nextSection;
 
             if ((TrackSection.Side == Side.Top && interSectingSection.Side == Side.Left && Rotation == Rotation.Clockwise) ||
                 (TrackSection.Side == Side.Top && interSectingSection.Side == Side.Right && Rotation == Rotation.CounterClockwise) ||

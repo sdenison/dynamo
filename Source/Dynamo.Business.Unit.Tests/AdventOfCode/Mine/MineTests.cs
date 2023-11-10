@@ -160,7 +160,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
         [Test]
         public void Can_get_day_13_part_1_puzzle_answer()
         {
-            var mineLayout = TestDataProvider.GetTestData2();
+            var mineLayout = TestDataProvider.GetFullPuzzleInput();
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
             var firstCollision = mine.GetFirstCollision();
             Assert.AreEqual(50, firstCollision.X);
@@ -189,11 +189,11 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
         [Test]
         public void Can_get_day_13_part_2_puzzle_answer()
         {
-            var mineLayout = TestDataProvider.GetTestData2();
+            var mineLayout = TestDataProvider.GetFullPuzzleInput();
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
             var lastCart = mine.GetLastCart();
-            Assert.AreEqual(144, lastCart.Point.X);
-            Assert.AreEqual(123, lastCart.Point.Y);
+            Assert.AreEqual(50, lastCart.Point.X);
+            Assert.AreEqual(100, lastCart.Point.Y);
         }
     }
 }

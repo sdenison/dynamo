@@ -20,10 +20,10 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             };
         }
 
-
-        internal static string[] GetTestData2()
+        internal static string[] GetFullPuzzleInput()
         {
             var stream = Tests.FileGetter.GetMemoryStreamFromFile("MineLayout.txt");
+            stream.Seek(0, SeekOrigin.Begin);
             stream.Position = 0;
             string[] stringArray = ReadMemoryStreamToStringArray(stream, Encoding.UTF8);
             return stringArray;

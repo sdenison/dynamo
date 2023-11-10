@@ -94,7 +94,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 {
                     currentSection = new TrackSection(currentPoint, TrackSectionType.Intersection, this, previousSection, side);
                     Sections.Add(currentSection);
-
                     switch (currentDirection)
                     {
                         case CurrentDirection.Left:
