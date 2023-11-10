@@ -184,8 +184,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             var lastCart = mine.GetLastCart();
             Assert.AreEqual(6, lastCart.Point.X);
             Assert.AreEqual(4, lastCart.Point.Y);
+        }
 
-
+        [Test]
+        public void Can_get_day_13_part_2_puzzle_answer()
+        {
+            var mineLayout = TestDataProvider.GetTestData2();
+            var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
+            var lastCart = mine.GetLastCart();
+            Assert.AreEqual(144, lastCart.Point.X);
+            Assert.AreEqual(123, lastCart.Point.Y);
         }
     }
 }

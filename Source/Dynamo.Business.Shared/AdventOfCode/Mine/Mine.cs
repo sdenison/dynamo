@@ -112,37 +112,60 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             return null;
         }
 
-        public IEnumerable<Point> StepReturningCollisions()
+        public List<Cart> GetActiveCarts()
         {
-            var carts = GetCarts();
-            foreach (var cart in carts)
+            return GetCarts().Where(x => !x.IsDeleted).ToList();
+        }
+
+        public void DeleteCollisions()
+        {
+            foreach (var cartA in GetActiveCarts())
+            {
+                foreach (var cartB in GetActiveCarts())
+                {
+                    if (cartA.Point == cartB.Point && cartA != cartB) // && !cartA.IsDeleted && !cartB.IsDeleted)
+                    //if (cartA.Point.X == cartB.Point.X && cartA.Point.Y == cartB.Point.Y && cartA != cartB) // && !cartA.IsDeleted && !cartB.IsDeleted)
+                    {
+                        cartA.IsDeleted = true;
+                        cartB.IsDeleted = true;
+                        return;
+                    }
+
+                    if (GetActiveCarts().Count() == 1)
+                    {
+                        return;
+                    }
+
+                }
+            }
+        }
+
+        public void StepDeletingCollisions()
+        {
+            foreach (var cart in GetActiveCarts())
             {
                 cart.Step();
-                var collision = GetCollision();
-                if (collision != null)
-                    yield return collision;
+                DeleteCollisions();
+                if (GetActiveCarts().Count() == 1)
+                {
+                    var x = "got here";
+                }
             }
         }
 
         //Gets the final cart after all others have collided
         public Cart GetLastCart()
         {
-            while (GetCarts().Count > 1)
+            var step = 0;
+            while (GetActiveCarts().Count > 1)
             {
-                foreach (var collisionPoint in StepReturningCollisions())
-                {
-                    var cartsToRemove = GetCarts().Where(x => x.Point == collisionPoint);
-                    foreach (var track in Tracks)
-                    {
-                        foreach (var cart in cartsToRemove)
-                        {
-                            if (track.Carts.Contains(cart))
-                                track.Carts.Remove(cart);
-                        }
-                    }
-                }
+                StepDeletingCollisions();
+                step++;
             }
-            return GetCarts()[0];
+
+            var lastCart = GetActiveCarts()[0];
+            //lastCart.Step();
+            return lastCart;
         }
     }
 }

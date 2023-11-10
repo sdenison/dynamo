@@ -6,6 +6,8 @@
         public Point Point => TrackSection.Point;
         public Rotation Rotation { get; set; }
         public NextMove NextMove { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public bool IsLastOne { get; set; } = false;
 
         public Cart(TrackSection trackSection, Rotation rotation)
         {
@@ -16,6 +18,7 @@
 
         public void Step()
         {
+            if (IsDeleted) return;
             TrackSection nextSection = null;
             if (Rotation == Rotation.Clockwise)
                 nextSection = TrackSection.Next;
