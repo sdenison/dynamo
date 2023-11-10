@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -69,6 +71,43 @@ namespace Dynamo.Business.Shared.AdventOfCode.Stars
                 displayStrings.Add(line.ToString());
             }
             return displayStrings;
+        }
+
+        public int FindStepWithMessage()
+        {
+            //Make a copy of our points
+            var points = new List<Point>();
+            foreach (var point in Points)
+                points.Add(new Point(point.X, point.Y, point.Velocity));
+
+            var i = 0;
+            var smallestArea = GetArea(points);
+            while (true)
+            {
+                points.ForEach(x => x.Step());
+                var area = GetArea(points);
+                if (area < smallestArea)
+                    smallestArea = area;
+                else
+                    break;
+                i++;
+            }
+            return i;
+        }
+
+        public void TakeSteps(int steps)
+        {
+            for (var i = 0; i < steps; i++)
+                Step();
+        }
+
+        public long GetArea(List<Point> points)
+        {
+            var minX = points.Min(x => x.X);
+            var maxX = points.Max(x => x.X);
+            var minY = points.Min(x => x.Y);
+            var maxY = points.Max(x => x.Y);
+            return (maxX - minX) * (maxY - minY);
         }
     }
 }

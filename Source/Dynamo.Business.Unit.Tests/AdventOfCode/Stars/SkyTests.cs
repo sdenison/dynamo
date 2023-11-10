@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dynamo.Business.Shared.AdventOfCode.Stars;
 using NUnit.Framework;
 
@@ -21,15 +20,35 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Stars
             Assert.AreEqual(display, GetSecond0());
             sky.Step();
             Assert.AreEqual(sky.Display(), GetSecond1());
+            sky.Step();
+            Assert.AreEqual(sky.Display(), GetSecond2());
+            sky.Step();
+            Assert.AreEqual(sky.Display(), GetSecond3());
         }
 
-        private bool StringListsMatch(List<string> list1, List<string> list2)
+        [Test]
+        public void Can_find_smallest_area()
         {
-            if (list1.Count != list2.Count) return false;
-            for (var x = 0; x < list1.Count; x++)
-                if (!list1[x].Equals(list2[x]))
-                    return false;
-            return true;
+            var sky = new Sky(GetTestData());
+            var stepWithMessage = sky.FindStepWithMessage();
+            Assert.AreEqual(3, stepWithMessage);
+        }
+
+        [Test]
+        public void Can_solve_day_10_part_1()
+        {
+            var sky = new Sky(TestDataProvider.GetPuzzleInput());
+            var stepWithMessage = sky.FindStepWithMessage();
+            Assert.AreEqual(10243, stepWithMessage);
+            sky.TakeSteps(stepWithMessage);
+            var display = sky.DisplayCondensed();
+            using (StreamWriter outputFile = new StreamWriter("d:\\temp\\day10output.txt"))
+            {
+                foreach (var line in display)
+                {
+                    outputFile.WriteLine(line);
+                }
+            }
         }
 
         public string[] GetTestData()
@@ -116,5 +135,55 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Stars
             };
             return display.ToList();
         }
+
+        public List<string> GetSecond2()
+        {
+            string[] display = new[]
+            {
+                "......................",
+                "......................",
+                "......................",
+                "..............#.......",
+                "....#..#...####..#....",
+                "......................",
+                "........#....#........",
+                "......#.#.............",
+                ".......#...#..........",
+                ".......#..#..#.#......",
+                "....#....#.#..........",
+                ".....#...#...##.#.....",
+                "........#.............",
+                "......................",
+                "......................",
+                "......................",
+            };
+            return display.ToList();
+        }
+
+        public List<string> GetSecond3()
+        {
+            string[] display = new[]
+            {
+                "......................",
+                "......................",
+                "......................",
+                "......................",
+                "......#...#..###......",
+                "......#...#...#.......",
+                "......#...#...#.......",
+                "......#####...#.......",
+                "......#...#...#.......",
+                "......#...#...#.......",
+                "......#...#...#.......",
+                "......#...#..###......",
+                "......................",
+                "......................",
+                "......................",
+                "......................",
+            };
+            return display.ToList();
+        }
     }
 }
+
+
