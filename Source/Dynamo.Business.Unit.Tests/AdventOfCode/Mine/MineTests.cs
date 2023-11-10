@@ -166,5 +166,27 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             Assert.AreEqual(50, firstCollision.X);
             Assert.AreEqual(54, firstCollision.Y);
         }
+
+        [Test]
+        public void Can_get_last_cart_location_for_example()
+        {
+            var mineLayout = new string[]
+            {
+                @"/>-<\  ",
+                @"|   |  ",
+                @"| /<+-\",
+                @"| | | v",
+                @"\>+</ |",
+                @"  |   ^",
+                @"  \<->/"
+            };
+            var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
+            var lastCart = mine.GetLastCart();
+            Assert.AreEqual(6, lastCart.Point.X);
+            Assert.AreEqual(4, lastCart.Point.Y);
+
+
+        }
     }
 }
+

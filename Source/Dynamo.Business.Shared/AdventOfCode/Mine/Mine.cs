@@ -1,6 +1,7 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -76,13 +77,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
         public Point GetFirstCollision()
         {
             Point returnValue = null;
-            while (returnValue == null)
+            while (true)
             {
                 returnValue = Step();
                 if (returnValue != null)
                     return returnValue;
             }
-            return null;
         }
 
         public Point Step()
@@ -91,7 +91,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             foreach (var cart in carts)
             {
                 cart.Step();
-                var collision = GetCollisions();
+                var collision = GetCollision();
                 if (collision != null)
                     return collision;
             }
@@ -99,7 +99,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             return null;
         }
 
-        public Point GetCollisions()
+        public Point GetCollision()
         {
             foreach (var cartA in GetCarts())
             {
@@ -110,6 +110,39 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                 }
             }
             return null;
+        }
+
+        public IEnumerable<Point> StepReturningCollisions()
+        {
+            var carts = GetCarts();
+            foreach (var cart in carts)
+            {
+                cart.Step();
+                var collision = GetCollision();
+                if (collision != null)
+                    yield return collision;
+            }
+        }
+
+        //Gets the final cart after all others have collided
+        public Cart GetLastCart()
+        {
+            while (GetCarts().Count > 1)
+            {
+                foreach (var collisionPoint in StepReturningCollisions())
+                {
+                    var cartsToRemove = GetCarts().Where(x => x.Point == collisionPoint);
+                    foreach (var track in Tracks)
+                    {
+                        foreach (var cart in cartsToRemove)
+                        {
+                            if (track.Carts.Contains(cart))
+                                track.Carts.Remove(cart);
+                        }
+                    }
+                }
+            }
+            return GetCarts()[0];
         }
     }
 }
