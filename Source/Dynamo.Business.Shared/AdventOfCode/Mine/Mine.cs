@@ -78,19 +78,19 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
             Point returnValue = null;
             while (returnValue == null)
             {
-                returnValue = MoveBy1();
+                returnValue = Step();
                 if (returnValue != null)
                     return returnValue;
             }
             return null;
         }
 
-        public Point MoveBy1()
+        public Point Step()
         {
             var carts = GetCarts();
             foreach (var cart in carts)
             {
-                cart.MoveBy1();
+                cart.Step();
                 var collision = GetCollisions();
                 if (collision != null)
                     return collision;

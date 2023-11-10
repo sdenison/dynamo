@@ -120,7 +120,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Mine
                         Carts.Add(new Cart(currentSection, Rotation.Clockwise));
                         currentPoint = allPoints[currentPoint.X + 1, currentPoint.Y];
                     }
-                    else
+                    if (currentDirection == CurrentDirection.Left)
                     {
                         Carts.Add(new Cart(currentSection, Rotation.CounterClockwise));
                         currentPoint = allPoints[currentPoint.X - 1, currentPoint.Y];
