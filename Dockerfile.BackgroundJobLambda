@@ -8,6 +8,8 @@ ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
 FROM public.ecr.aws/lambda/dotnet:7 as background-job-lambda
 COPY --from=build /source/lambda-build ${LAMBDA_TASK_ROOT}
+RUN apt update && apt upgrade
+RUN apt install wget
 RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
 RUN chmod +x ./dotnet-install.sh 
 RUN ./dotnet-install.sh --version latest --runtime aspnetcore
