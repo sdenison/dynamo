@@ -13,6 +13,7 @@ using Dynamo.Business.Shared.AdventOfCode.Guard;
 using Dynamo.Business.Shared.AdventOfCode.Sleigh;
 using Dynamo.Business.Shared.AdventOfCode.Fuel;
 using Dynamo.Business.Shared.AdventOfCode.Marbles;
+using Dynamo.Business.Shared.AdventOfCode.Mine;
 using Dynamo.Business.Shared.AdventOfCode.Navigation;
 
 namespace Dynamo.Commands.Utilities
@@ -133,6 +134,18 @@ namespace Dynamo.Commands.Utilities
                         var maxPowerIdentifier2 = grid2.GetMaxPower();
                         backgroundJob.JobOutput =
                             $"(X,Y) = ({maxPowerIdentifier2.Coordinates.X},{maxPowerIdentifier2.Coordinates.Y}), WindowSize = {maxPowerIdentifier2.WindowSize}, Power = {maxPowerIdentifier2.Power}";
+                        break;
+                    case JobType.Day13Step1:
+                        var mine = new Mine(fileContents);
+                        var firstCollision = mine.GetFirstCollision();
+                        backgroundJob.JobOutput =
+                            $"First collision detected at ({firstCollision.X},{firstCollision.Y}).";
+                        break;
+                    case JobType.Day13Step2:
+                        var mine2 = new Mine(fileContents);
+                        var lastCart = mine2.GetLastCart();
+                        backgroundJob.JobOutput =
+                            $"The last cart is located at ({lastCart.Point.X},{lastCart.Point.Y}).";
                         break;
                     default:
                         throw new Exception($"No processor for JobType {backgroundJob.JobType}.");
