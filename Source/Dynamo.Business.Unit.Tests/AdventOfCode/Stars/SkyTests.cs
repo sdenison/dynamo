@@ -186,4 +186,3 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Stars
     }
 }
 
-
