@@ -11,6 +11,7 @@ COPY --from=build /source/lambda-build ${LAMBDA_TASK_ROOT}
 #RUN apt update && apt upgrade
 #RUN apt install wget
 #RUN apt-get install wget
+RUN yum install tar -y
 RUN yum install wget -y
 RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
 RUN chmod +x ./dotnet-install.sh 
