@@ -17,5 +17,5 @@ RUN yum install wget -y
 RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
 RUN chmod +x ./dotnet-install.sh 
 RUN ./dotnet-install.sh --version latest --runtime aspnetcore
-#RUN dotnet -version
+RUN dotnet -version
 CMD [ "Dynamo.Lambda::Dynamo.Lambda.Function::BackgroundJobHandler" ]
