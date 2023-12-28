@@ -6,13 +6,6 @@ RUN apt install -y clang zlib1g-dev
 RUN dotnet publish -c release -o lambda-build /p:GenerateRuntimeConfigurationFiles=true --runtime linux-x64 Dynamo.Lambda/Dynamo.Lambda.csproj 
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
-FROM public.ecr.aws/lambda/dotnet:7 as lambda
+FROM public.ecr.aws/lambda/dotnet:8-preview as lambda
 COPY --from=build /source/lambda-build ${LAMBDA_TASK_ROOT}
-RUN yum install gzip -y
-RUN yum install tar -y
-RUN yum install wget -y
-RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
-RUN chmod +x ./dotnet-install.sh 
-RUN ./dotnet-install.sh --version latest --runtime aspnetcore
-RUN dotnet -v
 CMD [ "Dynamo.Lambda::Dynamo.Lambda.Function::FunctionHandler" ]
