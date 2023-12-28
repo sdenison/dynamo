@@ -11,31 +11,18 @@ namespace Dynamo.Commands.Utilities
 {
     public class SendEmailCommand : Command
     {
-        public SendEmailCommand() : base("sendtestemail", "Sends test email")
+        public SendEmailCommand() : base("sendemail", "Sends an email")
         {
             var toAddressesOption = CreateToAddressesOption();
             var fromAddressOption = CreateFromAddressOption();
             var subjectOption = CreateSubjectOption();
             var bodyOption = CreateBodyOption();
-            //Handler = CreateHandler();
-            this.SetHandler((toAddresses, fromAddresses, subject, body) =>
-            {
-                SendEmail(toAddresses, fromAddresses, subject, body);
-            }, toAddressesOption, fromAddressOption, subjectOption, bodyOption);
+            this.SetHandler(SendEmail, toAddressesOption, fromAddressOption, subjectOption, bodyOption);
         }
-
-        //public ICommandHandler CreateHandler()
-        //{
-        //    Action<IEnumerable<string>, string, string, string> command = SendEmail;
-        //    return CommandHandler.Create(
-        //        (IEnumerable<string> toAddresses, string fromAddress, string subject, string body) =>
-        //        {
-        //            command(toAddresses, fromAddress, subject, body);
-        //        });
-        //}
 
         public void SendEmail(IEnumerable<string> toAddresses, string fromAddress, string subject, string body)
         {
+            var message = $"Sending email to {toAddresses.First()} from {fromAddress} with subject {subject}";
         }
 
         private Option<IEnumerable<string>> CreateToAddressesOption()

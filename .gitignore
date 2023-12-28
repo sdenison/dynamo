@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 
 *.ncrunchsolution
+
+Source/Dynamo/Properties/launchSettings.json
