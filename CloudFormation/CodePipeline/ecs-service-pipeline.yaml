@@ -212,5 +212,3 @@ Resources:
         Type: S3
         Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline
 
-
-
