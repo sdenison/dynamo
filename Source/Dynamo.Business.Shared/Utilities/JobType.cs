@@ -30,6 +30,10 @@ namespace Dynamo.Business.Shared.Utilities
         Day11Step1,
         [Description("Day 11 Step 2")]
         Day11Step2,
+        [Description("Day 13 Step 1")]
+        Day13Step1,
+        [Description("Day 13 Step 2")]
+        Day13Step2,
         [Description("Busy Box")]
         BusyBox, //Used to test the system
     }
