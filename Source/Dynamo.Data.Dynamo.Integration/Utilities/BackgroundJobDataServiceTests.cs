@@ -11,8 +11,7 @@ using ServiceStack.Aws.DynamoDb;
 
 namespace Dynamo.Data.DynamoDb.Integration.Utilities
 {
-    //[TestFixture, Ignore("Uses live connection to DynamoDB")]
-    [TestFixture]
+    [TestFixture, Ignore("Uses live connection to DynamoDB")]
     public class BackgroundJobDataServiceTests
     {
         [Test]
