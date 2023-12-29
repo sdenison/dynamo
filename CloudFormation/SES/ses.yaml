@@ -1,0 +1,84 @@
+Description:
+  This template deploys SES resources
+
+Parameters:
+  EnvironmentName:
+    Type: String
+  DomainName:
+    Type: String    
+  ApplicationName:
+    Type: String    
+
+Resources:
+  SESBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${ApplicationName}-${EnvironmentName}-ses
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      Tags:
+        - Key: environment
+          Value: !Ref EnvironmentName
+
+  SESBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    DependsOn:
+      - SESBucket
+    Properties:
+      Bucket: !Sub ${ApplicationName}-${EnvironmentName}-ses
+      PolicyDocument:
+        Statement:
+          - Sid: AllowSESPuts
+            Effect: Allow
+            Principal:
+              Service: ses.amazonaws.com
+            Action: 's3:PutObject'
+            Resource: !Sub arn:${AWS::Partition}:s3:::${ApplicationName}-${EnvironmentName}-ses/*
+            Condition:
+              StringEquals:
+                'aws:Referer': !Ref AWS::AccountId
+          - Sid: AllowSSLRequestsOnly
+            Action:
+              - s3:*
+            Effect: Deny
+            Resource:
+              - !Sub arn:${AWS::Partition}:s3:::${SESBucket}
+              - !Sub arn:${AWS::Partition}:s3:::${SESBucket}/*
+            Principal: '*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': 'false'
+
+  ReceiptRuleSet:
+    Type: AWS::SES::ReceiptRuleSet
+    Properties:
+      RuleSetName: !Sub ${ApplicationName}-${EnvironmentName}-RuleSet                
+
+  # This feature is not available in GovCloud
+  ReceiptRuleData:
+    Type: AWS::SES::ReceiptRule
+    DependsOn:
+      - SESBucket
+      - SESBucketPolicy
+      - ReceiptRuleSet
+    Properties:
+      RuleSetName: !Sub ${ApplicationName}-${EnvironmentName}-RuleSet
+      Rule:
+        Name: !Sub ${EnvironmentName}-${EnvironmentName}-Data
+        Enabled: true
+        ScanEnabled: true
+        TlsPolicy: 'Require'
+        Recipients:
+          - !Sub data@${DomainName}
+        Actions:
+          - S3Action:
+              BucketName:
+                !Sub ${ApplicationName}-${EnvironmentName}-ses
