@@ -76,8 +76,6 @@ Resources:
         Enabled: true
         ScanEnabled: true
         TlsPolicy: 'Require'
-        Recipients:
-          - !Sub data@${DomainName}
         Actions:
           - S3Action:
               BucketName:
