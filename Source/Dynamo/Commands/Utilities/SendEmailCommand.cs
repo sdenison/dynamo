@@ -6,6 +6,7 @@ using System.CommandLine.Invocation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dynamo.Aws.Services;
 
 namespace Dynamo.Commands.Utilities
 {
@@ -23,6 +24,9 @@ namespace Dynamo.Commands.Utilities
         public void SendEmail(IEnumerable<string> toAddresses, string fromAddress, string subject, string body)
         {
             var message = $"Sending email to {toAddresses.First()} from {fromAddress} with subject {subject}";
+            Console.WriteLine(message);
+            var emailSender = new EmailSender();
+            emailSender.SendEmail(toAddresses, fromAddress, subject, body);
         }
 
         private Option<IEnumerable<string>> CreateToAddressesOption()
@@ -34,6 +38,7 @@ namespace Dynamo.Commands.Utilities
                 IsRequired = true,
                 Arity = ArgumentArity.OneOrMore
             };
+            Add(toAddressesOption);
             return toAddressesOption;
         }
 
@@ -44,8 +49,9 @@ namespace Dynamo.Commands.Utilities
                 "From address for email.")
             {
                 IsRequired = true,
-                Arity = ArgumentArity.OneOrMore
+                Arity = ArgumentArity.ExactlyOne
             };
+            Add(fromAddresses);
             return fromAddresses;
         }
 
@@ -55,8 +61,9 @@ namespace Dynamo.Commands.Utilities
                 "Subject for email.")
             {
                 IsRequired = true,
-                Arity = ArgumentArity.OneOrMore
+                Arity = ArgumentArity.ExactlyOne
             };
+            Add(subject);
             return subject;
         }
 
@@ -66,8 +73,9 @@ namespace Dynamo.Commands.Utilities
                 "Body for email.")
             {
                 IsRequired = true,
-                Arity = ArgumentArity.OneOrMore
+                Arity = ArgumentArity.ExactlyOne
             };
+            Add(body);
             return body;
         }
     }
