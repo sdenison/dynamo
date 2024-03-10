@@ -32,3 +32,12 @@ Resources:
       TemplateURL: !Sub https://${CFTemplateBucket}/SecretsManager/secrets.yaml
       Parameters:
         EnvironmentName: !Ref EnvironmentName             
+
+  SES:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${CFTemplateBucket}/SES/ses.yaml
+      Parameters:
+        EnvironmentName: !Ref EnvironmentName
+        ApplicationName: !Ref ApplicationName        
+        DomainName: 'sdenisondemo.com'              
