@@ -8,6 +8,7 @@ namespace Dynamo.Commands.Utilities
         {
             Add(new DiagnosticsCommand());
             Add(new RunBackgroundJobCommand());
+            Add(new SendEmailCommand());
         }
     }
 }

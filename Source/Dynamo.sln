@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lambda", "Lambda", "{214E4F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.IO.S3", "Dynamo.IO.S3\Dynamo.IO.S3.csproj", "{BF0403CD-83DC-4FEF-A106-3B5E03DAD00D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamo.Aws.Services", "Dynamo.Aws.Services\Dynamo.Aws.Services.csproj", "{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +167,18 @@ Global
 		{BF0403CD-83DC-4FEF-A106-3B5E03DAD00D}.Release|x64.Build.0 = Release|Any CPU
 		{BF0403CD-83DC-4FEF-A106-3B5E03DAD00D}.Release|x86.ActiveCfg = Release|Any CPU
 		{BF0403CD-83DC-4FEF-A106-3B5E03DAD00D}.Release|x86.Build.0 = Release|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Debug|x64.Build.0 = Debug|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Debug|x86.Build.0 = Debug|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Release|x64.ActiveCfg = Release|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Release|x64.Build.0 = Release|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Release|x86.ActiveCfg = Release|Any CPU
+		{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
