@@ -136,19 +136,18 @@ Resources:
     Properties:
       FunctionName: !Sub "${EnvironmentName}-background-job-lambda"
       Code:
-        ImageUri: !Join 
-          - ":"
-          - - Fn::ImportValue: !Sub "${EnvironmentName}-dynamo-background-job-repository-uri"
-            - latest      
+        S3Bucket: !Sub ${EnvironmentName}-${ApplicationName}-deployment
+        S3Key: !Sub ${EnvironmentName}-${ApplicationName}-dotnet-lambda-functions.zip           
       Environment:
         Variables:
           ENVIRONMENT: !Sub "${EnvironmentName}"
           "AppSettings__EnvironmentName": !Sub "${EnvironmentName}"
-          "AppSettings__AWSRegion": !Sub "${AWS::Region}"            
+          "AppSettings__AWSRegion": !Sub "${AWS::Region}"  
+      Handler: "Dynamo.Lambda::Dynamo.Lambda.Function::BackgroundJobHandle" 
+      Runtime: dotnet8          
       Role: !GetAtt RunDotnetLambdaRole.Arn
       Timeout: 900
       MemorySize: 2048
-      PackageType: Image
       Tags:
         - Key: CodeDeploy 
           Value: !Sub ${EnvironmentName}-dynamo-dotnet-lambda
