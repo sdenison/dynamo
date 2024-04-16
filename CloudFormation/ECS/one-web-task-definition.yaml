@@ -30,7 +30,7 @@ Parameters:
     Description: Number of seconds to wait between each health check.
   ContainerPort:
     Type: Number
-    Default: 80
+    Default: 8080
     Description: The port number the application inside the docker container
       is binding to.    
   Path:
