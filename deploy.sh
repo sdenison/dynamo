@@ -3,7 +3,7 @@ dotnet --version
 sed -i "s/@BuildNumber@/$CODEBUILD_BUILD_NUMBER/" Source/Dynamo/appsettings.json 
 more Source/Dynamo/appsettings.json
 
-dotnet publish -c Release -o dynamo-lambda-release Source/Dynamo.Lambda/Dynamo.Lambda.csproj
+dotnet publish -c Release -o dynamo-lambda-release -r linux-x64 Source/Dynamo.Lambda/Dynamo.Lambda.csproj
 cd dynamo-lambda-release
 zip -r $ENVIRONMENT_NAME-dynamo-dontnet-lambda-functions.zip *
 cp $ENVIRONMENT_NAME-dynamo-dontnet-lambda-functions.zip $ENVIRONMENT_NAME-dynamo-dontnet-lambda-functions-v$CODEBUILD_BUILD_NUMBER.zip

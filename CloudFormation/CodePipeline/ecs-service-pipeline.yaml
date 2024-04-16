@@ -159,7 +159,12 @@ Resources:
                   - secretsmanager:ListSecretVersionIds
                   - ecr:*
                   - ecs:*
-                  - lambda:UpdateFunctionCode                 
+                  - lambda:UpdateFunctionCode             
+                  - codeconnections:UseConnection,
+                  - codeconnections:GetConnection
+                  - codeconnections:ListConnections
+                  - codeconnections:TagResource
+                  - codeconnections:ListTagsForResource
       AssumeRolePolicyDocument: 
         Version: 2012-10-17
         Statement: 
@@ -170,12 +175,48 @@ Resources:
             Action: 
               - 'sts:AssumeRole'          
 
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [codepipeline.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      Policies:
+        - PolicyName: CodePipelinePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'codecommit:*'
+                  - 'codedeploy:*'
+                  - 'codeconnections:*'
+                  - 'code-connections:*'
+                  - 'codestar-connections:UseConnection'
+                  - 'lambda:*'
+                  - 's3:*'
+                  - 'sns:*'
+                  - 'cloudwatch:*'
+                  - 'codebuild:BatchGetBuilds'
+                  - 'codebuild:StartBuild'
+                  - 'iam:PassRole'
+                  - 'codecommit:GetRepository'
+                  - 'appconfig:StartDeployment'
+                  - 'appconfig:GetDeployment'
+                  - 'appconfig:StopDeployment'
+                Resource: '*'              
+
   EcsServicePipelineTest:
     Type: AWS::CodePipeline::Pipeline
     Condition: IsTest
     Properties:
-      Name: !Sub ${EnvironmentName}-${ApplicationName}-Web-Service
-      RoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/service-role/${EnvironmentName}-${ApplicationName}-CodePipelineServiceRole
+      Name: !Sub ${EnvironmentName}-${ApplicationName}-web-service
+      #RoleArn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/service-role/${EnvironmentName}-${ApplicationName}-CodePipelineServiceRoleq
+      RoleArn: !GetAtt CodePipelineRole.Arn
       Stages:
         - Name: Source
           Actions:
@@ -183,17 +224,15 @@ Resources:
             InputArtifacts: []
             ActionTypeId:
               Category: Source
-              Owner: ThirdParty
+              Owner: AWS
               Version: 1
-              Provider: GitHub
+              Provider: CodeStarSourceConnection
+            Configuration:
+              FullRepositoryId: 'sdenison/dynamo'
+              BranchName: test
+              ConnectionArn: !Sub 'arn:${AWS::Partition}:codestar-connections:${AWS::Region}:${AWS::AccountId}:connection/ada190bf-b12b-4f2b-9256-26d082a23814'
             OutputArtifacts:
               - Name: SourceCode
-            Configuration:
-              Owner: sdenison
-              Repo: dynamo
-              Branch: test
-              PollForSourceChanges: true 
-              OAuthToken: !Sub '{{resolve:secretsmanager:/${EnvironmentName}/githuboauthkey:SecretString:githuboauthkey}}'
             RunOrder: 1
         - Name: Deploy
           Actions:
@@ -208,7 +247,20 @@ Resources:
             Configuration:
               ProjectName: !Ref EcsCopyImageCodeBuildProject
             RunOrder: 10
+          - Name: DeployLambda
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            InputArtifacts:
+              - Name: SourceCode
+            Configuration:
+              ProjectName: !Ref LambdaCodeBuildProject 
+            RunOrder: 10                 
       ArtifactStore:
         Type: S3
         Location: !Sub ${EnvironmentName}-${ApplicationName}-codepipeline
+
+
 
