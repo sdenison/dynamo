@@ -35,7 +35,6 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             new (0, 68),
         };
 
-
         [Test]
         public void Can_play_a_slot_machine()
         {
@@ -48,20 +47,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
         public void Get_week_2_part_1_tymc_answer()
         {
             var gamesToPlay = 100000;
-            //long totalWinAmount = 0;
-            //for (var i = 0; i < gamesToPlay; i++)
-            //{
-            //    var slotMachine = new SlotMachine(_game1Thresholds);
-            //    slotMachine.InsertMoney(10);
-            //    slotMachine.PullHandleNumberOfTimes(50);
-            //    totalWinAmount += slotMachine.Money;
-            //}
-
-            //var averageWinAmount = (double)totalWinAmount / gamesToPlay;
-
-            //var slotMachine2 = new SlotMachine(_game1Thresholds);
             var averageWinAmount = GetAverageAmount(_game1Thresholds, gamesToPlay);
-
 
             //Accepted answer is 22.2
             Assert.That(averageWinAmount, Is.GreaterThan(22.13));
