@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dynamo.Business.Shared.Casino.Slots;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace Dynamo.Business.Unit.Tests.Casino.Slots
 {
@@ -25,6 +26,29 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             Assert.That(reel.CurrentSymbol.Symbol, Is.EqualTo(Symbol.RedScarf));
             Assert.That(reel.CurrentSymbol.NextSymbol.Symbol, Is.EqualTo(Symbol.Guitar));
             Assert.That(reel.CurrentSymbol.PreviousSymbol.Symbol, Is.EqualTo(Symbol.Butterfly));
+        }
+
+        [Test]
+        public void Can_create_a_mechanical_slot_machine()
+        {
+            var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts());
+        }
+
+        public List<Payout> GetPayouts()
+        {
+            var oneHundredPayout = new Payout(new List<Symbol> { Symbol.QuillAndInk }, 100);
+            var fiftyPayout = new Payout(new List<Symbol> { Symbol.RedScarf }, 50);
+            var tenPayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedScarf, Symbol.RedLips, Symbol.StatueOfLiberty, Symbol.Butterfly, Symbol.Cardigan, Symbol.Champagne, Symbol.FriendshipBracelet }, 50);
+            var fivePayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedLips, Symbol.RedScarf, Symbol.StatueOfLiberty }, 5);
+            var zeroPayout = new Payout(new List<Symbol> { Symbol.Guitar, Symbol.Snake }, 0);
+            return new List<Payout>()
+            {
+                oneHundredPayout,
+                fiftyPayout,
+                tenPayout,
+                fivePayout,
+                zeroPayout
+            };
         }
 
         public List<string> ReelStrings()

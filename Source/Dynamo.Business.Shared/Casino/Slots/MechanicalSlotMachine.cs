@@ -7,6 +7,18 @@ namespace Dynamo.Business.Shared.Casino.Slots
 {
     public class MechanicalSlotMachine
     {
+        public List<Reel> Reels { get; set; }
+        public List<Payout> Payouts { get; private set; }
+
+        public MechanicalSlotMachine(List<string> reelStrings, List<Payout> payouts)
+        {
+            Payouts = payouts;
+            Reels = new List<Reel>();
+            foreach (var reelString in reelStrings)
+            {
+                Reels.Add(new Reel(reelString));
+            }
+        }
     }
 
     public class Reel
@@ -32,6 +44,9 @@ namespace Dynamo.Business.Shared.Casino.Slots
 
         public Reel(List<Symbol> symbols)
         {
+            if (symbols == null || symbols.Count == 0)
+                throw new ArgumentException("Symbols list cannot be empty.", nameof(symbols));
+
             var firstSymbol = new ReelSymbol()
             {
                 Symbol = symbols[0]
@@ -68,6 +83,18 @@ namespace Dynamo.Business.Shared.Casino.Slots
                 .ToList();
 
             return symbolsAsEnum;
+        }
+    }
+
+    public class Payout
+    {
+        public List<Symbol> Symbols { get; }
+        public int WinAmount { get; }
+
+        public Payout(List<Symbol> symbols, int winAmount)
+        {
+            Symbols = symbols;
+            WinAmount = winAmount;
         }
     }
 
