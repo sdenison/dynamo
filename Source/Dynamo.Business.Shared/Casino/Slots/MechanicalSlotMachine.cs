@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Dynamo.Business.Shared.Casino.Slots
 {
@@ -9,14 +8,49 @@ namespace Dynamo.Business.Shared.Casino.Slots
     {
         public List<Reel> Reels { get; set; }
         public List<Payout> Payouts { get; private set; }
+        public long Money { get; private set; }
 
-        public MechanicalSlotMachine(List<string> reelStrings, List<Payout> payouts)
+        public MechanicalSlotMachine(List<string> reelStrings, List<Payout> payouts, long money)
         {
             Payouts = payouts;
-            Reels = new List<Reel>();
-            foreach (var reelString in reelStrings)
+            Reels = reelStrings.Select(x => new Reel(x)).ToList();
+            Money = money;
+        }
+
+        public int PullHandle()
+        {
+            Money -= 1;
+            var random = new Random();
+            foreach (var reel in Reels)
             {
-                Reels.Add(new Reel(reelString));
+                var randomNumber = random.Next(0, reel.NumberOfSymbols);
+                reel.Next(randomNumber);
+            }
+            foreach (var payout in Payouts.OrderByDescending(x => x.WinAmount))
+            {
+                var winner = true;
+                foreach (var reel in Reels)
+                {
+                    if (!payout.Symbols.Contains(reel.CurrentSymbol.Symbol))
+                        winner = false;
+                }
+                if (winner)
+                {
+                    Money += payout.WinAmount;
+                    return payout.WinAmount;
+                }
+            }
+            return 0;
+        }
+
+        public void PullHandleNumberOfTimes(int timesToPullHandle)
+        {
+            for (var i = 0; i < timesToPullHandle; i++)
+            {
+                if (Money > 0)
+                    PullHandle();
+                else
+                    return;
             }
         }
     }
@@ -24,6 +58,7 @@ namespace Dynamo.Business.Shared.Casino.Slots
     public class Reel
     {
         public ReelSymbol CurrentSymbol { get; private set; }
+        public int NumberOfSymbols { get; }
 
         public void Next()
         {
@@ -46,6 +81,7 @@ namespace Dynamo.Business.Shared.Casino.Slots
         {
             if (symbols == null || symbols.Count == 0)
                 throw new ArgumentException("Symbols list cannot be empty.", nameof(symbols));
+            NumberOfSymbols = symbols.Count;
 
             var firstSymbol = new ReelSymbol()
             {
@@ -63,6 +99,8 @@ namespace Dynamo.Business.Shared.Casino.Slots
                 CurrentSymbol.NextSymbol = reelSymbol;
                 CurrentSymbol = reelSymbol;
             }
+
+            CurrentSymbol.NextSymbol = firstSymbol;
             firstSymbol.PreviousSymbol = CurrentSymbol;
             CurrentSymbol = firstSymbol;
         }

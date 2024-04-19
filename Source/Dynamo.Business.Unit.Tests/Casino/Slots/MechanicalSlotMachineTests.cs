@@ -26,19 +26,53 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             Assert.That(reel.CurrentSymbol.Symbol, Is.EqualTo(Symbol.RedScarf));
             Assert.That(reel.CurrentSymbol.NextSymbol.Symbol, Is.EqualTo(Symbol.Guitar));
             Assert.That(reel.CurrentSymbol.PreviousSymbol.Symbol, Is.EqualTo(Symbol.Butterfly));
+
+            //Can move forward through the entire circular list
+            reel.Next(100);
         }
 
         [Test]
-        public void Can_create_a_mechanical_slot_machine()
+        public void Can_create_a_mechanical_slot_machine_and_pull_the_handle()
         {
-            var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts());
+            var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), money: 10);
+            var winAmount = -1;
+            winAmount = slotMachine.PullHandle();
+            Assert.That(winAmount, Is.GreaterThanOrEqualTo(0));
+        }
+
+        [Test]
+        public void Can_pull_the_handle_50_times()
+        {
+            var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), money: 10);
+            for (var i = 0; i < 50; i++)
+            {
+                var winAmount = -1;
+                winAmount = slotMachine.PullHandle();
+                Assert.That(winAmount, Is.GreaterThanOrEqualTo(0));
+            }
+        }
+
+        [Test]
+        public void Get_average_payout()
+        {
+            long totalWinAmount = 0;
+            var gamesToPlay = 100000;
+            for (var i = 0; i < gamesToPlay; i++)
+            {
+                var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), money: 10);
+                slotMachine.PullHandleNumberOfTimes(50);
+                totalWinAmount += slotMachine.Money;
+            }
+
+            var averageWinAmount = (double)totalWinAmount / gamesToPlay;
+            Assert.That(averageWinAmount, Is.EqualTo(0));
         }
 
         public List<Payout> GetPayouts()
         {
             var oneHundredPayout = new Payout(new List<Symbol> { Symbol.QuillAndInk }, 100);
             var fiftyPayout = new Payout(new List<Symbol> { Symbol.RedScarf }, 50);
-            var tenPayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedScarf, Symbol.RedLips, Symbol.StatueOfLiberty, Symbol.Butterfly, Symbol.Cardigan, Symbol.Champagne, Symbol.FriendshipBracelet }, 50);
+            var tenPayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedScarf, Symbol.RedLips, Symbol.StatueOfLiberty, Symbol.Butterfly, Symbol.Cardigan, Symbol.Champagne, Symbol.FriendshipBracelet }, 10);
             var fivePayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedLips, Symbol.RedScarf, Symbol.StatueOfLiberty }, 5);
             var zeroPayout = new Payout(new List<Symbol> { Symbol.Guitar, Symbol.Snake }, 0);
             return new List<Payout>()
