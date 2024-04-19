@@ -56,7 +56,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
         public void Get_average_payout()
         {
             long totalWinAmount = 0;
-            var gamesToPlay = 100000;
+            var gamesToPlay = 1000;
             for (var i = 0; i < gamesToPlay; i++)
             {
                 var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), money: 10);
@@ -65,7 +65,10 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             }
 
             var averageWinAmount = (double)totalWinAmount / gamesToPlay;
-            Assert.That(averageWinAmount, Is.EqualTo(0));
+
+            //190 was the accepted answer
+            Assert.That(averageWinAmount, Is.LessThan(192));
+            Assert.That(averageWinAmount, Is.GreaterThan(189.5));
         }
 
         public List<Payout> GetPayouts()

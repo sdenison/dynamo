@@ -1,0 +1,65 @@
+﻿@page "/slotmachine"
+<PageTitleSlot Machine></PageTitleSlot>
+@using Dynamo.Business.Shared.Casino.Slots
+
+<h1>Slot Machine</h1>
+
+
+<div>
+    <h2>Balance: $@slotMachine.Money</h2>
+    <button @onclick="PullHandle">Pull Handle</button>
+    <h3>Last Win: $@lastWin</h3>
+</div>
+
+<div>
+    @foreach (var reel in slotMachine.Reels)
+    {
+        <p>Reel: @reel.CurrentSymbol.Symbol</p>
+    }
+</div>
+
+@code {
+    private int lastWin = 0;
+    private MechanicalSlotMachine slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), 10);
+
+    private void PullHandle()
+    {
+        if (slotMachine.Money <= 0)
+        {
+            lastWin = 0;
+    // Optionally, add logic to handle "out of money" scenarios
+        }
+        else
+        {
+            lastWin = slotMachine.PullHandle();
+        }
+    }
+
+    public static List<string> ReelStrings()
+    {
+        return new List<string>
+        {
+            "Butterfly, Red Scarf, Guitar, Red Scarf, Cardigan, Snake, Butterfly, Heart hands, Butterfly, Red Lips, 13, Red Lips, 13, Cardigan, Friendship Bracelet, Red Lips, Red Scarf, Heart hands, Snake, Quill and Ink",
+            "Heart hands, Snake, Champagne, Cardigan, Quill and Ink, Cardigan, Cardigan, Snake, Red Scarf, Snake, Champagne, Friendship Bracelet, Snake, Butterfly, Red Scarf, Butterfly, 13, Snake, Cardigan, Champagne",
+            "Snake, 13, Friendship Bracelet, Red Scarf, Guitar, Red Scarf, Cardigan, 13, Guitar, Red Lips, Red Lips, Red Lips, Quill and Ink, Cardigan, Champagne, Red Scarf, Cardigan, Red Scarf, Statue of Liberty, Heart hands"
+        };
+    }
+
+    public static List<Payout> GetPayouts()
+    {
+        var oneHundredPayout = new Payout(new List<Symbol> { Symbol.QuillAndInk }, 100);
+        var fiftyPayout = new Payout(new List<Symbol> { Symbol.RedScarf }, 50);
+        var tenPayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedScarf, Symbol.RedLips, Symbol.StatueOfLiberty, Symbol.Butterfly, Symbol.Cardigan, Symbol.Champagne, Symbol.FriendshipBracelet }, 10);
+        var fivePayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedLips, Symbol.RedScarf, Symbol.StatueOfLiberty }, 5);
+        var zeroPayout = new Payout(new List<Symbol> { Symbol.Guitar, Symbol.Snake }, 0);
+        return new List<Payout>()
+        {
+            oneHundredPayout,
+            fiftyPayout,
+            tenPayout,
+            fivePayout,
+            zeroPayout
+        };
+    }
+
+}
