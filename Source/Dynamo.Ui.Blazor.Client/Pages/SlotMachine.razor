@@ -7,7 +7,6 @@
 
 <div>
     <h2>Balance: $@slotMachine.Money</h2>
-    <button @onclick="PullHandle">Pull Handle</button>
     <button @onclick="Reset">Reset</button>
     <h3>Last Win: $@lastWin</h3>
 </div>
@@ -32,6 +31,7 @@
         transform: rotateX(-60deg); /* Tilts the image forward */
         transform-origin: middle; /* Sets the rotation axis near the top of the image */
     }
+
 </style>
 
 <div class="row">
@@ -43,14 +43,38 @@
             <img class="reel-image reel-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
         </div>
     }
+    <div class="col-2">
+        <img @onclick="PullHandle" src="images/@HandleFile" alt="handle zero percent" />
+    </div>
 </div>
+
 
 @code {
     private int lastWin = 0;
     private MechanicalSlotMachine slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), 10);
+    private string HandleFile = "handle-0-percent.png";
 
     private async Task PullHandle()
     {
+        HandleFile = "handle-10-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-20-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-30-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-40-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-20-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-10-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+
         if (slotMachine.Money <= 0)
         {
             lastWin = 0;
