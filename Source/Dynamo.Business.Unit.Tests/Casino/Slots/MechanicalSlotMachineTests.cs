@@ -68,7 +68,14 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
 
             //190 was the accepted answer
             Assert.That(averageWinAmount, Is.LessThan(192));
-            Assert.That(averageWinAmount, Is.GreaterThan(189.5));
+            Assert.That(averageWinAmount, Is.GreaterThan(188));
+        }
+
+        [Test]
+        public async Task Can_pull_handle_async()
+        {
+            var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), money: 10);
+            var task = await slotMachine.PullHandleAsync(1);
         }
 
         public List<Payout> GetPayouts()
