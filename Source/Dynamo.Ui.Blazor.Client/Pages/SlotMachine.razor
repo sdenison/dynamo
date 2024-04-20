@@ -18,18 +18,15 @@
         height: auto; /* Maintain aspect ratio */
         display: block; /* Ensures img is treated as block-level */
         margin: auto; /* Centers the image in its container */
-        border: 2px solid #000000;
     }
 
     .reel-previous-image {
-        width: 80px; /* Smaller width for adjacent symbols */
         height: auto; /* Maintain aspect ratio */
         transform: rotateX(60deg); /* Tilts the image back */
-        transform-origin: top; /* Sets the rotation axis near the top of the image */
+        transform-origin: bottom; /* Sets the rotation axis near the top of the image */
     }
 
     .reel-next-image {
-        width: 80px; /* Smaller width for adjacent symbols */
         height: auto; /* Maintain aspect ratio */
         transform: rotateX(-60deg); /* Tilts the image forward */
         transform-origin: top; /* Sets the rotation axis near the top of the image */
@@ -40,15 +37,9 @@
     @foreach (var reel in slotMachine.Reels)
     {
         <div class="col-2">
-           <div class="row">
-                <img class="reel-image reel-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.PreviousSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
-           </div>
-           <div class="row">
+                <img class="reel-image reel-next-image" src="images/@GetImageFileName(reel.CurrentSymbol.PreviousSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
                 <img class="reel-image" src="images/@GetImageFileName(reel.CurrentSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
-           </div>
-           <div class="row">
-                <img class="reel-image reel-next-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
-           </div>
+                <img class="reel-image reel-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
         </div>
     }
 </div>
@@ -77,7 +68,7 @@
 
     private static string GetImageFileName(Symbol symbol)
     {
-    // Replace spaces and special characters as necessary
+        // Replace spaces and special characters as necessary
         return symbol.ToString().ToLower().Replace(" ", "") + ".png";
     }
 
@@ -89,6 +80,13 @@
             "Heart hands, Snake, Champagne, Cardigan, Quill and Ink, Cardigan, Cardigan, Snake, Red Scarf, Snake, Champagne, Friendship Bracelet, Snake, Butterfly, Red Scarf, Butterfly, 13, Snake, Cardigan, Champagne",
             "Snake, 13, Friendship Bracelet, Red Scarf, Guitar, Red Scarf, Cardigan, 13, Guitar, Red Lips, Red Lips, Red Lips, Quill and Ink, Cardigan, Champagne, Red Scarf, Cardigan, Red Scarf, Statue of Liberty, Heart hands"
         };
+
+        // return new List<string>()
+        // {
+        //     "Butterfly, Butterfly, Butterfly, Butterfly, Butterfly",
+        //     "Butterfly, Butterfly, Butterfly, Butterfly, Butterfly",
+        //     "Butterfly, Butterfly, Butterfly, Butterfly, Butterfly",
+        // };
     }
 
     public static List<Payout> GetPayouts()
