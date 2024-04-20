@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace Dynamo.Business.Shared.Casino.Slots
 {
@@ -43,6 +45,34 @@ namespace Dynamo.Business.Shared.Casino.Slots
             return 0;
         }
 
+        public void AdvanceReel()
+        {
+            foreach (var reel in Reels)
+            {
+                reel.Next();
+            }
+        }
+
+        public int HandlePayout()
+        {
+            Money -= 1;
+            foreach (var payout in Payouts.OrderByDescending(x => x.WinAmount))
+            {
+                var winner = true;
+                foreach (var reel in Reels)
+                {
+                    if (!payout.Symbols.Contains(reel.CurrentSymbol.Symbol))
+                        winner = false;
+                }
+                if (winner)
+                {
+                    Money += payout.WinAmount;
+                    return payout.WinAmount;
+                }
+            }
+            return 0;
+        }
+
         public void PullHandleNumberOfTimes(int timesToPullHandle)
         {
             for (var i = 0; i < timesToPullHandle; i++)
@@ -63,6 +93,13 @@ namespace Dynamo.Business.Shared.Casino.Slots
         public void Next()
         {
             CurrentSymbol = CurrentSymbol.NextSymbol;
+        }
+
+        public async Task NextAsync(int delay)
+        {
+            Next();
+            await Task.Delay(delay);
+            var x = "got here";
         }
 
         public void Next(int numberToMove)
