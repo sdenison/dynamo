@@ -4,43 +4,21 @@
 
 <h1>Slot Machine</h1>
 
-
 <div>
     <h2>Balance: $@slotMachine.Money</h2>
     <button @onclick="Reset">Reset</button>
     <h3>Last Win: $@lastWin</h3>
 </div>
 
-<style>
-    .reel-image {
-        width: 90px; /* Set a fixed width for main symbols */
-        height: auto; /* Maintain aspect ratio */
-        display: block; /* Ensures img is treated as block-level */
-        margin: auto; /* Centers the image in its container */
-    }
-
-    .reel-previous-image {
-        height: auto; /* Maintain aspect ratio */
-        transform: rotateX(60deg); /* Tilts the image back */
-        transform-origin: middle; /* Sets the rotation axis near the top of the image */
-
-    }
-
-    .reel-next-image {
-        height: auto; /* Maintain aspect ratio */
-        transform: rotateX(-60deg); /* Tilts the image forward */
-        transform-origin: middle; /* Sets the rotation axis near the top of the image */
-    }
-
-</style>
-
 <div class="row">
     @foreach (var reel in slotMachine.Reels)
     {
         <div class="col-2">
+            <img class="reel-image reel-next-next-image" src="images/@GetImageFileName(reel.CurrentSymbol.PreviousSymbol.PreviousSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
             <img class="reel-image reel-next-image" src="images/@GetImageFileName(reel.CurrentSymbol.PreviousSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
             <img class="reel-image" src="images/@GetImageFileName(reel.CurrentSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
             <img class="reel-image reel-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
+            <img class="reel-image reel-previous-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
         </div>
     }
     <div class="col-2">
@@ -48,13 +26,34 @@
     </div>
 </div>
 
-
 @code {
     private int lastWin = 0;
     private MechanicalSlotMachine slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), 10);
     private string HandleFile = "handle-0-percent.png";
 
     private async Task PullHandle()
+    {
+        await PlayHandleAnimation();
+
+        if (slotMachine.Money <= 0)
+        {
+            lastWin = 0;
+        }
+        else
+        {
+            var random = new Random();
+            var randomNumber = random.Next(20, 20 + slotMachine.Reels[0].NumberOfSymbols);
+            for (var i = 0; i < randomNumber; i++)
+            {
+                slotMachine.AdvanceReel();
+                await Task.Delay(150);
+                StateHasChanged();
+            }
+            lastWin = slotMachine.HandlePayout();
+        }
+    }
+
+    private async Task PlayHandleAnimation()
     {
         HandleFile = "handle-10-percent.png";
         StateHasChanged();
@@ -74,23 +73,8 @@
         HandleFile = "handle-10-percent.png";
         StateHasChanged();
         await Task.Delay(100);
-
-        if (slotMachine.Money <= 0)
-        {
-            lastWin = 0;
-        }
-        else
-        {
-            var random = new Random();
-            var randomNumber = random.Next(20, 20 + slotMachine.Reels[0].NumberOfSymbols);
-            for(var i = 0; i < randomNumber; i++)
-            {
-                slotMachine.AdvanceReel();
-                await Task.Delay(150);
-                StateHasChanged();
-            }
-            lastWin = slotMachine.HandlePayout();
-        }
+        HandleFile = "handle-0-percent.png";
+        StateHasChanged();
     }
 
     private void Reset()
@@ -100,7 +84,6 @@
 
     private static string GetImageFileName(Symbol symbol)
     {
-        // Replace spaces and special characters as necessary
         return symbol.ToString().ToLower().Replace(" ", "") + ".png";
     }
 
@@ -130,5 +113,38 @@
             zeroPayout
         };
     }
-
 }
+
+<style>
+    .reel-image {
+        width: 90px;
+        height: auto;
+        display: block;
+        margin: auto;
+    }
+
+    .reel-previous-image {
+        height: auto;
+        transform: rotateX(60deg);
+        transform-origin: middle;
+    }
+
+    .reel-next-image {
+        height: auto;
+        transform: rotateX(-60deg);
+        transform-origin: middle;
+    }
+
+    .reel-previous-previous-image {
+        height: auto;
+        transform: rotateX(80deg);
+        transform-origin: middle;
+    }
+
+    .reel-next-next-image {
+        height: auto;
+        transform: rotateX(-80deg);
+        transform-origin: middle;
+    }
+
+</style>
