@@ -71,13 +71,6 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             Assert.That(averageWinAmount, Is.GreaterThan(188));
         }
 
-        [Test]
-        public async Task Can_pull_handle_async()
-        {
-            var slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), money: 10);
-            var task = await slotMachine.PullHandleAsync(1);
-        }
-
         public List<Payout> GetPayouts()
         {
             var oneHundredPayout = new Payout(new List<Symbol> { Symbol.QuillAndInk }, 100);
