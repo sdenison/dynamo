@@ -2,12 +2,21 @@
 <PageTitleSlot Machine></PageTitleSlot>
 @using Dynamo.Business.Shared.Casino.Slots
 
+<Modal @ref="outOfMoneyModal" Title="Ya Broke!">
+    <BodyTemplate>
+        You are out of money! Please insert more dollars.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="OnHideModalClick">Close</Button>
+    </FooterTemplate>
+</Modal>
+
 <h1>Slot Machine</h1>
 
 <div>
     <h2>Balance: $@slotMachine.Money</h2>
-    <button @onclick="Reset">Reset</button>
     <h3>Last Win: $@lastWin</h3>
+    <Button Color="ButtonColor.Primary" @onclick="InsertDollar">Insert Dollar</Button>
 </div>
 
 <div class="row">
@@ -27,12 +36,29 @@
 </div>
 
 @code {
+    private Modal outOfMoneyModal;
     private int lastWin = 0;
     private MechanicalSlotMachine slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), 10);
     private string HandleFile = "handle-0-percent.png";
 
+    private async Task OnHideModalClick()
+    {
+        await outOfMoneyModal.HideAsync();
+    }
+
+    private void InsertDollar()
+    {
+        slotMachine.Money += 1;
+    }
+
     private async Task PullHandle()
     {
+        if (slotMachine.Money <= 0)
+        {
+            await outOfMoneyModal.ShowAsync();
+            return; 
+        }
+        
         await PlayHandleAnimation();
 
         if (slotMachine.Money <= 0)
@@ -42,18 +68,32 @@
         else
         {
             var random = new Random();
-            var randomNumber = random.Next(20, 20 + slotMachine.Reels[0].NumberOfSymbols);
-            for (var i = 0; i < randomNumber; i++)
+            var randomNumbers = new List<int>();
+
+            //Assign a random number for each reel to spin to
+            for (var reel = 0; reel < slotMachine.Reels.Count; reel++)
             {
-                slotMachine.AdvanceReel();
+                var minValue = (reel + 1) * 10;
+                randomNumbers.Add(random.Next(minValue, minValue + slotMachine.Reels[reel].NumberOfSymbols));
+            }
+
+            //Advance the reels until the random number is hit for each one
+            for (var step = 1; step <= randomNumbers.Max(); step++)
+            {
+                for (var reel = 0; reel < slotMachine.Reels.Count; reel++)
+                {
+                    if (step < randomNumbers[reel])
+                    {
+                        slotMachine.Reels[reel].Next();
+                    }
+                }
                 await Task.Delay(150);
                 StateHasChanged();
             }
             lastWin = slotMachine.HandlePayout();
         }
     }
-
-    private async Task PlayHandleAnimation()
+    async Task PlayHandleAnimation()
     {
         HandleFile = "handle-10-percent.png";
         StateHasChanged();
@@ -75,11 +115,6 @@
         await Task.Delay(100);
         HandleFile = "handle-0-percent.png";
         StateHasChanged();
-    }
-
-    private void Reset()
-    {
-        slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), 10);
     }
 
     private static string GetImageFileName(Symbol symbol)

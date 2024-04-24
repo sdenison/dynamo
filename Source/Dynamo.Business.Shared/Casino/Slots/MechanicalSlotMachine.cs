@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 namespace Dynamo.Business.Shared.Casino.Slots
 {
@@ -10,7 +8,7 @@ namespace Dynamo.Business.Shared.Casino.Slots
     {
         public List<Reel> Reels { get; set; }
         public List<Payout> Payouts { get; private set; }
-        public long Money { get; private set; }
+        public long Money { get; set; }
 
         public MechanicalSlotMachine(List<string> reelStrings, List<Payout> payouts, long money)
         {
@@ -43,14 +41,6 @@ namespace Dynamo.Business.Shared.Casino.Slots
                 }
             }
             return 0;
-        }
-
-        public void AdvanceReel()
-        {
-            foreach (var reel in Reels)
-            {
-                reel.Next();
-            }
         }
 
         public int HandlePayout()
@@ -93,13 +83,6 @@ namespace Dynamo.Business.Shared.Casino.Slots
         public void Next()
         {
             CurrentSymbol = CurrentSymbol.NextSymbol;
-        }
-
-        public async Task NextAsync(int delay)
-        {
-            Next();
-            await Task.Delay(delay);
-            var x = "got here";
         }
 
         public void Next(int numberToMove)
