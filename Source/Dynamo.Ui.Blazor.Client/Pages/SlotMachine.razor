@@ -1,0 +1,185 @@
+﻿@page "/slotmachine"
+<PageTitleSlot Machine></PageTitleSlot>
+@using Dynamo.Business.Shared.Casino.Slots
+
+<Modal @ref="outOfMoneyModal" Title="Ya Broke!">
+    <BodyTemplate>
+        You are out of money! Please insert more dollars.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="OnHideModalClick">Close</Button>
+    </FooterTemplate>
+</Modal>
+
+<h1>Slot Machine</h1>
+
+<div>
+    <h2>Balance: $@slotMachine.Money</h2>
+    <h3>Last Win: $@lastWin</h3>
+    <Button Color="ButtonColor.Primary" @onclick="InsertDollar">Insert Dollar</Button>
+</div>
+
+<div class="row">
+    @foreach (var reel in slotMachine.Reels)
+    {
+        <div class="col-2">
+            <img class="reel-image reel-next-next-image" src="images/@GetImageFileName(reel.CurrentSymbol.PreviousSymbol.PreviousSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
+            <img class="reel-image reel-next-image" src="images/@GetImageFileName(reel.CurrentSymbol.PreviousSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
+            <img class="reel-image" src="images/@GetImageFileName(reel.CurrentSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
+            <img class="reel-image reel-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
+            <img class="reel-image reel-previous-previous-image" src="images/@GetImageFileName(reel.CurrentSymbol.NextSymbol.NextSymbol.Symbol)" alt="@reel.CurrentSymbol.Symbol.ToString()" />
+        </div>
+    }
+    <div class="col-2">
+        <img @onclick="PullHandle" src="images/@HandleFile" alt="handle zero percent" />
+    </div>
+</div>
+
+@code {
+    private Modal outOfMoneyModal;
+    private int lastWin = 0;
+    private MechanicalSlotMachine slotMachine = new MechanicalSlotMachine(ReelStrings(), GetPayouts(), 10);
+    private string HandleFile = "handle-0-percent.png";
+
+    private async Task OnHideModalClick()
+    {
+        await outOfMoneyModal.HideAsync();
+    }
+
+    private void InsertDollar()
+    {
+        slotMachine.Money += 1;
+    }
+
+    private async Task PullHandle()
+    {
+        if (slotMachine.Money <= 0)
+        {
+            await outOfMoneyModal.ShowAsync();
+            return; 
+        }
+        
+        await PlayHandleAnimation();
+
+        if (slotMachine.Money <= 0)
+        {
+            lastWin = 0;
+        }
+        else
+        {
+            var random = new Random();
+            var randomNumbers = new List<int>();
+
+            //Assign a random number for each reel to spin to
+            for (var reel = 0; reel < slotMachine.Reels.Count; reel++)
+            {
+                var minValue = (reel + 1) * 10;
+                randomNumbers.Add(random.Next(minValue, minValue + slotMachine.Reels[reel].NumberOfSymbols));
+            }
+
+            //Advance the reels until the random number is hit for each one
+            for (var step = 1; step <= randomNumbers.Max(); step++)
+            {
+                for (var reel = 0; reel < slotMachine.Reels.Count; reel++)
+                {
+                    if (step < randomNumbers[reel])
+                    {
+                        slotMachine.Reels[reel].Next();
+                    }
+                }
+                await Task.Delay(150);
+                StateHasChanged();
+            }
+            lastWin = slotMachine.HandlePayout();
+        }
+    }
+    async Task PlayHandleAnimation()
+    {
+        HandleFile = "handle-10-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-20-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-30-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-40-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-20-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-10-percent.png";
+        StateHasChanged();
+        await Task.Delay(100);
+        HandleFile = "handle-0-percent.png";
+        StateHasChanged();
+    }
+
+    private static string GetImageFileName(Symbol symbol)
+    {
+        return symbol.ToString().ToLower().Replace(" ", "") + ".png";
+    }
+
+    public static List<string> ReelStrings()
+    {
+        return new List<string>
+        {
+            "Butterfly, Red Scarf, Guitar, Red Scarf, Cardigan, Snake, Butterfly, Heart hands, Butterfly, Red Lips, 13, Red Lips, 13, Cardigan, Friendship Bracelet, Red Lips, Red Scarf, Heart hands, Snake, Quill and Ink",
+            "Heart hands, Snake, Champagne, Cardigan, Quill and Ink, Cardigan, Cardigan, Snake, Red Scarf, Snake, Champagne, Friendship Bracelet, Snake, Butterfly, Red Scarf, Butterfly, 13, Snake, Cardigan, Champagne",
+            "Snake, 13, Friendship Bracelet, Red Scarf, Guitar, Red Scarf, Cardigan, 13, Guitar, Red Lips, Red Lips, Red Lips, Quill and Ink, Cardigan, Champagne, Red Scarf, Cardigan, Red Scarf, Statue of Liberty, Heart hands"
+        };
+    }
+
+    public static List<Payout> GetPayouts()
+    {
+        var oneHundredPayout = new Payout(new List<Symbol> { Symbol.QuillAndInk }, 100);
+        var fiftyPayout = new Payout(new List<Symbol> { Symbol.RedScarf }, 50);
+        var tenPayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedScarf, Symbol.RedLips, Symbol.StatueOfLiberty, Symbol.Butterfly, Symbol.Cardigan, Symbol.Champagne, Symbol.FriendshipBracelet }, 10);
+        var fivePayout = new Payout(new List<Symbol> { Symbol.HeartHands, Symbol.Thirteen, Symbol.RedLips, Symbol.RedScarf, Symbol.StatueOfLiberty }, 5);
+        var zeroPayout = new Payout(new List<Symbol> { Symbol.Guitar, Symbol.Snake }, 0);
+        return new List<Payout>()
+        {
+            oneHundredPayout,
+            fiftyPayout,
+            tenPayout,
+            fivePayout,
+            zeroPayout
+        };
+    }
+}
+
+<style>
+    .reel-image {
+        width: 90px;
+        height: auto;
+        display: block;
+        margin: auto;
+    }
+
+    .reel-previous-image {
+        height: auto;
+        transform: rotateX(60deg);
+        transform-origin: middle;
+    }
+
+    .reel-next-image {
+        height: auto;
+        transform: rotateX(-60deg);
+        transform-origin: middle;
+    }
+
+    .reel-previous-previous-image {
+        height: auto;
+        transform: rotateX(80deg);
+        transform-origin: middle;
+    }
+
+    .reel-next-next-image {
+        height: auto;
+        transform: rotateX(-80deg);
+        transform-origin: middle;
+    }
+
+</style>
