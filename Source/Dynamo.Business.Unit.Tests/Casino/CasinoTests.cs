@@ -46,7 +46,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
         [Test]
         public void Can_create_a_blackjack_game()
         {
-            var playerCount = 50000;
+            var playerCount = 500000;
             var blackjackGame = new Game(playerCount, 0.1666667); //1.66666667 is 1/10th of an hour or 10 minutes
 
             var players = new List<Player>();
@@ -63,18 +63,65 @@ namespace Dynamo.Business.Unit.Tests.Casino
             }
 
             double totalTime = 0;
+            double totalGameTime = 0;
             foreach (var player in players)
             {
                 var gameTime = player.GameTime;
                 var waitTime = player.WaitTime;
                 totalTime += gameTime + waitTime;
+                totalGameTime += player.TotalGameTime;
             }
+
+            var averageTotalGameTime = totalGameTime / playerCount;
+            Assert.That(averageTotalGameTime, Is.GreaterThan(0.15));
+            Assert.That(averageTotalGameTime, Is.LessThan(0.17)); //Should converge to 0.16666667
+
 
             var averageTimeInGame = totalTime / playerCount;
             //These numbers seem reasonable for a game that lasts 10 minutes on average
-            Assert.That(averageTimeInGame, Is.GreaterThan(0.26));
-            Assert.That(averageTimeInGame, Is.LessThan(0.27));
-
+            Assert.That(averageTimeInGame, Is.GreaterThan(0.36));
+            Assert.That(averageTimeInGame, Is.LessThan(0.39));
         }
+
+        [Test]
+        public void Can_create_a_game_room_and_play_all_three_games()
+        {
+            var playerCount = 5000000;
+            var gameRoom = new GameRoom(playerCount);
+
+            var players = new List<Player>();
+            for (var i = 0; i < playerCount; i++)
+            {
+                players.Add(new Player());
+            }
+
+            double currentTime = 0;
+            foreach (var player in players)
+            {
+                gameRoom.AddPlayer(player, currentTime);
+                currentTime += 0.21739562;
+            }
+
+            double totalTime = 0;
+            double totalGameTime = 0;
+            foreach (var player in players)
+            {
+                var gameTime = player.TotalGameTime;
+                var waitTime = player.WaitTime;
+                totalTime += gameTime + waitTime;
+                totalGameTime += player.TotalGameTime;
+            }
+
+            var averageTotalGameTime = totalGameTime / playerCount;
+            //These numbers seem reasonable for a game that lasts 10 minutes on average
+            Assert.That(averageTotalGameTime, Is.GreaterThan(0.44));
+            Assert.That(averageTotalGameTime, Is.LessThan(0.459)); //This should converge to 0.458333. 10 + 9 + 8.5 minutes is 0.458333 of an hour.
+
+            var averageTimeInGame = totalTime / playerCount;
+            //These numbers seem reasonable for a game that lasts 10 minutes on average
+            Assert.That(averageTimeInGame, Is.GreaterThan(0.36));
+            Assert.That(averageTimeInGame, Is.LessThan(0.42));
+        }
+
     }
 }

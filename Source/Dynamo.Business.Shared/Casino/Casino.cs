@@ -42,8 +42,8 @@ namespace Dynamo.Business.Shared.Casino
     {
         public double TimeInCasino { get; set; }
         public double LeavingTime { get; set; }
-        public double TotalTime { get; set; }
         public double GameTime { get; set; }
+        public double TotalGameTime { get; set; }
         public double WaitTime { get; set; }
         public double LastWaitTimeStart { get; set; }
     }
@@ -52,6 +52,7 @@ namespace Dynamo.Business.Shared.Casino
     {
         public Queue<Player> WaitingPlayers { get; set; }
         public Queue<Player> NextQueue { get; set; }
+        public Game NextGame { get; set; }
 
         private Player? _currentPlayer = null;
 
@@ -75,32 +76,80 @@ namespace Dynamo.Business.Shared.Casino
 
         public double AddPlayer(Player player, double currentTime)
         {
-            player.GameTime += TimeInGame[_playerCount];
+            player.GameTime = TimeInGame[_playerCount];
+            player.TotalGameTime += player.GameTime;
 
+            MovePlayersThroughTheGame(currentTime);
+
+            //No need to wait
             if (_currentPlayer == null)
             {
                 //The player never had to wait
                 _currentPlayer = player;
                 _currentPlayer.LeavingTime = currentTime + TimeInGame[_playerCount];
+                //return currentTime;
             }
-            player.LastWaitTimeStart = currentTime;
-            WaitingPlayers.Enqueue(player);
+            else
+            {
+                //Add the player to the waiting player's queue
+                player.LastWaitTimeStart = currentTime;
+                WaitingPlayers.Enqueue(player);
+            }
+
+            //Add the player to the waiting player's queue
+            //player.LastWaitTimeStart = currentTime;
+            //WaitingPlayers.Enqueue(player);
+
+            //MovePlayersThroughTheGame(currentTime);
+
+            _playerCount++;
+            return currentTime;
+        }
+
+        private void MovePlayersThroughTheGame(double currentTime)
+        {
             while (_currentPlayer != null && _currentPlayer.LeavingTime <= currentTime)
             {
                 var lastPlayer = _currentPlayer;
                 NextQueue.Enqueue(_currentPlayer);
+                if (NextGame != null)
+                {
+                    NextGame.AddPlayer(lastPlayer, lastPlayer.LeavingTime);
+                }
                 if (WaitingPlayers.Any())
                 {
                     _currentPlayer = WaitingPlayers.Dequeue();
-                    _currentPlayer.LeavingTime = currentTime + player.GameTime;
-                    _currentPlayer.WaitTime += currentTime - lastPlayer.LeavingTime;
+                    _currentPlayer.LeavingTime = lastPlayer.LeavingTime + _currentPlayer.GameTime;
+                    _currentPlayer.WaitTime += lastPlayer.LeavingTime - _currentPlayer.LastWaitTimeStart;
+                }
+                else
+                {
+                    _currentPlayer = null;
                 }
             }
-            _playerCount++;
-            return currentTime;
         }
     }
 
+    public class GameRoom
+    {
+        public Game Blackjack { get; private set; }
+        public Game Roulette { get; private set; }
+        public Game Craps { get; private set; }
+        public GameRoom(int playerCount)
+        {
+            Blackjack = new Game(playerCount, 0.1666666667); //10 minutes
+            Roulette = new Game(playerCount, 0.15); //9 minutes
+            Craps = new Game(playerCount, 0.1416666666667); //8.5 minutes
+
+            Blackjack.NextGame = Roulette;
+            Roulette.NextGame = Craps;
+        }
+
+        public void AddPlayer(Player player, double currentTime)
+        {
+            Blackjack.AddPlayer(player, currentTime);
+        }
+    }
 
     public static class MathHelper
     {
