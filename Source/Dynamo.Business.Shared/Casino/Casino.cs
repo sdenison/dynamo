@@ -2,37 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Dynamo.Business.Shared.AdventOfCode.Guard;
 
 namespace Dynamo.Business.Shared.Casino
 {
     public class Casino
     {
-        public SortedDictionary<double, Player> Players { get; set; }
+        //public SortedDictionary<double, Player> Players { get; set; }
+        public List<Player> Players { get; set; }
         public double CurrentTime { get; set; }
         public double TotalTime { get; set; }
 
         public Casino()
         {
-            Players = new SortedDictionary<double, Player>();
+            Players = new List<Player>();
         }
 
-        public void AddPlayer(Player player)
+        public void AddPlayer(Player player, double timeIncrement)
         {
-            if (Players.Count >= 1000)
-            {
-                var nextPlayerToExit = Players.FirstOrDefault();
-                TotalTime = CurrentTime + nextPlayerToExit.Key;
-                Players.Remove(nextPlayerToExit.Key);
-            }
-            var exitTime = player.TimeInCasino + CurrentTime;
-            Players.Add(exitTime, player);
-            CurrentTime += 0.0021739130;
-
-            var playersToRemove = Players.Where(x => x.Key < CurrentTime).ToList();
+            CurrentTime += timeIncrement;
+            var playersToRemove = Players.Where(x => x.LeavingTime < CurrentTime + timeIncrement).ToList();
             foreach (var playerToRemove in playersToRemove)
             {
-                Players.Remove(playerToRemove.Key);
+                Players.Remove(playerToRemove);
+            }
+
+            player.LeavingTime = player.TimeInCasino + CurrentTime;
+            Players.Add(player);
+
+            while (Players.Count > 1000)
+            {
+                var playerToRemove = Players.OrderBy(x => x.LeavingTime).First();
+                Players.Remove(playerToRemove);
+                CurrentTime = playerToRemove.LeavingTime;
+            }
+
+            if (Players.Count > 1000)
+            {
+                throw new Exception("Player count never exceeded 1000 in the original simulation");
             }
         }
     }
@@ -65,16 +73,8 @@ namespace Dynamo.Business.Shared.Casino
         public Game(int playerCount, double distributionMean)
         {
             TimeInGame = MathHelper.GenerateExponentialRandomVariables(distributionMean, playerCount);
-            //NextQueue = new Queue<Player>();
             WaitingPlayers = new Queue<Player>();
         }
-
-        //public Game(int playerCount, double distributionMean, Game previousGame)
-        //{
-        //    TimeInGame = MathHelper.GenerateExponentialRandomVariables(distributionMean, playerCount);
-        //    //NextQueue = new Queue<Player>();
-        //    //WaitingPlayers = previousGame.NextQueue;
-        //}
 
         public double AddPlayer(Player player, double currentTime)
         {
@@ -199,6 +199,31 @@ namespace Dynamo.Business.Shared.Casino
                 values[i] = -scale * Math.Log(1 - random.NextDouble());
             }
             return values;
+        }
+    }
+
+    public class PoissonRandom
+    {
+        private Random _random;
+
+        public PoissonRandom()
+        {
+            _random = new Random();
+        }
+
+        public int GeneratePoisson(double lambda)
+        {
+            double L = Math.Exp(-lambda);
+            int k = 0;
+            double p = 1.0;
+
+            do
+            {
+                k++;
+                p *= _random.NextDouble();
+            } while (p > L);
+
+            return k - 1;
         }
     }
 

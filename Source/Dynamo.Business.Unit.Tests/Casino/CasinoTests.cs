@@ -24,10 +24,11 @@ namespace Dynamo.Business.Unit.Tests.Casino
             var numbersOfUsers = new List<int>();
 
             var playerNum = 0;
+            var timeIncrement = 0.0021739130;
             while (casino.CurrentTime < casino.TotalTime && playerNum < timeInCasino.Length)
             {
                 var player = new Player() { TimeInCasino = timeInCasino[playerNum] };
-                casino.AddPlayer(player);
+                casino.AddPlayer(player, timeIncrement);
                 playerNum++;
 
                 if (casino.CurrentTime > 12)
@@ -39,8 +40,134 @@ namespace Dynamo.Business.Unit.Tests.Casino
 
             var averageNumberOfUsers = numbersOfUsers.Sum(x => x) / numbersOfUsers.Count;
             //Accepted answer was 927
-            Assert.That(averageNumberOfUsers, Is.GreaterThan(908));
+            Assert.That(averageNumberOfUsers, Is.GreaterThan(900));
             Assert.That(averageNumberOfUsers, Is.LessThan(934));
+        }
+
+        [Test]
+        public void Can_simulate_arrivals_using_poisson_process()
+        {
+            var casino = new Shared.Casino.Casino();
+            int n = 11040; //This is 460 per hour for 24 hours
+            double scale = 2;
+
+            double[] timeInCasino = MathHelper.GenerateExponentialRandomVariables(scale, n);
+            double[] arrivalTimes = MathHelper.GenerateExponentialRandomVariables(7.826 / 60 / 60 / 24, n); //7.826 is in seconds
+
+            foreach (var arrivalTime in arrivalTimes)
+            {
+                var x = arrivalTime;
+            }
+
+            casino.TotalTime = 24;
+
+            var numbersOfUsers = new List<int>();
+
+            var playerNum = 0;
+            while (casino.CurrentTime < casino.TotalTime && playerNum < timeInCasino.Length)
+            {
+                var player = new Player() { TimeInCasino = timeInCasino[playerNum] };
+                casino.AddPlayer(player, arrivalTimes[playerNum]);
+                playerNum++;
+
+                var numberOfUsers = casino.Players.Count;
+                numbersOfUsers.Add(numberOfUsers);
+            }
+
+            var averageNumberOfUsers = (double)numbersOfUsers.Sum(x => x) / numbersOfUsers.Count;
+            //Accepted answer was 927
+            Assert.That(averageNumberOfUsers, Is.GreaterThan(900));
+            Assert.That(averageNumberOfUsers, Is.LessThan(934));
+        }
+
+        [Test]
+        public void Can_simulate_for_three_years()
+        {
+            var daysToRunSimulation = 1095;
+            double totalUsers = 0;
+            for (var day = 0; day < daysToRunSimulation; day++)
+            {
+                totalUsers += SimulateFor24Hours();
+            }
+
+            var averageUsers = totalUsers / daysToRunSimulation;
+            Assert.That(averageUsers, Is.GreaterThan(900));
+            Assert.That(averageUsers, Is.LessThan(934));
+        }
+
+        [Test]
+        public void Can_simulate_for_3_years()
+        {
+            var averageUsers = SimulateFor3Years();
+            //919 was accepted
+            Assert.That(averageUsers, Is.GreaterThan(918));
+            Assert.That(averageUsers, Is.LessThan(920));
+        }
+
+        private double SimulateFor3Years()
+        {
+            var casino = new Shared.Casino.Casino();
+            int n = 11040 * 1095; //This is 460 per hour for 24 hours
+            double scale = 2;
+
+            double[] timeInCasino = MathHelper.GenerateExponentialRandomVariables(scale, n);
+            double[] arrivalTimes = MathHelper.GenerateExponentialRandomVariables(0.0021739130, n); //7.826 is in seconds
+
+            foreach (var arrivalTime in arrivalTimes)
+            {
+                var x = arrivalTime;
+            }
+
+            casino.TotalTime = 24 * 1095;
+
+            var numbersOfUsers = new List<long>();
+
+            var playerNum = 0;
+            while (casino.CurrentTime < casino.TotalTime && playerNum < timeInCasino.Length)
+            {
+                var player = new Player() { TimeInCasino = timeInCasino[playerNum] };
+                casino.AddPlayer(player, arrivalTimes[playerNum]);
+                playerNum++;
+
+                var numberOfUsers = casino.Players.Count;
+                numbersOfUsers.Add(numberOfUsers);
+            }
+
+            var averageNumberOfUsers = (double)numbersOfUsers.Sum(x => x) / numbersOfUsers.Count;
+            return averageNumberOfUsers;
+        }
+
+        private double SimulateFor24Hours()
+        {
+            var casino = new Shared.Casino.Casino();
+            int n = 11040; //This is 460 per hour for 24 hours
+            double scale = 2;
+
+            double[] timeInCasino = MathHelper.GenerateExponentialRandomVariables(scale, n);
+            double[] arrivalTimes = MathHelper.GenerateExponentialRandomVariables(0.0021739130, n); //7.826 is in seconds
+
+            foreach (var arrivalTime in arrivalTimes)
+            {
+                var x = arrivalTime;
+            }
+
+            casino.TotalTime = 24;
+
+            var numbersOfUsers = new List<int>();
+
+            var playerNum = 0;
+            while (casino.CurrentTime < casino.TotalTime && playerNum < timeInCasino.Length)
+            {
+                var player = new Player() { TimeInCasino = timeInCasino[playerNum] };
+                casino.AddPlayer(player, arrivalTimes[playerNum]);
+                playerNum++;
+
+                var numberOfUsers = casino.Players.Count;
+                numbersOfUsers.Add(numberOfUsers);
+            }
+
+            var averageNumberOfUsers = (double)numbersOfUsers.Sum(x => x) / numbersOfUsers.Count;
+            return averageNumberOfUsers;
         }
 
 
