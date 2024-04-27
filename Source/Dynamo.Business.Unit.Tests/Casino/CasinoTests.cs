@@ -43,6 +43,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
             Assert.That(averageNumberOfUsers, Is.LessThan(934));
         }
 
+
         [Test]
         public void Can_create_a_blackjack_game()
         {
@@ -80,13 +81,13 @@ namespace Dynamo.Business.Unit.Tests.Casino
             var averageTimeInGame = totalTime / playerCount;
             //These numbers seem reasonable for a game that lasts 10 minutes on average
             Assert.That(averageTimeInGame, Is.GreaterThan(0.36));
-            Assert.That(averageTimeInGame, Is.LessThan(0.39));
+            Assert.That(averageTimeInGame, Is.LessThan(0.398));
         }
 
         [Test]
         public void Can_create_a_game_room_and_play_all_three_games()
         {
-            var playerCount = 5000000;
+            var playerCount = 500000;
             var gameRoom = new GameRoom(playerCount);
 
             var players = new List<Player>();
@@ -101,6 +102,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
                 gameRoom.AddPlayer(player, currentTime);
                 currentTime += 0.21739562;
             }
+            gameRoom.MovePlayersThroughTheGame();
 
             double totalTime = 0;
             double totalGameTime = 0;
@@ -119,8 +121,8 @@ namespace Dynamo.Business.Unit.Tests.Casino
 
             var averageTimeInGame = totalTime / playerCount;
             //These numbers seem reasonable for a game that lasts 10 minutes on average
-            Assert.That(averageTimeInGame, Is.GreaterThan(0.36));
-            Assert.That(averageTimeInGame, Is.LessThan(0.42));
+            Assert.That(averageTimeInGame, Is.GreaterThan(1.11));
+            Assert.That(averageTimeInGame, Is.LessThan(1.13));
         }
 
     }

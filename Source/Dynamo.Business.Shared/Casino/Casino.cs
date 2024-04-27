@@ -51,28 +51,30 @@ namespace Dynamo.Business.Shared.Casino
     public class Game
     {
         public Queue<Player> WaitingPlayers { get; set; }
-        public Queue<Player> NextQueue { get; set; }
+        //public Queue<Player> NextQueue { get; set; }
         public Game NextGame { get; set; }
 
-        private Player? _currentPlayer = null;
+        public Player? _currentPlayer = null;
+
+        public string Name { get; set; }
 
         //This is the time each player will spend in the game
         public double[] TimeInGame { get; protected set; }
-        private int _playerCount = 0;
+        public int _playerCount = 0;
 
         public Game(int playerCount, double distributionMean)
         {
             TimeInGame = MathHelper.GenerateExponentialRandomVariables(distributionMean, playerCount);
-            NextQueue = new Queue<Player>();
+            //NextQueue = new Queue<Player>();
             WaitingPlayers = new Queue<Player>();
         }
 
-        public Game(int playerCount, double distributionMean, Game previousGame)
-        {
-            TimeInGame = MathHelper.GenerateExponentialRandomVariables(distributionMean, playerCount);
-            NextQueue = new Queue<Player>();
-            WaitingPlayers = previousGame.NextQueue;
-        }
+        //public Game(int playerCount, double distributionMean, Game previousGame)
+        //{
+        //    TimeInGame = MathHelper.GenerateExponentialRandomVariables(distributionMean, playerCount);
+        //    //NextQueue = new Queue<Player>();
+        //    //WaitingPlayers = previousGame.NextQueue;
+        //}
 
         public double AddPlayer(Player player, double currentTime)
         {
@@ -80,13 +82,14 @@ namespace Dynamo.Business.Shared.Casino
             player.TotalGameTime += player.GameTime;
 
             MovePlayersThroughTheGame(currentTime);
+            //MovePlayersThroughTheGame();
 
             //No need to wait
             if (_currentPlayer == null)
             {
                 //The player never had to wait
                 _currentPlayer = player;
-                _currentPlayer.LeavingTime = currentTime + TimeInGame[_playerCount];
+                _currentPlayer.LeavingTime = currentTime + player.GameTime;
                 //return currentTime;
             }
             else
@@ -106,12 +109,12 @@ namespace Dynamo.Business.Shared.Casino
             return currentTime;
         }
 
-        private void MovePlayersThroughTheGame(double currentTime)
+        public void MovePlayersThroughTheGame(double currentTime)
         {
             while (_currentPlayer != null && _currentPlayer.LeavingTime <= currentTime)
             {
                 var lastPlayer = _currentPlayer;
-                NextQueue.Enqueue(_currentPlayer);
+                var lastPlayerLeavingTime = _currentPlayer.LeavingTime;
                 if (NextGame != null)
                 {
                     NextGame.AddPlayer(lastPlayer, lastPlayer.LeavingTime);
@@ -119,14 +122,40 @@ namespace Dynamo.Business.Shared.Casino
                 if (WaitingPlayers.Any())
                 {
                     _currentPlayer = WaitingPlayers.Dequeue();
-                    _currentPlayer.LeavingTime = lastPlayer.LeavingTime + _currentPlayer.GameTime;
-                    _currentPlayer.WaitTime += lastPlayer.LeavingTime - _currentPlayer.LastWaitTimeStart;
+                    _currentPlayer.LeavingTime = lastPlayerLeavingTime + _currentPlayer.GameTime;
+                    _currentPlayer.WaitTime += lastPlayerLeavingTime - _currentPlayer.LastWaitTimeStart;
                 }
                 else
                 {
                     _currentPlayer = null;
                 }
             }
+        }
+
+        public void MovePlayersThroughTheGame()
+        {
+            while (_currentPlayer != null)
+            {
+                var lastPlayer = _currentPlayer;
+                var lastPlayerLeavingTime = _currentPlayer.LeavingTime;
+                if (NextGame != null)
+                {
+                    NextGame.AddPlayer(lastPlayer, lastPlayer.LeavingTime);
+                }
+                if (WaitingPlayers.Any())
+                {
+                    _currentPlayer = WaitingPlayers.Dequeue();
+                    _currentPlayer.LeavingTime = lastPlayerLeavingTime + _currentPlayer.GameTime;
+                    _currentPlayer.WaitTime += lastPlayerLeavingTime - _currentPlayer.LastWaitTimeStart;
+                }
+                else
+                {
+                    _currentPlayer = null;
+                }
+            }
+
+            if (NextGame != null)
+                NextGame.MovePlayersThroughTheGame();
         }
     }
 
@@ -138,8 +167,11 @@ namespace Dynamo.Business.Shared.Casino
         public GameRoom(int playerCount)
         {
             Blackjack = new Game(playerCount, 0.1666666667); //10 minutes
+            Blackjack.Name = "Blackjack";
             Roulette = new Game(playerCount, 0.15); //9 minutes
+            Roulette.Name = "Roulette";
             Craps = new Game(playerCount, 0.1416666666667); //8.5 minutes
+            Craps.Name = "Craps";
 
             Blackjack.NextGame = Roulette;
             Roulette.NextGame = Craps;
@@ -148,6 +180,11 @@ namespace Dynamo.Business.Shared.Casino
         public void AddPlayer(Player player, double currentTime)
         {
             Blackjack.AddPlayer(player, currentTime);
+        }
+
+        public void MovePlayersThroughTheGame()
+        {
+            Blackjack.MovePlayersThroughTheGame();
         }
     }
 
