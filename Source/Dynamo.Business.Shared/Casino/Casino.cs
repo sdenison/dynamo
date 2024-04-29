@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using Dynamo.Business.Shared.AdventOfCode.Guard;
 
 namespace Dynamo.Business.Shared.Casino
 {
@@ -21,7 +18,6 @@ namespace Dynamo.Business.Shared.Casino
 
         public void AddPlayer(Player player, double timeIncrement)
         {
-            CurrentTime += timeIncrement;
             var playersToRemove = Players.Where(x => x.LeavingTime < CurrentTime + timeIncrement).ToList();
             foreach (var playerToRemove in playersToRemove)
             {
@@ -31,6 +27,7 @@ namespace Dynamo.Business.Shared.Casino
             player.LeavingTime = player.TimeInCasino + CurrentTime;
             Players.Add(player);
 
+            CurrentTime += timeIncrement;
             while (Players.Count > 1000)
             {
                 var playerToRemove = Players.OrderBy(x => x.LeavingTime).First();
