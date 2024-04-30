@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace Dynamo.Business.Shared.Casino.StreetDice
 {
@@ -28,13 +26,6 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             return new Game(players);
         }
 
-
-        public int PlayerShoots(Player shooter)
-        {
-            var bet = (shooter.MaximumPercentage / 2) * shooter.CurrentMoney;
-            return 0;
-        }
-
         public List<Bet> GetBets(Player shooter)
         {
             int shooterBet = (int)Math.Ceiling(shooter.CurrentMoney * shooter.MaximumPercentage / 2);
@@ -45,7 +36,6 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             {
                 if (player == shooter)
                     continue;
-                //if (shooter.Nemeses.Contains(player) || player.Nemeses.Contains(shooter))
                 if (player.Nemeses.Contains(shooter))
                 {
                     int nemesisBet = 0;
@@ -65,6 +55,7 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
                     if (nemesisBet > player.CurrentMoney)
                         throw new Exception();
+
                     bets.Add(new Bet(toWin: false, nemesisBet, player));
                 }
                 else
@@ -75,7 +66,6 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
                     }
                 }
             }
-
             return bets;
         }
     }

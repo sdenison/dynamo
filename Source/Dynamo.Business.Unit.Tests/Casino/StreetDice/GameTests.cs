@@ -7,7 +7,6 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
 {
     public class GameTests
     {
-
         [Test]
         public void Let_player_1_play_the_game()
         {
