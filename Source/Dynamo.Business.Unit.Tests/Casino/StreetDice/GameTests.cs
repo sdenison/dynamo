@@ -106,6 +106,20 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
             Assert.That(game.Players[3].CurrentMoney, Is.EqualTo(120));
         }
 
+        [Test]
+        public void Can_get_spring_2024_week_4_part_2_answer()
+        {
+            var playerStrings = TestDataProvider.GetPlayerStrings();
+            var game = Game.Parse(playerStrings);
+            var rollOutcomes = Game.ParseRollOutcomes(TestDataProvider.GetWinLossString());
+            game.PlayGame(rollOutcomes);
+            var x = game.RoundsPlayed;
+
+            var mostMoney = game.Players.Max(x => x.CurrentMoney);
+            var mostMoneyPlayer = game.Players.First(x => x.CurrentMoney == mostMoney);
+            Assert.That(game.RoundsPlayed, Is.EqualTo(91));
+        }
+
         public List<bool> GetDiceOutcomes()
         {
             var outcomeStrings = "W,L,L,W,W,W,L,L,L,W,L,W,L,L,W,W,W".Split(",");

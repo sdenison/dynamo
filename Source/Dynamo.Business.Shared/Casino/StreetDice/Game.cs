@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Dynamo.Business.Shared.Casino.StreetDice
 {
     public class Game
     {
         public List<Player> Players { get; private set; }
-        public List<Player> PlayersInGame { get; private set; }
+        public SortedDictionary<int, Player> PlayersInGame { get; private set; }
         public int Pot { get; private set; }
         public int RoundsPlayed { get; set; }
 
@@ -44,11 +43,24 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             return new Game(players);
         }
 
+        public static List<bool> ParseRollOutcomes(string rollOutcomesString)
+        {
+            var outcomes = new List<bool>();
+            foreach (var outcomeString in rollOutcomesString.Split(","))
+            {
+                if (outcomeString == "W")
+                    outcomes.Add(true);
+                else
+                    outcomes.Add(false);
+            }
+            return outcomes;
+        }
 
         public List<Bet> GetBets(Player shooter)
         {
             shooter.SatOutInARow = 0;
             int shooterBet = (int)Math.Ceiling(shooter.CurrentMoney * shooter.MaximumPercentage / 2);
+
             //Shooter always bets
             var bets = new List<Bet> { new Bet(toWin: true, amount: shooterBet, player: shooter) };
             var player = shooter.NextPlayer;
@@ -110,11 +122,14 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             }
 
             var winners = bets.Where(x => x.ToWin == win).ToList();
-            var winAmount = (int)Pot / winners.Count;
-            foreach (var bet in winners)
+            if (winners.Count > 0)
             {
-                bet.Player.CurrentMoney += winAmount;
-                Pot -= winAmount;
+                var winAmount = (int)Pot / winners.Count;
+                foreach (var bet in winners)
+                {
+                    bet.Player.CurrentMoney += winAmount;
+                    Pot -= winAmount;
+                }
             }
         }
 
@@ -122,7 +137,7 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
         {
             RoundsPlayed = 0;
             var shooter = Players[0];
-            var player = Players[0];
+            //var player = Players[0];
             foreach (var rollOutcome in rollOutcomes)
             {
                 if (shooter.NextPlayer == shooter)
@@ -132,32 +147,27 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
                     return;
                 }
                 PlayRound(shooter, rollOutcome);
-                player = shooter;
-                do
+                var player = shooter.NextPlayer;
+                while (player != shooter)
                 {
-                    if (player.SatOutInARow > 0)
+                    if (player.SatOutInARow >= 3 || player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
                     {
-                        var x = "got here";
-                    }
-                    if (player.SatOutInARow > 1)
-                    {
-                        var x = "got here";
-                    }
-                    if (player.SatOutInARow >= 3)
-                    {
-                        player.PreviousPlayer.NextPlayer = player.NextPlayer;
-                        player.NextPlayer.PreviousPlayer = player.PreviousPlayer;
-                        continue;
-                    }
-                    if (player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
-                    {
-                        player.PreviousPlayer.NextPlayer = player.NextPlayer;
-                        player.NextPlayer.PreviousPlayer = player.PreviousPlayer;
+                        RemovePlayer(player);
                     }
                     player = player.NextPlayer;
-                } while (player != shooter);
+                }
+                if (shooter.SatOutInARow >= 3 || shooter.CurrentMoney == 0 || AllNemesisHaveDropped(shooter))
+                {
+                    RemovePlayer(shooter);
+                }
                 shooter = shooter.NextPlayer;
             }
+        }
+
+        private void RemovePlayer(Player player)
+        {
+            player.PreviousPlayer.NextPlayer = player.NextPlayer;
+            player.NextPlayer.PreviousPlayer = player.PreviousPlayer;
         }
 
         public bool AllNemesisHaveDropped(Player player)

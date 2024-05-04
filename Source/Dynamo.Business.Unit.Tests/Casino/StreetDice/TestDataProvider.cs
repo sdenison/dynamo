@@ -4,6 +4,12 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice;
 
 public static class TestDataProvider
 {
+
+    public static string GetWinLossString()
+    {
+        return "W,L,W,W,W,L,W,W,W,W,W,L,L,W,W,W,L,L,L,L,L,W,L,W,W,L,W,W,W,W,W,W,L,L,W,W,W,W,L,W,L,L,W,W,L,L,W,W,L,L,W,L,W,L,W,W,W,W,L,L,W,W,L,W,W,W,W,L,L,L,L,W,L,W,L,W,W,W,L,W,W,L,W,L,W,W,W,W,L,W,W,W,W,W,W,W,W,L,W,L";
+    }
+
     public static List<string> GetPlayerStrings()
     {
         return new List<string>
