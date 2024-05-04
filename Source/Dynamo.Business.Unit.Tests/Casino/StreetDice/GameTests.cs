@@ -32,7 +32,6 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
         public void Can_play_game_from_spring_2024_week_4_part_1_example()
         {
             var playerStrings = new List<string>
-
             {
                 "1: $40 50% - 4,3",
                 "2: $50 40% - 4,1",
@@ -88,6 +87,51 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
             Assert.That(game.Players[50].Nemeses[3].PlayerId, Is.EqualTo(102));
             Assert.That(game.Players[499].PlayerId, Is.EqualTo(500));
             Assert.That(game.Players[499].Nemeses.Last().PlayerId, Is.EqualTo(433));
+        }
+
+        [Test]
+        public void Can_play_rounds_of_dice()
+        {
+            var playerStrings = new List<string>
+            {
+                "1: $40 50% - 4,3",
+                "2: $50 40% - 4,1",
+                "3: $10 30% - 2,1",
+                "4: $20 35% - 2,3"
+            };
+            var game = Game.Parse(playerStrings);
+            //game.PlayRound(game.Players[0], true);
+            var rollOutcomes = GetDiceOutcomes();
+            game.PlayGame(rollOutcomes);
+            Assert.That(game.RoundsPlayed, Is.EqualTo(15));
+
+        }
+
+        public List<bool> GetDiceOutcomes()
+        {
+            var outcomeStrings = "W,L,L,W,W,W,L,L,L,W,L,W,L,L,W,W,W".Split(",");
+            var outcomes = new List<bool>();
+            foreach (var outcomeString in outcomeStrings)
+            {
+                if (outcomeString == "W")
+                {
+                    outcomes.Add(true);
+                }
+                else
+                {
+                    outcomes.Add(false);
+                }
+            }
+            return outcomes;
+        }
+
+        [Test]
+        public void Play_with_pot()
+        {
+            var pot = 10;
+            var winnerCount = 3;
+            var winAmount = pot / winnerCount;
+            Assert.That(winAmount, Is.EqualTo(3));
         }
     }
 }

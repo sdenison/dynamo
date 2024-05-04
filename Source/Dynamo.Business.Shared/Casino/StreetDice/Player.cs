@@ -13,6 +13,9 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
         public List<Player> Nemeses { get; set; }
         private List<int> NemesisIds { get; }
         public int MaxComfortableBet => (int)Math.Ceiling(MaximumPercentage * CurrentMoney);
+        public int SatOutInARow { get; set; } = 0;
+        public Player NextPlayer { get; set; }
+        public Player PreviousPlayer { get; set; }
 
 
         public static Player Parse(string playerString)
