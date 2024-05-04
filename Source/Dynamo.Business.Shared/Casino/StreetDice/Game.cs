@@ -51,13 +51,10 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             int shooterBet = (int)Math.Ceiling(shooter.CurrentMoney * shooter.MaximumPercentage / 2);
             //Shooter always bets
             var bets = new List<Bet> { new Bet(toWin: true, amount: shooterBet, player: shooter) };
-
             var player = shooter.NextPlayer;
+
             while (shooter != player)
-            //foreach (var player in Players)
             {
-                if (player == shooter)
-                    continue;
                 if (player.Nemeses.Contains(shooter))
                 {
                     player.SatOutInARow = 0;
@@ -100,6 +97,9 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
         public void PlayRound(Player shooter, bool win)
         {
+
+            var totalPlayerMoney = TotalPlayerMoney(shooter) + Pot;
+
             RoundsPlayed++;
             var bets = GetBets(shooter);
 
@@ -135,9 +135,24 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
                 player = shooter;
                 do
                 {
-                    if (player.SatOutInARow >= 3 || player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
+                    if (player.SatOutInARow > 0)
+                    {
+                        var x = "got here";
+                    }
+                    if (player.SatOutInARow > 1)
+                    {
+                        var x = "got here";
+                    }
+                    if (player.SatOutInARow >= 3)
                     {
                         player.PreviousPlayer.NextPlayer = player.NextPlayer;
+                        player.NextPlayer.PreviousPlayer = player.PreviousPlayer;
+                        continue;
+                    }
+                    if (player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
+                    {
+                        player.PreviousPlayer.NextPlayer = player.NextPlayer;
+                        player.NextPlayer.PreviousPlayer = player.PreviousPlayer;
                     }
                     player = player.NextPlayer;
                 } while (player != shooter);
@@ -155,6 +170,18 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
                 currentPlayer = currentPlayer.NextPlayer;
             }
             return true;
+        }
+
+        public int TotalPlayerMoney(Player shooter)
+        {
+            var totalMoney = shooter.CurrentMoney;
+            var player = shooter.NextPlayer;
+            while (player != shooter)
+            {
+                totalMoney += player.CurrentMoney;
+                player = player.NextPlayer;
+            }
+            return totalMoney;
         }
     }
 

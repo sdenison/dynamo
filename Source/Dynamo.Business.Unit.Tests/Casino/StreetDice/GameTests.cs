@@ -100,11 +100,10 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
                 "4: $20 35% - 2,3"
             };
             var game = Game.Parse(playerStrings);
-            //game.PlayRound(game.Players[0], true);
             var rollOutcomes = GetDiceOutcomes();
             game.PlayGame(rollOutcomes);
             Assert.That(game.RoundsPlayed, Is.EqualTo(15));
-
+            Assert.That(game.Players[3].CurrentMoney, Is.EqualTo(120));
         }
 
         public List<bool> GetDiceOutcomes()
