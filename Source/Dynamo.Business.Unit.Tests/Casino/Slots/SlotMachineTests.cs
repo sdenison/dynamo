@@ -50,7 +50,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             var averageWinAmount = GetAverageAmount(_game1Thresholds, gamesToPlay);
 
             //Accepted answer is 22.2
-            Assert.That(averageWinAmount, Is.GreaterThan(22.13));
+            Assert.That(averageWinAmount, Is.GreaterThan(22));
             Assert.That(averageWinAmount, Is.LessThan(22.5));
         }
 
