@@ -117,7 +117,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
 
             var mostMoney = game.Players.Max(x => x.CurrentMoney);
             var mostMoneyPlayer = game.Players.First(x => x.CurrentMoney == mostMoney);
-            Assert.That(game.RoundsPlayed, Is.EqualTo(91));
+            Assert.That(game.RoundsPlayed, Is.EqualTo(80));
         }
 
         public List<bool> GetDiceOutcomes()

@@ -7,7 +7,7 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
     public class Game
     {
         public List<Player> Players { get; private set; }
-        public SortedDictionary<int, Player> PlayersInGame { get; private set; }
+        public List<Player> PlayersInGame { get; private set; }
         public int Pot { get; private set; }
         public int RoundsPlayed { get; set; }
 
@@ -16,6 +16,9 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             Players = players;
             Pot = 0;
             RoundsPlayed = 0;
+            PlayersInGame = new List<Player>();
+            foreach (var player in Players)
+                PlayersInGame.Add(player);
         }
 
         public static Game Parse(List<string> playerStrings)
@@ -25,16 +28,6 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             {
                 players.Add(Player.Parse(playerString));
             }
-
-            for (int i = 1; i < players.Count - 1; i++)
-            {
-                players[i].NextPlayer = players[i + 1];
-                players[i].PreviousPlayer = players[i - 1];
-            }
-            players[0].PreviousPlayer = players[players.Count - 1];
-            players[0].NextPlayer = players[1];
-            players[players.Count - 1].NextPlayer = players[0];
-            players[players.Count - 1].PreviousPlayer = players[players.Count - 2];
 
             foreach (var player in players)
             {
@@ -63,55 +56,59 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
             //Shooter always bets
             var bets = new List<Bet> { new Bet(toWin: true, amount: shooterBet, player: shooter) };
-            var player = shooter.NextPlayer;
 
-            while (shooter != player)
+            foreach (var player in PlayersInGame.Where(x => x.PlayerId > shooter.PlayerId).OrderBy(x => x.PlayerId))
             {
-                if (player.Nemeses.Contains(shooter))
-                {
-                    player.SatOutInARow = 0;
-                    int nemesisBet = 0;
-
-                    if (shooterBet > player.CurrentMoney)
-                        //Go all in
-                        nemesisBet = player.CurrentMoney;
-                    else if (shooterBet > player.MaxComfortableBet)
-                        //Take the shooter's number
-                        nemesisBet = shooterBet;
-                    else
-                        //Use player's number
-                        nemesisBet = player.MaxComfortableBet;
-
-                    if (nemesisBet == 0)
-                        throw new Exception($"Player {player.PlayerId} has nemisisBet of 0 when shooter is {shooter.PlayerId}");
-
-                    if (nemesisBet > player.CurrentMoney)
-                        throw new Exception();
-
-                    bets.Add(new Bet(toWin: false, nemesisBet, player));
-                }
-                else
-                {
-                    if (player.MaxComfortableBet >= shooterBet)
-                    {
-                        bets.Add(new Bet(toWin: true, shooterBet, player));
-                        player.SatOutInARow = 0;
-                    }
-                    else
-                    {
-                        player.SatOutInARow += 1;
-                    }
-                }
-                player = player.NextPlayer;
+                AddBetForPlayer(shooterBet, player, shooter, bets);
+            }
+            foreach (var player in PlayersInGame.Where(x => x.PlayerId < shooter.PlayerId).OrderBy(x => x.PlayerId))
+            {
+                AddBetForPlayer(shooterBet, player, shooter, bets);
             }
             return bets;
         }
 
+        private void AddBetForPlayer(int shooterBet, Player player, Player shooter, List<Bet> bets)
+        {
+            if (player.Nemeses.Contains(shooter))
+            {
+                player.SatOutInARow = 0;
+                int nemesisBet = 0;
+
+                if (shooterBet > player.CurrentMoney)
+                    //Go all in
+                    nemesisBet = player.CurrentMoney;
+                else if (shooterBet > player.MaxComfortableBet)
+                    //Take the shooter's number
+                    nemesisBet = shooterBet;
+                else
+                    //Use player's number
+                    nemesisBet = player.MaxComfortableBet;
+
+                if (nemesisBet == 0)
+                    throw new Exception($"Player {player.PlayerId} has nemisisBet of 0 when shooter is {shooter.PlayerId}");
+
+                if (nemesisBet > player.CurrentMoney)
+                    throw new Exception();
+
+                bets.Add(new Bet(toWin: false, nemesisBet, player));
+            }
+            else
+            {
+                if (player.MaxComfortableBet >= shooterBet)
+                {
+                    bets.Add(new Bet(toWin: true, shooterBet, player));
+                    player.SatOutInARow = 0;
+                }
+                else
+                {
+                    player.SatOutInARow += 1;
+                }
+            }
+        }
+
         public void PlayRound(Player shooter, bool win)
         {
-
-            var totalPlayerMoney = TotalPlayerMoney(shooter) + Pot;
-
             RoundsPlayed++;
             var bets = GetBets(shooter);
 
@@ -137,61 +134,59 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
         {
             RoundsPlayed = 0;
             var shooter = Players[0];
-            //var player = Players[0];
+
             foreach (var rollOutcome in rollOutcomes)
             {
-                if (shooter.NextPlayer == shooter)
-                {
-                    shooter.CurrentMoney += Pot;
-                    Pot = 0;
-                    return;
-                }
                 PlayRound(shooter, rollOutcome);
-                var player = shooter.NextPlayer;
-                while (player != shooter)
+                var playersToRemove = new List<Player>();
+                foreach (var player in PlayersInGame.Where(x => x.PlayerId >= shooter.PlayerId).OrderBy(x => x.PlayerId))
                 {
                     if (player.SatOutInARow >= 3 || player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
-                    {
-                        RemovePlayer(player);
-                    }
-                    player = player.NextPlayer;
+                        playersToRemove.Add(player);
                 }
-                if (shooter.SatOutInARow >= 3 || shooter.CurrentMoney == 0 || AllNemesisHaveDropped(shooter))
+                foreach (var player in PlayersInGame.Where(x => x.PlayerId < shooter.PlayerId).OrderBy(x => x.PlayerId))
                 {
-                    RemovePlayer(shooter);
+                    if (player.SatOutInARow >= 3 || player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
+                        playersToRemove.Add(player);
                 }
-                shooter = shooter.NextPlayer;
+                foreach (var playerToRemove in playersToRemove)
+                {
+                    PlayersInGame.Remove(playerToRemove);
+                    if (PlayersInGame.Count == 1)
+                    {
+                        PlayersInGame[0].CurrentMoney += Pot;
+                        Pot = 0;
+                        return;
+                    }
+                }
+                shooter = GetNextPlayer(shooter.PlayerId);
+            }
+
+        }
+
+        private Player GetNextPlayer(int playerId)
+        {
+            if (PlayersInGame.Max(x => x.PlayerId) > playerId)
+            {
+                var minPlayerId = PlayersInGame.Where(x => x.PlayerId > playerId).Min(x => x.PlayerId);
+                return PlayersInGame.First(x => x.PlayerId == minPlayerId);
+            }
+            else
+            {
+                return PlayersInGame.First();
             }
         }
 
-        private void RemovePlayer(Player player)
+        public bool AllNemesisHaveDropped(Player nemesis)
         {
-            player.PreviousPlayer.NextPlayer = player.NextPlayer;
-            player.NextPlayer.PreviousPlayer = player.PreviousPlayer;
-        }
-
-        public bool AllNemesisHaveDropped(Player player)
-        {
-            var currentPlayer = player;
-            while (currentPlayer.NextPlayer != player)
+            foreach (var player in PlayersInGame)
             {
-                if (currentPlayer.Nemeses.Contains(player))
+                if (player.Nemeses.Contains(nemesis))
+                {
                     return false;
-                currentPlayer = currentPlayer.NextPlayer;
+                }
             }
             return true;
-        }
-
-        public int TotalPlayerMoney(Player shooter)
-        {
-            var totalMoney = shooter.CurrentMoney;
-            var player = shooter.NextPlayer;
-            while (player != shooter)
-            {
-                totalMoney += player.CurrentMoney;
-                player = player.NextPlayer;
-            }
-            return totalMoney;
         }
     }
 
