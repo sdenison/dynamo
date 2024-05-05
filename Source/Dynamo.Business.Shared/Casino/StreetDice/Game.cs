@@ -132,19 +132,29 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
             foreach (var rollOutcome in rollOutcomes)
             {
-                if (shooter.PlayerId == 73)
-                {
-                    var x = "got here";
-                }
                 PlayRound(shooter, rollOutcome);
 
-                foreach (var player in PlayersInGame.OrderBy(x => x.PlayerId))
+                foreach (var player in PlayersInGame)
                 {
                     if (player.SatOutInARow == 3 || player.CurrentMoney <= 0 || AllNemesisHaveDropped(player))
                     {
                         player.Deleted = true;
                     }
                 }
+                var deletedPlayers = PlayersInGame.Where(x => x.Deleted).ToList();
+                foreach (var player in deletedPlayers)
+                {
+                    PlayersInGame.Remove(player);
+                    if (PlayersInGame.Count == 1)
+                    {
+                        PlayersInGame[0].CurrentMoney += Pot;
+                        Pot = 0;
+                        return;
+                    }
+                }
+                shooter = GetNextPlayer(shooter.PlayerId);
+                RoundsPlayed++;
+
                 //foreach (var player in PlayersInGame.Where(x => x.PlayerId >= shooter.PlayerId))
                 //{
                 //    if (player.SatOutInARow == 3 || player.CurrentMoney <= 0 || AllNemesisHaveDropped(player))
@@ -159,19 +169,19 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
                 //        player.Deleted = true;
                 //    }
                 //}
-                var deletedPlayers = PlayersInGame.Where(x => x.Deleted).ToList();
-                foreach (var player in deletedPlayers)
-                {
-                    PlayersInGame.Remove(player);
-                    if (PlayersInGame.Count == 1)
-                    {
-                        PlayersInGame[0].CurrentMoney += Pot;
-                        Pot = 0;
-                        return;
-                    }
-                }
-                shooter = GetNextPlayer(shooter.PlayerId);
-                RoundsPlayed++;
+                //var deletedPlayers = PlayersInGame.Where(x => x.Deleted).ToList();
+                //foreach (var player in deletedPlayers)
+                //{
+                //    PlayersInGame.Remove(player);
+                //    if (PlayersInGame.Count == 1)
+                //    {
+                //        PlayersInGame[0].CurrentMoney += Pot;
+                //        Pot = 0;
+                //        return;
+                //    }
+                //}
+                //shooter = GetNextPlayer(shooter.PlayerId);
+                //RoundsPlayed++;
 
                 //while (true)
                 //{
@@ -195,6 +205,7 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
                 //while (true)
                 //{
+
                 //    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => x.PlayerId > shooter.PlayerId && (x.SatOutInARow >= 3 || x.CurrentMoney == 0 || AllNemesisHaveDropped(x)));
                 //    if (playerToRemove != null)
                 //    {

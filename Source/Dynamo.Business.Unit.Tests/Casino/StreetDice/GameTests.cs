@@ -103,7 +103,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.StreetDice
             var rollOutcomes = Game.ParseRollOutcomes("W,L,L,W,W,W,L,L,L,W,L,W,L,L,W,W,W");
             game.PlayGame(rollOutcomes);
             //This is breaking when I added to RoundsPlayed after removing players
-            //Assert.That(game.RoundsPlayed, Is.EqualTo(15));
+            Assert.That(game.RoundsPlayed, Is.EqualTo(15));
             Assert.That(game.Players[3].CurrentMoney, Is.EqualTo(120));
         }
 
