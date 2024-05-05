@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Dynamo.Business.Shared.Casino.StreetDice
 {
@@ -52,18 +53,13 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
         public List<Bet> GetBets(Player shooter)
         {
             shooter.SatOutInARow = 0;
-            int shooterBet = (int)Math.Ceiling(shooter.CurrentMoney * shooter.MaximumPercentage / 2);
 
             //Shooter always bets
-            var bets = new List<Bet> { new Bet(toWin: true, amount: shooterBet, player: shooter) };
+            var bets = new List<Bet> { new Bet(toWin: true, amount: shooter.ShooterBet, player: shooter) };
 
-            foreach (var player in PlayersInGame.Where(x => x.PlayerId > shooter.PlayerId).OrderBy(x => x.PlayerId))
+            foreach (var player in PlayersInGame.Where(x => x != shooter))
             {
-                AddBetForPlayer(shooterBet, player, shooter, bets);
-            }
-            foreach (var player in PlayersInGame.Where(x => x.PlayerId < shooter.PlayerId).OrderBy(x => x.PlayerId))
-            {
-                AddBetForPlayer(shooterBet, player, shooter, bets);
+                AddBetForPlayer(shooter.ShooterBet, player, shooter, bets);
             }
             return bets;
         }
@@ -95,7 +91,7 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             }
             else
             {
-                if (player.MaxComfortableBet >= shooterBet)
+                if (shooterBet <= player.MaxComfortableBet)
                 {
                     bets.Add(new Bet(toWin: true, shooterBet, player));
                     player.SatOutInARow = 0;
@@ -109,7 +105,6 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
         public void PlayRound(Player shooter, bool win)
         {
-            RoundsPlayed++;
             var bets = GetBets(shooter);
 
             foreach (var bet in bets)
@@ -133,35 +128,74 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
         public void PlayGame(List<bool> rollOutcomes)
         {
             RoundsPlayed = 0;
-            var shooter = Players[0];
+            var shooter = PlayersInGame[0];
 
             foreach (var rollOutcome in rollOutcomes)
             {
-                PlayRound(shooter, rollOutcome);
-                while (true)
+                if (shooter.PlayerId == 73)
                 {
-                    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => (x.SatOutInARow >= 3 || x.CurrentMoney <= 0 || AllNemesisHaveDropped(x)));
-                    if (playerToRemove != null)
+                    var x = "got here";
+                }
+                PlayRound(shooter, rollOutcome);
+
+                foreach (var player in PlayersInGame.OrderBy(x => x.PlayerId))
+                {
+                    if (player.SatOutInARow == 3 || player.CurrentMoney <= 0 || AllNemesisHaveDropped(player))
                     {
-                        PlayersInGame.Remove(playerToRemove);
-                        if (PlayersInGame.Count == 1)
-                        {
-                            PlayersInGame[0].CurrentMoney += Pot;
-                            Pot = 0;
-                            return;
-                        }
+                        player.Deleted = true;
                     }
-                    else
+                }
+                //foreach (var player in PlayersInGame.Where(x => x.PlayerId >= shooter.PlayerId))
+                //{
+                //    if (player.SatOutInARow == 3 || player.CurrentMoney <= 0 || AllNemesisHaveDropped(player))
+                //    {
+                //        player.Deleted = true;
+                //    }
+                //}
+                //foreach (var player in PlayersInGame.Where(x => x.PlayerId < shooter.PlayerId))
+                //{
+                //    if (player.SatOutInARow == 3 || player.CurrentMoney <= 0 || AllNemesisHaveDropped(player))
+                //    {
+                //        player.Deleted = true;
+                //    }
+                //}
+                var deletedPlayers = PlayersInGame.Where(x => x.Deleted).ToList();
+                foreach (var player in deletedPlayers)
+                {
+                    PlayersInGame.Remove(player);
+                    if (PlayersInGame.Count == 1)
                     {
-                        break;
+                        PlayersInGame[0].CurrentMoney += Pot;
+                        Pot = 0;
+                        return;
                     }
                 }
                 shooter = GetNextPlayer(shooter.PlayerId);
-
+                RoundsPlayed++;
 
                 //while (true)
                 //{
-                //    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => x.PlayerId >= shooter.PlayerId && (x.SatOutInARow >= 3 || x.CurrentMoney == 0 || AllNemesisHaveDropped(x)));
+                //    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => (x.SatOutInARow >= 3 || x.CurrentMoney <= 0 || AllNemesisHaveDropped(x)));
+                //    if (playerToRemove != null)
+                //    {
+                //        PlayersInGame.Remove(playerToRemove);
+                //        if (PlayersInGame.Count == 1)
+                //        {
+                //            PlayersInGame[0].CurrentMoney += Pot;
+                //            Pot = 0;
+                //            return;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        break;
+                //    }
+                //}
+                //shooter = GetNextPlayer(shooter.PlayerId);
+
+                //while (true)
+                //{
+                //    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => x.PlayerId > shooter.PlayerId && (x.SatOutInARow >= 3 || x.CurrentMoney == 0 || AllNemesisHaveDropped(x)));
                 //    if (playerToRemove != null)
                 //    {
                 //        PlayersInGame.Remove(playerToRemove);
@@ -178,7 +212,7 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
                 //while (true)
                 //{
-                //    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => x.PlayerId < shooter.PlayerId && (x.SatOutInARow >= 3 || x.CurrentMoney == 0 || AllNemesisHaveDropped(x)));
+                //    var playerToRemove = PlayersInGame.OrderBy(x => x.PlayerId).FirstOrDefault(x => x.PlayerId <= shooter.PlayerId && (x.SatOutInARow >= 3 || x.CurrentMoney == 0 || AllNemesisHaveDropped(x)));
                 //    if (playerToRemove != null)
                 //    {
                 //        PlayersInGame.Remove(playerToRemove);
@@ -196,12 +230,12 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
 
 
                 //var playersToRemove = new List<Player>();
-                //foreach (var player in PlayersInGame.Where(x => x.PlayerId > shooter.PlayerId).OrderBy(x => x.PlayerId))
+                //foreach (var player in PlayersInGame.Where(x => x.PlayerId >= shooter.PlayerId).OrderBy(x => x.PlayerId))
                 //{
                 //    if (player.SatOutInARow >= 3 || player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
                 //        playersToRemove.Add(player);
                 //}
-                //foreach (var player in PlayersInGame.Where(x => x.PlayerId <= shooter.PlayerId).OrderBy(x => x.PlayerId))
+                //foreach (var player in PlayersInGame.Where(x => x.PlayerId < shooter.PlayerId).OrderBy(x => x.PlayerId))
                 //{
                 //    if (player.SatOutInARow >= 3 || player.CurrentMoney == 0 || AllNemesisHaveDropped(player))
                 //        playersToRemove.Add(player);
@@ -233,15 +267,22 @@ namespace Dynamo.Business.Shared.Casino.StreetDice
             }
         }
 
-        public bool AllNemesisHaveDropped(Player nemesis)
+        public bool AllNemesisHaveDropped(Player player)
         {
-            foreach (var player in PlayersInGame)
+            foreach (var nemesis in player.Nemeses)
             {
-                if (player.Nemeses.Contains(nemesis))
+                if (PlayersInGame.Where(x => !x.Deleted).Contains(nemesis))
                 {
                     return false;
                 }
             }
+            //foreach (var nemesis in PlayersInGame.Where(x => !x.Deleted))
+            //{
+            //    if (nemesis.Nemeses.Contains(player))
+            //    {
+            //        return false;
+            //    }
+            //}
             return true;
         }
     }
