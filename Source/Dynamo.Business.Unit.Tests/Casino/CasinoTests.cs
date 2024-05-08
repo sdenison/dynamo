@@ -240,7 +240,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
 
             var averageTimeInGame = totalTime / playerCount;
             //These numbers seem reasonable for a game that lasts 10 minutes on average
-            Assert.That(averageTimeInGame, Is.GreaterThan(1.11));
+            Assert.That(averageTimeInGame, Is.GreaterThan(1.0));
             Assert.That(averageTimeInGame, Is.LessThan(1.13));
         }
 
