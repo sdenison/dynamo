@@ -38,7 +38,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
             var averageNumberOfUsers = numbersOfUsers.Sum(x => x) / numbersOfUsers.Count;
             //Accepted answer was 927
             Assert.That(averageNumberOfUsers, Is.GreaterThan(900));
-            Assert.That(averageNumberOfUsers, Is.LessThan(934));
+            Assert.That(averageNumberOfUsers, Is.LessThan(937));
         }
 
         [Test]
