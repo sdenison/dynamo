@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dynamo.Business.Shared.AdventOfCode.Mine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,31 +23,26 @@ namespace Dynamo.Business.Shared.Casino.Roulette
             foreach (var player in Players)
             {
                 var spaceToBetOn = (SpaceType)random.Next(0, 11);
-                var betType = spaceToBetOn == SpaceType.CalledShot ? BetType.CalledShot : BetType.AllForOne;
-                player.Bets.Add(new Bet(amount: 10, spaceToBetOn, mainBet: true));
-            }
-            foreach (var player in Players)
-            {
-                foreach (var playerToBetAgainst in Players)
+                if (spaceToBetOn == SpaceType.AllForOne)
+                    player.Bets.Add(new AllForOneBet(10));
+                else
+                    player.Bets.Add(new CalledShotBet(10, spaceToBetOn));
                 {
-                    if (player == playerToBetAgainst)
-                        continue;
-                    var takeBet = random.Next(0, 2) == 1;
-                    if (takeBet)
-                    {
-                        Bet playerBet;
-                        if (player.Bets.Any(x => x.Space == playerToBetAgainst.Bets[0].Space))
-                            playerBet = player.Bets.First(x => x.Space == playerToBetAgainst.Bets[0].Space);
-                        else
-                        {
-                            playerBet = new Bet(1, playerToBetAgainst.Bets[0].Space, mainBet: false);
-                            player.Bets.Add(playerBet);
-                        }
-                        playerBet.Amount += 1;
-                    }
+                    var addOddsBet = random.Next(0, 2) == 1;
+                    if (addOddsBet)
+                        player.Bets.Add(new OddsBet(1));
+                    var addEvensBet = random.Next(0, 2) == 1;
+                    if (addEvensBet)
+                        player.Bets.Add(new EvensBet(1));
+                    var addHandBet = random.Next(0, 2) == 1;
+                    if (addHandBet)
+                        player.Bets.Add(new HandBet(1));
+                    var addBushBet = random.Next(0, 2) == 1;
+                    if (addBushBet)
+                        player.Bets.Add(new BushBet(1));
                 }
-            }
 
+            }
         }
     }
 }

@@ -8,7 +8,7 @@
 
     public enum SpaceType
     {
-        CalledShot = 0,
+        AllForOne = 0,
         One = 1,
         Two = 2,
         Three = 3,
