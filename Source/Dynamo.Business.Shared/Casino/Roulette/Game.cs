@@ -1,20 +1,21 @@
-﻿using Dynamo.Business.Shared.AdventOfCode.Mine;
+﻿using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Dynamo.Business.Shared.Casino.Roulette
 {
     public class Game
     {
         public List<Player> Players { get; private set; }
+        public Wheel Wheel { get; private set; }
+        public int Pot { get; private set; }
 
         public Game(int numberOfPlayers)
         {
             Players = new List<Player>();
             for (var i = 0; i < 6; i++)
                 Players.Add(new Player());
+            Wheel = new Wheel();
         }
 
         public void PlaceBets()
@@ -41,8 +42,16 @@ namespace Dynamo.Business.Shared.Casino.Roulette
                     if (addBushBet)
                         player.Bets.Add(new BushBet(1));
                 }
-
             }
+        }
+
+        public void PlayGame(int wheelSpeedAverage)
+        {
+            Pot = 0;
+            //var wheelSpeed = MathHelper.GenerateExponentialRandomVariables(1, wheelSpeedAverage);
+            double lambda = 0.1; //Correspnds to mean of 1/lambda = 10;
+            var wheelSpeed = new Exponential(lambda);
+
         }
     }
 }

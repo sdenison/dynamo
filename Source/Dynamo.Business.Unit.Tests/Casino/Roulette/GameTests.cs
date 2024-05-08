@@ -1,4 +1,5 @@
 ﻿using Dynamo.Business.Shared.Casino.Roulette;
+using MathNet.Numerics.Distributions;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -34,5 +35,21 @@ namespace Dynamo.Business.Unit.Tests.Casino.Roulette
             }
         }
 
+        [Test]
+        public void Play_with_normal_distributions()
+        {
+            var random = new Random();
+            var total = 0.0;
+            for (var i = 0; i < 10000; i++)
+            {
+                //double initialWheelSpeed = Normal.Sample(random, 10, 1);
+                double lambda = 0.1; //Correspnds to mean of 1/lambda = 10;
+                var wheelSpeedExponential = new Exponential(lambda);
+                var wheelSpeed = wheelSpeedExponential.Sample();
+                total += wheelSpeed;
+            }
+
+            var average = (double)total / 10000;
+        }
     }
 }
