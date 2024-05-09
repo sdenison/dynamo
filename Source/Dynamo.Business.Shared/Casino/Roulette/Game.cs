@@ -45,13 +45,13 @@ namespace Dynamo.Business.Shared.Casino.Roulette
             }
         }
 
-        public void PlayGame(int wheelSpeedAverage)
+        public void PlayGame(int wheelSpeedAverage, Space initialSpace)
         {
             Pot = 0;
             //var wheelSpeed = MathHelper.GenerateExponentialRandomVariables(1, wheelSpeedAverage);
-            double lambda = 0.1; //Correspnds to mean of 1/lambda = 10;
+            double lambda = (double)1 / wheelSpeedAverage; //Correspnds to mean of 1/lambda = 10;
             var wheelSpeed = new Exponential(lambda);
-
+            Wheel.Spin(initialSpace.Value, wheelSpeed.Sample());
         }
     }
 }

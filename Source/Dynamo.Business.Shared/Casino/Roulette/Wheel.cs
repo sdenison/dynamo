@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Dynamo.Business.Shared.Casino.Roulette
 {
     public class Wheel
     {
         public List<Space> Spaces { get; set; }
+        public Space WinningSpace { get; private set; }
 
         public Wheel()
         {
@@ -24,10 +25,11 @@ namespace Dynamo.Business.Shared.Casino.Roulette
             Spaces.Add(new Space() { Value = SpaceType.Ten });
         }
 
-        public void Spin(SpaceType startingSpace, int wheelSpeed)
+        public Space Spin(SpaceType startingSpace, double wheelSpeed)
         {
-
-
+            var startingSpaceIndex = Spaces.IndexOf(Spaces.First(x => x.Value == startingSpace));
+            var winningSpaceIndex = (int)(startingSpaceIndex + wheelSpeed) % Spaces.Count;
+            return Spaces[winningSpaceIndex];
         }
     }
 }
