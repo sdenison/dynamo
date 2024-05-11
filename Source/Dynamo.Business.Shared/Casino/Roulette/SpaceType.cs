@@ -1,11 +1,5 @@
 ﻿namespace Dynamo.Business.Shared.Casino.Roulette
 {
-    public class Space
-    {
-        public SpaceType Value { get; set; }
-        public ColorEnum Color { get; set; }
-    }
-
     public enum SpaceType
     {
         AllForOne = 0,
@@ -19,12 +13,5 @@
         Eight = 8,
         Nine = 9,
         Ten = 10,
-    }
-
-    public enum ColorEnum
-    {
-        Red,
-        Green,
-        AllForOne
     }
 }

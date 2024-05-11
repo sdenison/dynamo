@@ -7,32 +7,16 @@ namespace Dynamo.Business.Shared.Casino.Roulette
 {
     public class Wheel
     {
-        public List<Space> Spaces { get; set; }
-
         public Wheel()
+        { }
+
+        public SpaceType SpinWheel(SpaceType startingSpace, int wheelSpeed)
         {
-            Spaces = new List<Space>();
-            Spaces.Add(new Space() { Value = SpaceType.AllForOne });
-            Spaces.Add(new Space() { Value = SpaceType.One });
-            Spaces.Add(new Space() { Value = SpaceType.Two });
-            Spaces.Add(new Space() { Value = SpaceType.Three });
-            Spaces.Add(new Space() { Value = SpaceType.Four });
-            Spaces.Add(new Space() { Value = SpaceType.Five });
-            Spaces.Add(new Space() { Value = SpaceType.Six });
-            Spaces.Add(new Space() { Value = SpaceType.Seven });
-            Spaces.Add(new Space() { Value = SpaceType.Eight });
-            Spaces.Add(new Space() { Value = SpaceType.Nine });
-            Spaces.Add(new Space() { Value = SpaceType.Ten });
+            var numberOfSpaces = Enum.GetValues(typeof(SpaceType)).Length;
+            return (SpaceType)(((int)startingSpace + wheelSpeed) % numberOfSpaces);
         }
 
-        public Space Spin(SpaceType startingSpace, int wheelSpeed)
-        {
-            var startingSpaceIndex = Spaces.IndexOf(Spaces.First(x => x.Value == startingSpace));
-            var winningSpaceIndex = (startingSpaceIndex + wheelSpeed) % Spaces.Count;
-            return Spaces[winningSpaceIndex];
-        }
-
-        public static int SpinWheelComplex(int initialBallPosition, float decelerationCoef)
+        public static SpaceType SpinWheelComplex(int initialBallPosition, float decelerationCoef)
         {
             var random = new Random();
             // Generate initial wheel speed with normal distribution
@@ -69,7 +53,7 @@ namespace Dynamo.Business.Shared.Casino.Roulette
                     bool caught = random.NextDouble() < 0.95;
                     if (caught)
                     {
-                        return (int)ballPosition;
+                        return (SpaceType)((int)ballPosition);
                     }
                 }
             }
@@ -77,7 +61,7 @@ namespace Dynamo.Business.Shared.Casino.Roulette
             // Ball settles in the nearest slot if not caught earlier
             int finalPosition = (int)Math.Round(ballPosition) % 11;
 
-            return finalPosition;
+            return (SpaceType)finalPosition;
         }
     }
 }

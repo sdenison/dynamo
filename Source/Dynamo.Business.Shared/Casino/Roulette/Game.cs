@@ -52,14 +52,14 @@ namespace Dynamo.Business.Shared.Casino.Roulette
             var wheelSpeedExponential = new Exponential(lambda);
             var wheelSpeed = (int)Math.Floor(wheelSpeedExponential.Sample());
 
-            var winningSpace = Wheel.Spin(initialSpace, wheelSpeed);
-            ApplyWinnings(winningSpace.Value);
+            var winningSpace = Wheel.SpinWheel(initialSpace, wheelSpeed);
+            ApplyWinnings(winningSpace);
         }
 
         public void PlayGameComplex(SpaceType initialSpace, float decelerationCoef)
         {
             PlaceBets();
-            var winningSpace = (SpaceType)Wheel.SpinWheelComplex((int)initialSpace, decelerationCoef);
+            var winningSpace = Wheel.SpinWheelComplex((int)initialSpace, decelerationCoef);
             ApplyWinnings(winningSpace);
         }
 

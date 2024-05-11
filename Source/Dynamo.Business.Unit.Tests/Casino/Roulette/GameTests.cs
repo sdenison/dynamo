@@ -101,39 +101,22 @@ namespace Dynamo.Business.Unit.Tests.Casino.Roulette
             //These are the accepted answers for part 2
             Assert.That(maxResult.Item3, Is.EqualTo(SpaceType.Nine));
             //Assert.That(maxResult.Item2, Is.EqualTo(.72));
-
         }
 
-        [Test]
-        public void Play_with_normal_distributions()
-        {
-            var random = new Random();
-            var total = 0.0;
-            for (var i = 0; i < 10000; i++)
-            {
-                double numberOfGamesPlayed = Math.Floor(Normal.Sample(random, 10, 1));
-                double lambda = 0.1; //Correspnds to mean of 1/lambda = 10;
-                var wheelSpeedExponential = new Exponential(lambda);
-                var wheelSpeed = wheelSpeedExponential.Sample();
-                total += wheelSpeed;
-            }
-
-            var average = (double)total / 10000;
-        }
 
         [Test]
         public void Can_spin_wheel()
         {
             var wheel = new Wheel();
             var startingSpace = SpaceType.Six;
-            var winningSpace = wheel.Spin(startingSpace, 4);
-            Assert.That(winningSpace.Value, Is.EqualTo(SpaceType.Ten));
-            winningSpace = wheel.Spin(startingSpace, 5);
-            Assert.That(winningSpace.Value, Is.EqualTo(SpaceType.AllForOne));
-            winningSpace = wheel.Spin(startingSpace, 11);
-            Assert.That(winningSpace.Value, Is.EqualTo(SpaceType.Six));
-            winningSpace = wheel.Spin(startingSpace, 16);
-            Assert.That(winningSpace.Value, Is.EqualTo(SpaceType.AllForOne));
+            var winningSpace = wheel.SpinWheel(startingSpace, 4);
+            Assert.That(winningSpace, Is.EqualTo(SpaceType.Ten));
+            winningSpace = wheel.SpinWheel(startingSpace, 5);
+            Assert.That(winningSpace, Is.EqualTo(SpaceType.AllForOne));
+            winningSpace = wheel.SpinWheel(startingSpace, 11);
+            Assert.That(winningSpace, Is.EqualTo(SpaceType.Six));
+            winningSpace = wheel.SpinWheel(startingSpace, 16);
+            Assert.That(winningSpace, Is.EqualTo(SpaceType.AllForOne));
         }
     }
 }
