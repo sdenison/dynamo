@@ -1,5 +1,4 @@
-﻿using Dynamo.Business.Shared.Casino.Slots;
-using MathNet.Numerics.Distributions;
+﻿using MathNet.Numerics.Distributions;
 using System;
 using System.Collections.Generic;
 
@@ -47,29 +46,37 @@ namespace Dynamo.Business.Shared.Casino.Roulette
 
         public void PlayGame(int wheelSpeedAverage, SpaceType initialSpace)
         {
-            //Pot = 0;
             PlaceBets();
-
 
             double lambda = (double)1 / wheelSpeedAverage; //Correspnds to mean of 1/lambda = 10;
             var wheelSpeedExponential = new Exponential(lambda);
             var wheelSpeed = (int)Math.Floor(wheelSpeedExponential.Sample());
 
-            //var wheelSpeed = wheelSpeedAverage;
-
-
             var winningSpace = Wheel.Spin(initialSpace, wheelSpeed);
+            ApplyWinnings(winningSpace.Value);
+        }
+
+        public void PlayGameComplex(SpaceType initialSpace, float decelerationCoef)
+        {
+            PlaceBets();
+            var winningSpace = (SpaceType)Wheel.SpinWheelComplex((int)initialSpace, decelerationCoef);
+            ApplyWinnings(winningSpace);
+        }
+
+        private void ApplyWinnings(SpaceType winningSpace)
+        {
             foreach (var player in Players)
             {
                 foreach (var bet in player.Bets)
                 {
                     Pot += bet.Amount;
                     player.Amount -= bet.Amount;
-                    var payout = bet.GetPayout(winningSpace.Value);
+                    var payout = bet.GetPayout(winningSpace);
                     player.Amount += payout;
                     Pot -= payout;
                 }
             }
         }
+
     }
 }

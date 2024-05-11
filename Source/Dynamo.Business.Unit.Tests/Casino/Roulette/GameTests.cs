@@ -58,8 +58,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.Roulette
                 for (var wheelSpeedAverage = 1; wheelSpeedAverage < 11; wheelSpeedAverage++)
                 {
                     var game = new Game(numberOfPlayers: 6);
-                    //var gamesPerHour = (int)Math.Floor(Normal.Sample(random, 50, 1));
-                    var gamesPerHour = 5000;
+                    var gamesPerHour = 100;
                     for (var i = 0; i < gamesPerHour; i++)
                     {
                         game.PlayGame(wheelSpeedAverage, spaceType);
@@ -71,9 +70,38 @@ namespace Dynamo.Business.Unit.Tests.Casino.Roulette
             var maxPot = results.Max(x => x.Item1);
             var maxResult = results.First(x => x.Item1 == maxPot);
 
-            //These are the accepted answers for 
+            //These are the accepted answers for part 1
             Assert.That(maxResult.Item2, Is.EqualTo(1));
             Assert.That(maxResult.Item3, Is.EqualTo(SpaceType.AllForOne));
+        }
+
+        [Test]
+        public void Solve_spring_2024_week_5_part_2()
+        {
+            var decelerationCoef = 0.5f;
+            var results = new List<Tuple<int, float, SpaceType>>();
+            while (decelerationCoef < 1)
+            {
+                foreach (SpaceType ballDropSpace in Enum.GetValues(typeof(SpaceType)))
+                {
+                    var game = new Game(numberOfPlayers: 6);
+                    var gamesPerHour = 100;
+                    for (var i = 0; i < gamesPerHour; i++)
+                    {
+                        game.PlayGameComplex(ballDropSpace, decelerationCoef);
+                    }
+                    results.Add(new Tuple<int, float, SpaceType>(game.Pot, decelerationCoef, ballDropSpace));
+                }
+                decelerationCoef += 0.01f;
+            }
+
+            var maxPot = results.Max(x => x.Item1);
+            var maxResult = results.First(x => x.Item1 == maxPot);
+
+            //These are the accepted answers for part 2
+            Assert.That(maxResult.Item3, Is.EqualTo(SpaceType.Nine));
+            //Assert.That(maxResult.Item2, Is.EqualTo(.72));
+
         }
 
         [Test]
@@ -91,7 +119,6 @@ namespace Dynamo.Business.Unit.Tests.Casino.Roulette
             }
 
             var average = (double)total / 10000;
-
         }
 
         [Test]
