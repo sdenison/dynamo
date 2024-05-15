@@ -4,10 +4,12 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<ItemGroup>
+	  <None Remove="FakeFiles\blkjckhands.csv" />
 	  <None Remove="FakeFiles\BoxScans.txt" />
 	  <None Remove="FakeFiles\MineLayout.txt" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="FakeFiles\blkjckhands.csv" />
 		<EmbeddedResource Include="FakeFiles\BoxScans.txt" />
 		<EmbeddedResource Include="FakeFiles\BusyBox1Second.txt" />
 		<EmbeddedResource Include="FakeFiles\MineLayout.txt" />
