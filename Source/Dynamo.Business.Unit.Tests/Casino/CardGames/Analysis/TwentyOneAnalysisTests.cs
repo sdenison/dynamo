@@ -11,10 +11,29 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.Analysis
     public class TwentyOneAnalysisTests
     {
         [Test]
-        public void Can_analyze_twenty_one_games()
+        public void Find_answer_spring_2024_week_6_part_1()
         {
             var twentyOneAnalysis = TwentyOneAnalysis.Parse(GetFileInput());
             Assert.That(twentyOneAnalysis.PlayOutcomes.Count(), Is.EqualTo(900000));
+
+            var playerAndDealerBust = twentyOneAnalysis.PlayOutcomes.Where(x => x.PlayerBustBeat == PlayerBustBeat.Bust && x.DealerBustBeat == DealerBustBeat.Bust).Count();
+            var percentage = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
+            Assert.That(percentage, Is.EqualTo(0));
+
+            //Did not work
+            playerAndDealerBust = twentyOneAnalysis.PlayOutcomes.Where(x => x.PlayerBustBeat == PlayerBustBeat.DlBust && x.DealerBustBeat == DealerBustBeat.PlBust).Count();
+            percentage = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
+            Assert.That(percentage, Is.EqualTo(0));
+
+            //Did not work
+            playerAndDealerBust = twentyOneAnalysis.PlayOutcomes.Where(x => x.PlayerBustBeat == PlayerBustBeat.DlBust && x.DealerBustBeat == DealerBustBeat.PlBust).Count();
+            percentage = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
+            Assert.That(percentage, Is.EqualTo(0));
+
+            playerAndDealerBust = twentyOneAnalysis.PlayOutcomes.Where(x => x.SumOfCards > 21 && x.SumOfDeal > 21).Count();
+            percentage = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
+            //Accepted answer was 0.039
+            Assert.That(Math.Round(percentage * 1000), Is.EqualTo(39));
         }
 
         private string[] GetFileInput()
