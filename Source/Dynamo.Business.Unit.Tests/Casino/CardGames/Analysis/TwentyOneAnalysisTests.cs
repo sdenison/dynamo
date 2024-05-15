@@ -16,13 +16,9 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.Analysis
             var twentyOneAnalysis = TwentyOneAnalysis.Parse(GetFileInput());
             Assert.That(twentyOneAnalysis.PlayOutcomes.Count(), Is.EqualTo(900000));
 
+            //Did not work
             var playerAndDealerBust = twentyOneAnalysis.PlayOutcomes.Where(x => x.PlayerBustBeat == PlayerBustBeat.Bust && x.DealerBustBeat == DealerBustBeat.Bust).Count();
             var percentage = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
-            Assert.That(percentage, Is.EqualTo(0));
-
-            //Did not work
-            playerAndDealerBust = twentyOneAnalysis.PlayOutcomes.Where(x => x.PlayerBustBeat == PlayerBustBeat.DlBust && x.DealerBustBeat == DealerBustBeat.PlBust).Count();
-            percentage = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
             Assert.That(percentage, Is.EqualTo(0));
 
             //Did not work
@@ -36,9 +32,40 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.Analysis
             Assert.That(Math.Round(percentage * 1000), Is.EqualTo(39));
         }
 
+        //[Test, Ignore("Takes too long to run in NUnit")]
+        [Test]
+        public void Find_answer_spring_2024_week_6_part_2()
+        {
+            var twentyOneAnalysis = TwentyOneAnalysis.Parse(GetFileInput());
+            var bootstrapProportions = new List<double>();
+            var bootstrapSamples = 1000;
+
+            for (int i = 0; i < bootstrapSamples; i++)
+            {
+                var resampledOutcomes = twentyOneAnalysis.Resample();
+                var playerAndDealerBust = resampledOutcomes.Count(x => x.SumOfCards > 21 && x.SumOfDeal > 21);
+                var proportion = (double)playerAndDealerBust / twentyOneAnalysis.PlayOutcomes.Count;
+                bootstrapProportions.Add(proportion);
+            }
+
+            bootstrapProportions.Sort();
+            var lowerBound = Percentile(bootstrapProportions, 2.5);
+            var upperBound = Percentile(bootstrapProportions, 97.5);
+
+            //Accepted answers were 0.38 for the lower bound and 0.39 for the upper bound
+            Assert.That(Math.Round(lowerBound * 1000), Is.EqualTo(38));
+            Assert.That(Math.Round(upperBound * 1000), Is.EqualTo(39));
+        }
+
+        private double Percentile(List<double> values, double percentile)
+        {
+            int n = (int)((percentile / 100.0) * values.Count);
+            return values[Math.Max(0, n - 1)];
+        }
+
         private string[] GetFileInput()
         {
-            var stream = Tests.FileGetter.GetMemoryStreamFromFile("blkjckhands.csv");
+            var stream = FileGetter.GetMemoryStreamFromFile("blkjckhands.csv");
             stream.Seek(0, SeekOrigin.Begin);
             stream.Position = 0;
             string[] stringArray = ReadMemoryStreamToStringArray(stream, Encoding.UTF8);

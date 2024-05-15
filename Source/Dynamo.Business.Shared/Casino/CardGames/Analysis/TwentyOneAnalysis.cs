@@ -44,6 +44,18 @@ namespace Dynamo.Business.Shared.Casino.CardGames.Analysis
             }
             return twentyOneAnalysis;
         }
+
+        public List<PlayOutcome> Resample()
+        {
+            var random = new Random();
+            var sample = new List<PlayOutcome>();
+            for (int i = 0; i < PlayOutcomes.Count; i++)
+            {
+                int index = random.Next(PlayOutcomes.Count);
+                sample.Add(PlayOutcomes[index]);
+            }
+            return sample;
+        }
     }
 
     public class PlayOutcome
