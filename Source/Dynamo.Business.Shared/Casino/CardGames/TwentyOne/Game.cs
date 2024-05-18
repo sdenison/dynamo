@@ -88,6 +88,7 @@ namespace Dynamo.Business.Shared.Casino.CardGames.TwentyOne
 
         public void PlayGameV2()
         {
+            var playerBust = false;
             Dealer.Hand = Deal();
 
             var playerHand = Deal();
@@ -115,6 +116,7 @@ namespace Dynamo.Business.Shared.Casino.CardGames.TwentyOne
                     if (hand.IsBusted())
                     {
                         hand.Winner = false;
+                        playerBust = true;
                         break;
                     }
 
@@ -135,6 +137,8 @@ namespace Dynamo.Business.Shared.Casino.CardGames.TwentyOne
                 //Bust
                 if (Dealer.Hand.IsBusted())
                 {
+                    if (playerBust)
+                        Dealer.Hand.DoubleBust = true;
                     return;
                 }
 

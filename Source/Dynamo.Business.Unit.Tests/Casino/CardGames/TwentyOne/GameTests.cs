@@ -333,5 +333,83 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.TwentyOne
             Assert.That(playerWinPercent, Is.GreaterThan(0.44));
             Assert.That(playerWinPercent, Is.LessThan(0.445));
         }
+
+        [Test]
+        public void Get_challenge_3_part_1()
+        {
+            var gamesPlayed = 0;
+            var gamesToPlay = 200000;
+            var handsWon = 0;
+            var doubleBustCount = 0;
+
+            while (gamesPlayed < gamesToPlay)
+            {
+                var game = new Game();
+                game.Deck.Shuffle();
+                game.PlayGameV2();
+                handsWon += game.Player.Hands.Count(x => x.Winner);
+                if (game.Dealer.Hand.DoubleBust)
+                    doubleBustCount++;
+                gamesPlayed++;
+            }
+
+            var doubleBustPercent = (float)doubleBustCount / gamesToPlay;
+
+            //Accepted answer was 0.67
+            Assert.That(doubleBustPercent, Is.GreaterThan(0.065));
+            Assert.That(doubleBustPercent, Is.LessThan(0.068));
+        }
+
+        [Test]
+        public void Get_challenge_3_part_2()
+        {
+            // Initialize counters for the game simulation
+            var gamesPlayed = 0;
+            var gamesToPlay = 200000;
+
+            // Run the simulation for the specified number of games
+            var doubleBustResults = new List<bool>();
+            while (gamesPlayed < gamesToPlay)
+            {
+                // Create and set up a new game
+                var game = new Game();
+                game.Deck.Shuffle();
+                game.PlayGameV2();
+
+                // Check if both the dealer and player have busted
+                doubleBustResults.Add(game.Dealer.Hand.DoubleBust);
+
+                gamesPlayed++;
+            }
+
+            // Calculate the percentage of double busts
+            var doubleBustPercent = (float)doubleBustResults.Count(x => x) / gamesToPlay;
+
+            // Perform bootstrap resampling to calculate the confidence interval
+            var bootstrapSamples = 1000;
+            var random = new Random();
+            var bootstrapMeans = new List<float>();
+
+            for (int i = 0; i < bootstrapSamples; i++)
+            {
+                var sample = new List<bool>();
+                for (int j = 0; j < gamesToPlay; j++)
+                {
+                    sample.Add(doubleBustResults[random.Next(gamesToPlay)]);
+                }
+                var sampleMean = (float)sample.Count(x => x) / gamesToPlay;
+                bootstrapMeans.Add(sampleMean);
+            }
+
+            // Calculate the 2.5th and 97.5th percentiles for the 95% confidence interval
+            bootstrapMeans.Sort();
+            var lowerBound = bootstrapMeans[(int)(0.025 * bootstrapSamples)];
+            var upperBound = bootstrapMeans[(int)(0.975 * bootstrapSamples)];
+
+            //Accepted answer was 0.065
+            //Assert.That(lowerBound, Is.EqualTo(0.06492));
+            //Accepted answer was 0.068
+            //Assert.That(upperBound, Is.EqualTo(0.06797));
+        }
     }
 }

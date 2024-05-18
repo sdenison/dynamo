@@ -32,8 +32,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.Analysis
             Assert.That(Math.Round(percentage * 1000), Is.EqualTo(39));
         }
 
-        //[Test, Ignore("Takes too long to run in NUnit")]
-        [Test]
+        [Test, Ignore("Takes too long to run in NUnit")]
         public void Find_answer_spring_2024_week_6_part_2()
         {
             var twentyOneAnalysis = TwentyOneAnalysis.Parse(GetFileInput());
