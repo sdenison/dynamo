@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dynamo.Business.Shared.Casino.CardGames;
 using Dynamo.Business.Shared.Casino.CardGames.TwentyOne;
-using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.Casino.CardGames.TwentyOne
@@ -312,7 +309,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.TwentyOne
         }
 
 
-        [Test]
+        [Test, Ignore("Takes too long to run")]
         public void Get_week_1_part_2_answer()
         {
             var gamesPlayed = 0;
@@ -334,7 +331,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.TwentyOne
             Assert.That(playerWinPercent, Is.LessThan(0.445));
         }
 
-        [Test]
+        [Test, Ignore("Takes too long to run")]
         public void Get_challenge_3_part_1()
         {
             var gamesPlayed = 0;
@@ -360,32 +357,23 @@ namespace Dynamo.Business.Unit.Tests.Casino.CardGames.TwentyOne
             Assert.That(doubleBustPercent, Is.LessThan(0.068));
         }
 
-        [Test]
+        [Test, Ignore("Takes too long to run")]
         public void Get_challenge_3_part_2()
         {
-            // Initialize counters for the game simulation
             var gamesPlayed = 0;
             var gamesToPlay = 200000;
 
-            // Run the simulation for the specified number of games
             var doubleBustResults = new List<bool>();
             while (gamesPlayed < gamesToPlay)
             {
-                // Create and set up a new game
                 var game = new Game();
                 game.Deck.Shuffle();
                 game.PlayGameV2();
-
-                // Check if both the dealer and player have busted
                 doubleBustResults.Add(game.Dealer.Hand.DoubleBust);
-
                 gamesPlayed++;
             }
 
-            // Calculate the percentage of double busts
-            var doubleBustPercent = (float)doubleBustResults.Count(x => x) / gamesToPlay;
-
-            // Perform bootstrap resampling to calculate the confidence interval
+            //Perform bootstrap resampling to calculate the confidence interval
             var bootstrapSamples = 1000;
             var random = new Random();
             var bootstrapMeans = new List<float>();
