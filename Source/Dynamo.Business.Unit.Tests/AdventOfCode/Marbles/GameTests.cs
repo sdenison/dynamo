@@ -46,7 +46,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             Assert.AreEqual(424112, game.HighScore);
         }
 
-        [Test, Ignore("Takes too long")]
+        [Test]
         public void Can_get_day_9_part_2_answer()
         {
             var stopWatch = new Stopwatch();
