@@ -9,6 +9,8 @@ namespace Dynamo.Business.Shared.Casino.CardGames.TwentyOne
     {
         public List<Card> Cards { get; } = new List<Card>();
         public bool Winner { get; set; } = true;
+        public bool DoubleBust { get; set; } = false;
+
 
         public List<int> HandValues()
         {
