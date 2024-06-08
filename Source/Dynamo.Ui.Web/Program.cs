@@ -1,4 +1,8 @@
-using Dynamo.Ui.Web.Components;
+﻿using Dynamo.Ui.Web.Components;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Dynamo.Ui.Web.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace Dynamo.Ui.Web
 {
@@ -7,6 +11,10 @@ namespace Dynamo.Ui.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<DynamoUiWebContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DynamoUiWebContext") ?? throw new InvalidOperationException("Connection string 'DynamoUiWebContext' not found.")));
+
+            builder.Services.AddQuickGridEntityFrameworkAdapter();;
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
