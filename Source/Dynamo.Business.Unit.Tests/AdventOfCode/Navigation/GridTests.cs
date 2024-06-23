@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dynamo.Business.Shared.AdventOfCode.Navigation;
-using NuGet.Frameworks;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation

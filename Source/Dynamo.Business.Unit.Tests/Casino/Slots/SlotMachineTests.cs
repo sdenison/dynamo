@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using Dynamo.Business.Shared.Casino.Slots;
-using NuGet.Frameworks;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.Casino.Slots

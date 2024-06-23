@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security;
 using Dynamo.Business.Shared.AdventOfCode.Cloth;
-using NuGet.Frameworks;
 using NUnit.Framework;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Cloth
