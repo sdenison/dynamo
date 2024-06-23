@@ -18,19 +18,19 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             var coordinates = Grid.ParseCoordinates(testData);
             var grid = new Grid(coordinates);
 
-            Assert.AreEqual("A", grid.GridPoints[0, 0].OwnedBy.Name);
-            Assert.AreEqual("A", grid.GridPoints[1, 1].OwnedBy.Name);
-            Assert.IsNull(grid.GridPoints[5, 0].OwnedBy);
-            Assert.AreEqual("C", grid.GridPoints[6, 0].OwnedBy.Name);
-            Assert.AreEqual("E", grid.GridPoints[5, 2].OwnedBy.Name);
-            Assert.AreEqual("F", grid.GridPoints[8, 9].OwnedBy.Name);
-            Assert.IsTrue(coordinates.Single(x => x.Name.Equals("A")).IsInfinite);
-            Assert.IsTrue(coordinates.Single(x => x.Name.Equals("B")).IsInfinite);
-            Assert.IsTrue(coordinates.Single(x => x.Name.Equals("C")).IsInfinite);
-            Assert.IsFalse(coordinates.Single(x => x.Name.Equals("D")).IsInfinite);
-            Assert.IsFalse(coordinates.Single(x => x.Name.Equals("E")).IsInfinite);
-            Assert.AreEqual(17, grid.GetArea(coordinates.Single(x => x.Name == "E")));
-            Assert.AreEqual(17, grid.GetLargesAreaNotInfinite());
+            Assert.That("A", Is.EqualTo(grid.GridPoints[0, 0].OwnedBy.Name));
+            Assert.That("A", Is.EqualTo(grid.GridPoints[1, 1].OwnedBy.Name));
+            Assert.That(grid.GridPoints[5, 0].OwnedBy, Is.Null);
+            Assert.That("C", Is.EqualTo(grid.GridPoints[6, 0].OwnedBy.Name));
+            Assert.That("E", Is.EqualTo(grid.GridPoints[5, 2].OwnedBy.Name));
+            Assert.That("F", Is.EqualTo(grid.GridPoints[8, 9].OwnedBy.Name));
+            Assert.That(coordinates.Single(x => x.Name.Equals("A")).IsInfinite);
+            Assert.That(coordinates.Single(x => x.Name.Equals("B")).IsInfinite);
+            Assert.That(coordinates.Single(x => x.Name.Equals("C")).IsInfinite);
+            Assert.That(coordinates.Single(x => x.Name.Equals("D")).IsInfinite, Is.False);
+            Assert.That(coordinates.Single(x => x.Name.Equals("E")).IsInfinite, Is.False);
+            Assert.That(17, Is.EqualTo(grid.GetArea(coordinates.Single(x => x.Name == "E"))));
+            Assert.That(17, Is.EqualTo(grid.GetLargesAreaNotInfinite()));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             var testData = GetPuzzleData();
             var coordinates = Grid.ParseCoordinates(testData);
             var grid = new Grid(coordinates);
-            Assert.AreEqual(4215, grid.GetLargesAreaNotInfinite());
+            Assert.That(4215, Is.EqualTo(grid.GetLargesAreaNotInfinite()));
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             var testData = GetTestData();
             var coordinates = Grid.ParseCoordinates(testData);
             var grid = new Grid(coordinates);
-            Assert.AreEqual(16, grid.GetAreaWithGridPointsInDistance(32));
+            Assert.That(16, Is.EqualTo(grid.GetAreaWithGridPointsInDistance(32)));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
             var testData = GetPuzzleData();
             var coordinates = Grid.ParseCoordinates(testData);
             var grid = new Grid(coordinates);
-            Assert.AreEqual(40376, grid.GetAreaWithGridPointsInDistance(10000));
+            Assert.That(40376, Is.EqualTo(grid.GetAreaWithGridPointsInDistance(10000)));
         }
 
         private static string[] GetTestData()

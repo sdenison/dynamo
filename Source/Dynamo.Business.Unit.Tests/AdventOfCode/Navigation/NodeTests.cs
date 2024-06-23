@@ -12,9 +12,9 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         {
             var nodeDefinition = new[] { 0, 1, 99 };
             var node = new Node(nodeDefinition);
-            Assert.AreEqual(1, node.Metadata.Count);
-            Assert.AreEqual(99, node.Metadata[0]);
-            Assert.AreEqual(99, node.Value);
+            Assert.That(1, Is.EqualTo(node.Metadata.Count));
+            Assert.That(99, Is.EqualTo(node.Metadata[0]));
+            Assert.That(99, Is.EqualTo(node.Value));
         }
 
         [Test]
@@ -22,9 +22,9 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         {
             var nodeDefinition = new[] { 1, 1, 0, 1, 99, 2 };
             var node = new Node(nodeDefinition);
-            Assert.AreEqual(2, node.Metadata[0]);
-            Assert.AreEqual(99, node.ChildNodes[0].Metadata[0]);
-            Assert.AreEqual(0, node.Value);
+            Assert.That(2, Is.EqualTo(node.Metadata[0]));
+            Assert.That(99, Is.EqualTo(node.ChildNodes[0].Metadata[0]));
+            Assert.That(0, Is.EqualTo(node.Value));
         }
 
         [Test]
@@ -32,16 +32,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         {
             var nodeDefinitionString = "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2";
             var node = new Node(nodeDefinitionString);
-            Assert.AreEqual(3, node.Metadata.Count);
-            Assert.AreEqual(1, node.Metadata[0]);
-            Assert.AreEqual(1, node.Metadata[1]);
-            Assert.AreEqual(2, node.Metadata[2]);
+            Assert.That(3, Is.EqualTo(node.Metadata.Count));
+            Assert.That(1, Is.EqualTo(node.Metadata[0]));
+            Assert.That(1, Is.EqualTo(node.Metadata[1]));
+            Assert.That(2, Is.EqualTo(node.Metadata[2]));
             //Main node has 2 child nodes
-            Assert.AreEqual(2, node.ChildNodes.Count);
+            Assert.That(2, Is.EqualTo(node.ChildNodes.Count));
             //Main node's second child has one child
-            Assert.AreEqual(99, node.ChildNodes[1].ChildNodes[0].Metadata[0]);
-            Assert.AreEqual(138, node.SumAllMetadata);
-            Assert.AreEqual(66, node.Value);
+            Assert.That(99, Is.EqualTo(node.ChildNodes[1].ChildNodes[0].Metadata[0]));
+            Assert.That(138, Is.EqualTo(node.SumAllMetadata));
+            Assert.That(66, Is.EqualTo(node.Value));
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         {
             var nodeDefinitionString = TestDataProvider.GetTestData();
             var node = new Node(nodeDefinitionString);
-            Assert.AreEqual(35911, node.SumAllMetadata);
+            Assert.That(35911, Is.EqualTo(node.SumAllMetadata));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Navigation
         {
             var nodeDefinitionString = TestDataProvider.GetTestData();
             var node = new Node(nodeDefinitionString);
-            Assert.AreEqual(17206, node.Value);
+            Assert.That(17206, Is.EqualTo(node.Value));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         public void Can_get_power_level_from_fuel_cell()
         {
             var fuelCell = new FuelCell(3, 5, 8);
-            Assert.AreEqual(4, fuelCell.Power);
+            Assert.That(4, Is.EqualTo(fuelCell.Power));
         }
 
         [TestCase(122, 79, 57, -5)]
@@ -19,16 +19,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         public void Get_power_examples(int x, int y, int gridSerialNumber, int expectedPower)
         {
             var fuelCell = new FuelCell(x, y, gridSerialNumber);
-            Assert.AreEqual(expectedPower, fuelCell.Power);
+            Assert.That(expectedPower, Is.EqualTo(fuelCell.Power));
         }
 
         [Test]
         public void Can_create_fuel_cell_grid()
         {
             var grid = new FuelCellGrid(300, 18);
-            Assert.IsNotNull(grid);
+            Assert.That(grid, Is.Not.Null);
             //Assert total number of FuelCells
-            Assert.AreEqual(90000, grid.FuelCells.GetLength(0) * grid.FuelCells.GetLength(1));
+            Assert.That(90000, Is.EqualTo(grid.FuelCells.GetLength(0) * grid.FuelCells.GetLength(1)));
         }
 
         [TestCase(18, 33, 45, 29)]
@@ -36,9 +36,9 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         public void Can_get_power_for_window(int gridSerialNumber, int x, int y, int expectedPower)
         {
             var grid = new FuelCellGrid(300, gridSerialNumber);
-            Assert.IsNotNull(grid);
+            Assert.That(grid, Is.Not.Null);
             var power = grid.GetPowerForWindow(x, y, 3);
-            Assert.AreEqual(expectedPower, power);
+            Assert.That(expectedPower, Is.EqualTo(power));
         }
 
         [Test]
@@ -46,8 +46,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         {
             var grid = new FuelCellGrid(300, 9306);
             var maxPowerIdentifier = grid.GetMaxPowerCoordinates(3);
-            Assert.AreEqual(235, maxPowerIdentifier.Coordinates.X);
-            Assert.AreEqual(38, maxPowerIdentifier.Coordinates.Y);
+            Assert.That(235, Is.EqualTo(maxPowerIdentifier.Coordinates.X));
+            Assert.That(38, Is.EqualTo(maxPowerIdentifier.Coordinates.Y));
         }
 
         [Test, Ignore("takes too long for NCrunch")]
@@ -55,11 +55,11 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         {
             var grid = new FuelCellGrid(300, 18);
             var maxPowerIdentifier = grid.GetMaxPower();
-            Assert.AreEqual(1341075099, grid.Calculations);
-            Assert.AreEqual(90, maxPowerIdentifier.Coordinates.X);
-            Assert.AreEqual(269, maxPowerIdentifier.Coordinates.Y);
-            Assert.AreEqual(16, maxPowerIdentifier.WindowSize);
-            Assert.AreEqual(113, maxPowerIdentifier.Power);
+            Assert.That(1341075099, Is.EqualTo(grid.Calculations));
+            Assert.That(90, Is.EqualTo(maxPowerIdentifier.Coordinates.X));
+            Assert.That(269, Is.EqualTo(maxPowerIdentifier.Coordinates.Y));
+            Assert.That(16, Is.EqualTo(maxPowerIdentifier.WindowSize));
+            Assert.That(113, Is.EqualTo(maxPowerIdentifier.Power));
         }
 
         [Test, Ignore("takes too long for NCrunch")]
@@ -67,10 +67,10 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         {
             var grid = new FuelCellGrid(300, 42);
             var maxPowerIdentifier = grid.GetMaxPower();
-            Assert.AreEqual(232, maxPowerIdentifier.Coordinates.X);
-            Assert.AreEqual(251, maxPowerIdentifier.Coordinates.Y);
-            Assert.AreEqual(12, maxPowerIdentifier.WindowSize);
-            Assert.AreEqual(119, maxPowerIdentifier.Power);
+            Assert.That(232, Is.EqualTo(maxPowerIdentifier.Coordinates.X));
+            Assert.That(251, Is.EqualTo(maxPowerIdentifier.Coordinates.Y));
+            Assert.That(12, Is.EqualTo(maxPowerIdentifier.WindowSize));
+            Assert.That(119, Is.EqualTo(maxPowerIdentifier.Power));
         }
 
         [Test, Ignore("takes too long for NCrunch")]
@@ -78,10 +78,10 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Fuel
         {
             var grid = new FuelCellGrid(300, 9306);
             var maxPowerIdentifier = grid.GetMaxPower();
-            Assert.AreEqual(233, maxPowerIdentifier.Coordinates.X);
-            Assert.AreEqual(146, maxPowerIdentifier.Coordinates.Y);
-            Assert.AreEqual(13, maxPowerIdentifier.WindowSize);
-            Assert.AreEqual(95, maxPowerIdentifier.Power);
+            Assert.That(233, Is.EqualTo(maxPowerIdentifier.Coordinates.X));
+            Assert.That(146, Is.EqualTo(maxPowerIdentifier.Coordinates.Y));
+            Assert.That(13, Is.EqualTo(maxPowerIdentifier.WindowSize));
+            Assert.That(95, Is.EqualTo(maxPowerIdentifier.Power));
         }
     }
 }
