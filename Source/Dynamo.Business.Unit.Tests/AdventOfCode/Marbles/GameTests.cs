@@ -12,8 +12,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
         {
             var gameDescription = "9 players; last marble is worth 25 points";
             var game = new Game(gameDescription);
-            Assert.AreEqual(9, game.NumberOfPlayers);
-            Assert.AreEqual(25, game.LastMarbleValue);
+            Assert.That(9, Is.EqualTo(game.NumberOfPlayers));
+            Assert.That(25, Is.EqualTo(game.LastMarbleValue));
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             var game = new Game(gameDescription);
             game.PlayGame();
             var highScore = game.HighScore;
-            Assert.AreEqual(32, highScore);
+            Assert.That(32, Is.EqualTo(highScore));
         }
 
         [TestCase("10 players; last marble is worth 1618", 8317)]
@@ -35,7 +35,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
         {
             var game = new Game(gameDescription);
             game.PlayGame();
-            Assert.AreEqual(highScore, game.HighScore);
+            Assert.That(highScore, Is.EqualTo(game.HighScore));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
         {
             var game = new Game("426 players; last marble is worth 72058 points");
             game.PlayGame();
-            Assert.AreEqual(424112, game.HighScore);
+            Assert.That(424112, Is.EqualTo(game.HighScore));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Marbles
             game.PlayGame();
             stopWatch.Stop();
             var numberOfSeconds = stopWatch.ElapsedMilliseconds / 1000;
-            Assert.AreEqual(3487352628, game.HighScore);
+            Assert.That(3487352628, Is.EqualTo(game.HighScore));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var boxScanner = new BoxScanner();
             var input = "abcdef";
             var labelType = boxScanner.Scan(input);
-            Assert.AreEqual(BoxLabelType.None, labelType);
+            Assert.That(BoxLabelType.None, Is.EqualTo(labelType));
         }
 
         [Test]
@@ -22,7 +22,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var boxScanner = new BoxScanner();
             var input = "bababc";
             var labelType = boxScanner.Scan(input);
-            Assert.AreEqual(BoxLabelType.Both, labelType);
+            Assert.That(BoxLabelType.Both, Is.EqualTo(labelType));
         }
 
         [TestCase("abbcde")]
@@ -31,7 +31,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
         {
             var boxScanner = new BoxScanner();
             var labelType = boxScanner.Scan(input);
-            Assert.AreEqual(BoxLabelType.MatchTwo, labelType);
+            Assert.That(BoxLabelType.MatchTwo, Is.EqualTo(labelType));
         }
 
         [TestCase("abcccd")]
@@ -40,7 +40,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
         {
             var boxScanner = new BoxScanner();
             var labelType = boxScanner.Scan(input);
-            Assert.AreEqual(BoxLabelType.MatchThree, labelType);
+            Assert.That(BoxLabelType.MatchThree, Is.EqualTo(labelType));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             };
             var boxScanner = new BoxScanner();
             var checkSum = boxScanner.GetCheckSum(input);
-            Assert.AreEqual(12, checkSum);
+            Assert.That(12, Is.EqualTo(checkSum));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var input2 = "fguij";
             var boxScanner = new BoxScanner();
             var offBy1 = boxScanner.OffBy1(input1, input2);
-            Assert.IsFalse(offBy1);
+            Assert.That(offBy1, Is.False);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var input2 = "fguij";
             var boxScanner = new BoxScanner();
             var offBy1 = boxScanner.OffBy1(input1, input2);
-            Assert.IsTrue(offBy1);
+            Assert.That(offBy1);
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             var input2 = "fguij";
             var boxScanner = new BoxScanner();
             var matching = boxScanner.GetMatchingPart(input1, input2);
-            Assert.AreEqual("fgij", matching);
+            Assert.That("fgij", Is.EqualTo(matching));
         }
 
         [Test]
@@ -106,7 +106,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
             };
             var boxScanner = new BoxScanner();
             var matching = boxScanner.GetMatchingOffByOneLetter(input);
-            Assert.AreEqual("fgij", matching);
+            Assert.That("fgij", Is.EqualTo(matching));
         }
 
         [Test]
@@ -114,7 +114,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
         {
             var boxScanner = new BoxScanner();
             var checkSum = boxScanner.GetCheckSum(day1Part1Input);
-            Assert.AreEqual(4693, checkSum);
+            Assert.That(4693, Is.EqualTo(checkSum));
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode
         {
             var boxScanner = new BoxScanner();
             var matching = boxScanner.GetMatchingOffByOneLetter(day1Part1Input);
-            Assert.AreEqual("pebjqsalrdnckzfihvtxysomg", matching);
+            Assert.That("pebjqsalrdnckzfihvtxysomg", Is.EqualTo(matching));
         }
 
         [Test]

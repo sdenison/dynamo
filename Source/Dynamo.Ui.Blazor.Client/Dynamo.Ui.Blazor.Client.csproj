@@ -7,10 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazor.Bootstrap" Version="1.10.4" />
+		<PackageReference Include="Blazor.Bootstrap" Version="2.2.0" />
 		<PackageReference Include="Csla.Blazor.WebAssembly" Version="8.0.0-R23122103" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.0" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.6" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>

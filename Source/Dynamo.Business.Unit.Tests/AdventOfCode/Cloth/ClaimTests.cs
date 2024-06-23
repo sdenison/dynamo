@@ -11,11 +11,11 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Cloth
         {
             var claimString = "#123 @ 3,2: 5x4";
             var claim = Claim.Parse(claimString);
-            Assert.AreEqual(123, claim.Id);
-            Assert.AreEqual(3, claim.X);
-            Assert.AreEqual(2, claim.Y);
-            Assert.AreEqual(5, claim.Width);
-            Assert.AreEqual(4, claim.Height);
+            Assert.That(123, Is.EqualTo(claim.Id));
+            Assert.That(3, Is.EqualTo(claim.X));
+            Assert.That(2, Is.EqualTo(claim.Y));
+            Assert.That(5, Is.EqualTo(claim.Width));
+            Assert.That(4, Is.EqualTo(claim.Height));
         }
     }
 }

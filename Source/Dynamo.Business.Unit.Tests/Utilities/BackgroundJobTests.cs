@@ -84,20 +84,20 @@ namespace Dynamo.Business.Unit.Tests.Utilities
         public async Task Can_create_BackgroundJob()
         {
             BackgroundJob job = await _portal.CreateAsync();
-            Assert.IsNotNull(job);
-            Assert.IsTrue(job.IsNew);
-            Assert.IsTrue(job.IsDirty);
-            Assert.AreEqual(JobStatus.Initializing, job.JobStatus);
+            Assert.That(job, Is.Not.Null);
+            Assert.That(job.IsNew);
+            Assert.That(job.IsDirty);
+            Assert.That(JobStatus.Initializing, Is.EqualTo(job.JobStatus));
             job.JobStatus = JobStatus.Submitted;
             job = await job.SaveAsync();
-            Assert.AreEqual(3, _backgroundJobTable.Count);
+            Assert.That(3, Is.EqualTo(_backgroundJobTable.Count));
             job.JobStatus = JobStatus.FinishedSuccess;
-            Assert.IsTrue(job.IsDirty);
+            Assert.That(job.IsDirty);
             var jobAfterUpdate = await job.SaveAsync();
             job.Delete();
-            Assert.AreEqual(3, _backgroundJobTable.Count);
+            Assert.That(3, Is.EqualTo(_backgroundJobTable.Count));
             var jobAfterDelete = await job.SaveAsync();
-            Assert.AreEqual(2, _backgroundJobTable.Count);
+            Assert.That(2, Is.EqualTo(_backgroundJobTable.Count));
         }
 
         [Test]
@@ -110,8 +110,8 @@ namespace Dynamo.Business.Unit.Tests.Utilities
         public async Task Can_get_list_of_BackgroundJobs()
         {
             BackgroundJobList jobs = await _listPortal.FetchAsync();
-            Assert.IsNotNull(jobs);
-            Assert.IsTrue(jobs.Count > 0);
+            Assert.That(jobs, Is.Not.Null);
+            Assert.That(jobs.Count > 0);
         }
     }
 }

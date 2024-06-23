@@ -206,7 +206,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
         [Test]
         public void Can_create_a_game_room_and_play_all_three_games()
         {
-            var playerCount = 5000;
+            var playerCount = 500000;
             var gameRoom = new GameRoom(playerCount);
 
             var players = new List<Player>();
