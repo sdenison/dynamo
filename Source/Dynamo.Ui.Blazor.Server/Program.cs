@@ -34,7 +34,6 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddCascadingAuthenticationState();
 
-//builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddHttpContextAccessor();
@@ -48,14 +47,6 @@ builder.Services.AddCsla(o => o
     .ClientSideDataPortal(co => co
         .UseLocalProxy())));
 
-//for EF Db
-//builder.Services.AddTransient(typeof(DataAccess.IPersonDal), typeof(DataAccess.EF.PersonEFDal));
-//builder.Services.AddDbContext<DataAccess.EF.PersonDbContext>(
-//options => options.UseSqlServer("Server=servername;Database=personDB;User ID=sa; Password=pass;Trusted_Connection=True;MultipleActiveResultSets=true"));
-
-// for Mock Db
-//builder.Services.AddTransient(typeof(DataAccess.IPersonDal), typeof(DataAccess.Mock.PersonDal));
-
 //Set up DynamoDb dataService
 var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);
 var db = new PocoDynamo(awsDb);
@@ -65,14 +56,9 @@ metadata.Name = "test-BackgroundJob";
 var dataService = new BackgroundJobDataService(db);
 
 //Add dependency injection 
-//var services = new ServiceCollection();
-//builder.Services.AddCsla();
 builder.Services.AddTransient<IBackgroundJobDataService>(o => dataService);
 var storageService = new StorageService();
 builder.Services.AddTransient<IStorageService>(o => storageService);
-;
-//var serviceProvider = services.BuildServiceProvider();
-//var portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
 
 builder.Services.AddBlazorBootstrap(); // Add this line
 
@@ -112,12 +98,7 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
-//app.MapControllers();
 
-//app.MapRazorComponents<App>()
-//    .AddInteractiveServerRenderMode()
-//    .AddInteractiveWebAssemblyRenderMode()
-//    .AddAdditionalAssemblies(typeof(Counter).Assembly);
 app.MapFallbackToFile("index.html");
 
 app.Run();

@@ -7,7 +7,6 @@
 @inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
 @inject HttpClient Http
 
-
 <h1>2018 Advent of Code Puzzle Solver</h1>
 
 <Toasts class="p-3" Messages="_messages" Placement="ToastsPlacement.TopRight" />
@@ -38,38 +37,37 @@ else
 {
     <Button class="float-end" Color="ButtonColor.Primary" onclick="@RefreshGrid">Refresh</Button>
     <div class="grid">
-       <div class="row">
-           <Grid TItem="Business.Utilities.BackgroundJob" 
-                 class="table table-hover table-bordered table-striped" 
-                 Data="vm.Model"
-                 Responsive="true"
-                 AllowPaging="true"
-                 PageSize="@pageSize">
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="File Name" PropertyName="FileName">
-                   @context.FileName
-               </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Status" PropertyName="JobStatus">
-                   @context.JobStatus.GetDescription()
-               </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Puzzle" PropertyName="JobType">
-                   @context.JobType.GetDescription()
-               </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="File Uploaded" PropertyName="Created">
-                   @context.Created
-               </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Answer Found" PropertyName="LastUpdated">
-                   @context.LastUpdated
-               </GridColumn>
-               <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Puzzle Output" PropertyName="JobOutput">
-                   @context.JobOutput
-               </GridColumn>
-           </Grid>
-       </div>
+        <div class="row">
+            <Grid TItem="Business.Utilities.BackgroundJob" 
+                  class="table table-hover table-bordered table-striped" 
+                  Data="vm.Model"
+                  Responsive="true"
+                  AllowPaging="true"
+                  PageSize="@pageSize">
+                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="File Name" PropertyName="FileName">
+                    @context.FileName
+                </GridColumn>
+                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Job Status" PropertyName="JobStatus">
+                    @context.JobStatus.GetDescription()
+                </GridColumn>
+                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Puzzle" PropertyName="JobType">
+                    @context.JobType.GetDescription()
+                </GridColumn>
+                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="File Uploaded" PropertyName="Created">
+                    @context.Created
+                </GridColumn>
+                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Answer Found" PropertyName="LastUpdated">
+                    @context.LastUpdated
+                </GridColumn>
+                <GridColumn TItem="Business.Utilities.BackgroundJob" HeaderText="Puzzle Output" PropertyName="JobOutput">
+                    @context.JobOutput
+                </GridColumn>
+            </Grid>
+        </div>
     </div>
     <Button Type="ButtonType.Button" Color="ButtonColor.Primary" @onclick="() => ChangeSize(5)">Page Size 5</Button>
     <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" @onclick="() => ChangeSize(10)">Page Size 10</Button>
     <Button Type="ButtonType.Button" Color="ButtonColor.Secondary" @onclick="() => ChangeSize(15)">Page Size 15</Button>
-
 }
 
 @code {
@@ -105,17 +103,8 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-      try
-      {
-         await StateManager.InitializeAsync();
-         await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
-      }
-      catch (Exception ex)
-        {
-             var message = new ToastMessage(ToastType.Warning, ex.Message);
-             message.AutoHide = true;
-             _messages.Add(message);
-        }
+        await StateManager.InitializeAsync();
+        await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
     }
 
     protected async Task RefreshGrid()
