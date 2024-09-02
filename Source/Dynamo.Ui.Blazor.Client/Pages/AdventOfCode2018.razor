@@ -2,6 +2,7 @@
 @using System.Net.Http.Headers
 @using Dynamo.Business.Shared.Utilities
 @using Dynamo.Business.Shared.ExtensionMethods
+@inject Csla.Blazor.State.StateManager StateManager
 @inject Csla.IDataPortal<Dynamo.Business.Utilities.BackgroundJobList> backgroundJobDataPortal
 @inject Csla.Blazor.ViewModel<Dynamo.Business.Utilities.BackgroundJobList> vm
 @inject HttpClient Http
@@ -104,7 +105,17 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
+      try
+      {
+         await StateManager.InitializeAsync();
+         await vm.RefreshAsync(() => backgroundJobDataPortal.FetchAsync());
+      }
+      catch (Exception ex)
+        {
+             var message = new ToastMessage(ToastType.Warning, ex.Message);
+             message.AutoHide = true;
+             _messages.Add(message);
+        }
     }
 
     protected async Task RefreshGrid()

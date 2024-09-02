@@ -27,16 +27,26 @@ builder.Services.AddCors(options =>
       });
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
+builder.Services.AddCascadingAuthenticationState();
+
+//builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddCsla(o => o
   .AddAspNetCore()
+  .AddServerSideBlazor(o => o.UseInMemoryApplicationContextManager = false)
+  .Security(so => so.FlowSecurityPrincipalFromClient = false)
   .DataPortal(dpo => dpo
-    .EnableSecurityPrincipalFlowFromClient()
     .AddServerSideDataPortal()
-    .UseLocalProxy()));
+    .ClientSideDataPortal(co => co
+        .UseLocalProxy())));
 
 //for EF Db
 //builder.Services.AddTransient(typeof(DataAccess.IPersonDal), typeof(DataAccess.EF.PersonEFDal));
@@ -56,7 +66,7 @@ var dataService = new BackgroundJobDataService(db);
 
 //Add dependency injection 
 //var services = new ServiceCollection();
-builder.Services.AddCsla();
+//builder.Services.AddCsla();
 builder.Services.AddTransient<IBackgroundJobDataService>(o => dataService);
 var storageService = new StorageService();
 builder.Services.AddTransient<IStorageService>(o => storageService);
@@ -102,6 +112,12 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
+//app.MapControllers();
+
+//app.MapRazorComponents<App>()
+//    .AddInteractiveServerRenderMode()
+//    .AddInteractiveWebAssemblyRenderMode()
+//    .AddAdditionalAssemblies(typeof(Counter).Assembly);
 app.MapFallbackToFile("index.html");
 
 app.Run();

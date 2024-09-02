@@ -4,9 +4,9 @@
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 	<ItemGroup>
-	  <None Remove="FakeFiles\blkjckhands.csv" />
-	  <None Remove="FakeFiles\BoxScans.txt" />
-	  <None Remove="FakeFiles\MineLayout.txt" />
+		<None Remove="FakeFiles\blkjckhands.csv" />
+		<None Remove="FakeFiles\BoxScans.txt" />
+		<None Remove="FakeFiles\MineLayout.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="FakeFiles\blkjckhands.csv" />
@@ -19,7 +19,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Csla" Version="8.0.0-R23122103" />
+		<PackageReference Include="Csla" Version="8.2.5" />
 		<PackageReference Include="Moq" Version="4.20.70" />
 		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
@@ -28,4 +28,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Dynamo.Business\Dynamo.Business.csproj" />
 	</ItemGroup>
-		</Project>
+</Project>
