@@ -14,16 +14,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Stars
         public void Can_display_sky()
         {
             var sky = new Sky(GetTestData());
-            Assert.AreEqual(31, sky.Points.Count);
+            Assert.That(31, Is.EqualTo(sky.Points.Count));
             var display = sky.Display();
-            Assert.AreEqual(16, display.Count);
-            Assert.AreEqual(display, GetSecond0());
+            Assert.That(16, Is.EqualTo(display.Count));
+            Assert.That(display, Is.EqualTo(GetSecond0()));
             sky.Step();
-            Assert.AreEqual(sky.Display(), GetSecond1());
+            Assert.That(sky.Display(), Is.EqualTo(GetSecond1()));
             sky.Step();
-            Assert.AreEqual(sky.Display(), GetSecond2());
+            Assert.That(sky.Display(), Is.EqualTo(GetSecond2()));
             sky.Step();
-            Assert.AreEqual(sky.Display(), GetSecond3());
+            Assert.That(sky.Display(), Is.EqualTo(GetSecond3()));
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Stars
         {
             var sky = new Sky(GetTestData());
             var stepWithMessage = sky.FindStepWithMessage();
-            Assert.AreEqual(3, stepWithMessage);
+            Assert.That(3, Is.EqualTo(stepWithMessage));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Stars
         {
             var sky = new Sky(TestDataProvider.GetPuzzleInput());
             var stepWithMessage = sky.FindStepWithMessage();
-            Assert.AreEqual(10243, stepWithMessage);
+            Assert.That(10243, Is.EqualTo(stepWithMessage));
             sky.TakeSteps(stepWithMessage);
             var display = sky.DisplayCondensed();
             using (StreamWriter outputFile = new StreamWriter("d:\\temp\\day10output.txt"))

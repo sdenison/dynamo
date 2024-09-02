@@ -11,7 +11,7 @@ namespace Dynamo.Business.Unit.Tests.Utilities
         {
             var stream = FileGetter.GetMemoryStreamFromFile("BusyBox1Second.txt");
             int secondsToSleep = BusyBox.GetSecondFromStream(stream);
-            Assert.AreEqual(1, secondsToSleep);
+            Assert.That(1, Is.EqualTo(secondsToSleep));
         }
     }
 }
