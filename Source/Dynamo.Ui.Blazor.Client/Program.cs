@@ -7,16 +7,16 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-//builder.Services.AddAuthorizationCore();
-builder.Services.AddOptions();
-
 builder.Services.AddCsla(o => o
-    .AddBlazorWebAssembly()
-    .DataPortal(dpo => dpo
-        .EnableSecurityPrincipalFlowFromClient()
-        .UseHttpProxy(options => options.DataPortalUrl = "/api/DataPortal")));
+    .AddBlazorWebAssembly(o => o.SyncContextWithServer = true)
+    .Security(o => o.FlowSecurityPrincipalFromClient = false)
+    .DataPortal(o => o.ClientSideDataPortal(o => o
+        .UseHttpProxy(o => o.DataPortalUrl = "/api/DataPortal"))));
 
 builder.Services.AddBlazorBootstrap();
 

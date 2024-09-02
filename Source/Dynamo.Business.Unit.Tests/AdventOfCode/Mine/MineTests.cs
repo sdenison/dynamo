@@ -25,48 +25,48 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             };
 
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
-            Assert.IsNotNull(mine);
+            Assert.That(mine, Is.Not.Null);
 
             //Trace the first track all the way around
-            Assert.AreEqual(16, mine.Tracks[0].Sections.Count);
-            Assert.AreEqual(TrackSectionType.TopLeft, mine.Tracks[0].Sections[0].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[0].Sections[1].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[0].Sections[2].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[0].Sections[3].Type);
-            Assert.AreEqual(TrackSectionType.TopRight, mine.Tracks[0].Sections[4].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[0].Sections[5].Type);
-            Assert.AreEqual(TrackSectionType.Intersection, mine.Tracks[0].Sections[6].Type);
-            Assert.AreEqual(mine.Tracks[2], mine.Tracks[0].Sections[6].IntersectingTrackSection.Track);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[0].Sections[7].Type);
-            Assert.AreEqual(TrackSectionType.LowerRight, mine.Tracks[0].Sections[8].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[0].Sections[9].Type);
-            Assert.AreEqual(TrackSectionType.Intersection, mine.Tracks[0].Sections[10].Type);
-            Assert.AreEqual(mine.Tracks[2], mine.Tracks[0].Sections[10].IntersectingTrackSection.Track);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[0].Sections[11].Type);
-            Assert.AreEqual(TrackSectionType.LowerLeft, mine.Tracks[0].Sections[12].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[0].Sections[13].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[0].Sections[14].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[0].Sections[15].Type);
+            Assert.That(16, Is.EqualTo(mine.Tracks[0].Sections.Count));
+            Assert.That(TrackSectionType.TopLeft, Is.EqualTo(mine.Tracks[0].Sections[0].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[0].Sections[1].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[0].Sections[2].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[0].Sections[3].Type));
+            Assert.That(TrackSectionType.TopRight, Is.EqualTo(mine.Tracks[0].Sections[4].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[0].Sections[5].Type));
+            Assert.That(TrackSectionType.Intersection, Is.EqualTo(mine.Tracks[0].Sections[6].Type));
+            Assert.That(mine.Tracks[2], Is.EqualTo(mine.Tracks[0].Sections[6].IntersectingTrackSection.Track));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[0].Sections[7].Type));
+            Assert.That(TrackSectionType.LowerRight, Is.EqualTo(mine.Tracks[0].Sections[8].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[0].Sections[9].Type));
+            Assert.That(TrackSectionType.Intersection, Is.EqualTo(mine.Tracks[0].Sections[10].Type));
+            Assert.That(mine.Tracks[2], Is.EqualTo(mine.Tracks[0].Sections[10].IntersectingTrackSection.Track));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[0].Sections[11].Type));
+            Assert.That(TrackSectionType.LowerLeft, Is.EqualTo(mine.Tracks[0].Sections[12].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[0].Sections[13].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[0].Sections[14].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[0].Sections[15].Type));
 
             //Second Track
-            Assert.AreEqual(TrackSectionType.TopLeft, mine.Tracks[1].Sections[0].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[1].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[2].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[3].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[4].Type);
-            Assert.AreEqual(TrackSectionType.TopRight, mine.Tracks[1].Sections[5].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[1].Sections[6].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[1].Sections[7].Type);
-            Assert.AreEqual(TrackSectionType.LowerRight, mine.Tracks[1].Sections[8].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[9].Type);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[10].Type);
-            Assert.AreEqual(TrackSectionType.Intersection, mine.Tracks[1].Sections[11].Type);
-            Assert.AreEqual(mine.Tracks[2], mine.Tracks[1].Sections[11].IntersectingTrackSection.Track);
-            Assert.AreEqual(TrackSectionType.Horizontal, mine.Tracks[1].Sections[12].Type);
-            Assert.AreEqual(TrackSectionType.LowerLeft, mine.Tracks[1].Sections[13].Type);
-            Assert.AreEqual(TrackSectionType.Vertical, mine.Tracks[1].Sections[14].Type);
-            Assert.AreEqual(TrackSectionType.Intersection, mine.Tracks[1].Sections[15].Type);
-            Assert.AreEqual(mine.Tracks[2], mine.Tracks[1].Sections[15].IntersectingTrackSection.Track);
+            Assert.That(TrackSectionType.TopLeft, Is.EqualTo(mine.Tracks[1].Sections[0].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[1].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[2].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[3].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[4].Type));
+            Assert.That(TrackSectionType.TopRight, Is.EqualTo(mine.Tracks[1].Sections[5].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[1].Sections[6].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[1].Sections[7].Type));
+            Assert.That(TrackSectionType.LowerRight, Is.EqualTo(mine.Tracks[1].Sections[8].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[9].Type));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[10].Type));
+            Assert.That(TrackSectionType.Intersection, Is.EqualTo(mine.Tracks[1].Sections[11].Type));
+            Assert.That(mine.Tracks[2], Is.EqualTo(mine.Tracks[1].Sections[11].IntersectingTrackSection.Track));
+            Assert.That(TrackSectionType.Horizontal, Is.EqualTo(mine.Tracks[1].Sections[12].Type));
+            Assert.That(TrackSectionType.LowerLeft, Is.EqualTo(mine.Tracks[1].Sections[13].Type));
+            Assert.That(TrackSectionType.Vertical, Is.EqualTo(mine.Tracks[1].Sections[14].Type));
+            Assert.That(TrackSectionType.Intersection, Is.EqualTo(mine.Tracks[1].Sections[15].Type));
+            Assert.That(mine.Tracks[2], Is.EqualTo(mine.Tracks[1].Sections[15].IntersectingTrackSection.Track));
         }
 
         [Test]
@@ -84,58 +84,58 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
 
             var cart = mine.GetCarts().First();
-            Assert.AreEqual(2, cart.Point.X);
-            Assert.AreEqual(0, cart.Point.Y);
+            Assert.That(2, Is.EqualTo(cart.Point.X));
+            Assert.That(0, Is.EqualTo(cart.Point.Y));
 
             cart.Step();
-            Assert.AreEqual(3, cart.Point.X);
+            Assert.That(3, Is.EqualTo(cart.Point.X));
             cart.Step();
             cart.Step();
-            Assert.AreEqual(mine.Tracks[0], cart.TrackSection.Track);
+            Assert.That(mine.Tracks[0], Is.EqualTo(cart.TrackSection.Track));
             cart.Step();
-            Assert.AreEqual(mine.Tracks[2], cart.TrackSection.Track);
-            Assert.AreEqual(Rotation.Clockwise, cart.Rotation);
-            Assert.AreEqual(4, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
+            Assert.That(mine.Tracks[2], Is.EqualTo(cart.TrackSection.Track));
+            Assert.That(Rotation.Clockwise, Is.EqualTo(cart.Rotation));
+            Assert.That(4, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(5, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
+            Assert.That(5, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(6, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
+            Assert.That(6, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(7, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
-            Assert.AreEqual(mine.Tracks[2], cart.TrackSection.Track);
+            Assert.That(7, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
+            Assert.That(mine.Tracks[2], Is.EqualTo(cart.TrackSection.Track));
             cart.Step();
-            Assert.AreEqual(8, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
+            Assert.That(8, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(9, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
+            Assert.That(9, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(9, cart.Point.X);
-            Assert.AreEqual(3, cart.Point.Y);
+            Assert.That(9, Is.EqualTo(cart.Point.X));
+            Assert.That(3, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(9, cart.Point.X);
-            Assert.AreEqual(4, cart.Point.Y);
-            Assert.AreEqual(mine.Tracks[1], cart.TrackSection.Track);
+            Assert.That(9, Is.EqualTo(cart.Point.X));
+            Assert.That(4, Is.EqualTo(cart.Point.Y));
+            Assert.That(mine.Tracks[1], Is.EqualTo(cart.TrackSection.Track));
             cart.Step();
-            Assert.AreEqual(8, cart.Point.X);
-            Assert.AreEqual(4, cart.Point.Y);
+            Assert.That(8, Is.EqualTo(cart.Point.X));
+            Assert.That(4, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(7, cart.Point.X);
-            Assert.AreEqual(4, cart.Point.Y);
+            Assert.That(7, Is.EqualTo(cart.Point.X));
+            Assert.That(4, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(7, cart.Point.X);
-            Assert.AreEqual(3, cart.Point.Y);
+            Assert.That(7, Is.EqualTo(cart.Point.X));
+            Assert.That(3, Is.EqualTo(cart.Point.Y));
             cart.Step();
-            Assert.AreEqual(7, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
-            Assert.AreEqual(mine.Tracks[2], cart.TrackSection.Track);
+            Assert.That(7, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
+            Assert.That(mine.Tracks[2], Is.EqualTo(cart.TrackSection.Track));
             cart.Step();
-            Assert.AreEqual(6, cart.Point.X);
-            Assert.AreEqual(2, cart.Point.Y);
+            Assert.That(6, Is.EqualTo(cart.Point.X));
+            Assert.That(2, Is.EqualTo(cart.Point.Y));
         }
 
         [Test]
@@ -152,8 +152,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             };
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
             var firstCollision = mine.GetFirstCollision();
-            Assert.AreEqual(7, firstCollision.X);
-            Assert.AreEqual(3, firstCollision.Y);
+            Assert.That(7, Is.EqualTo(firstCollision.X));
+            Assert.That(3, Is.EqualTo(firstCollision.Y));
             var numbers = TestDataProvider.GetPuzzleData();
         }
 
@@ -163,8 +163,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             var mineLayout = TestDataProvider.GetFullPuzzleInput();
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
             var firstCollision = mine.GetFirstCollision();
-            Assert.AreEqual(50, firstCollision.X);
-            Assert.AreEqual(54, firstCollision.Y);
+            Assert.That(50, Is.EqualTo(firstCollision.X));
+            Assert.That(54, Is.EqualTo(firstCollision.Y));
         }
 
         [Test]
@@ -182,8 +182,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             };
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
             var lastCart = mine.GetLastCart();
-            Assert.AreEqual(6, lastCart.Point.X);
-            Assert.AreEqual(4, lastCart.Point.Y);
+            Assert.That(6, Is.EqualTo(lastCart.Point.X));
+            Assert.That(4, Is.EqualTo(lastCart.Point.Y));
         }
 
         [Test]
@@ -192,8 +192,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Mine
             var mineLayout = TestDataProvider.GetFullPuzzleInput();
             var mine = new Shared.AdventOfCode.Mine.Mine(mineLayout);
             var lastCart = mine.GetLastCart();
-            Assert.AreEqual(50, lastCart.Point.X);
-            Assert.AreEqual(100, lastCart.Point.Y);
+            Assert.That(50, Is.EqualTo(lastCart.Point.X));
+            Assert.That(100, Is.EqualTo(lastCart.Point.Y));
         }
     }
 }

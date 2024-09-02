@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ServiceStack.Aws" Version="6.11.0" />
+		<PackageReference Include="ServiceStack.Aws" Version="8.3.0" />
 	</ItemGroup>
 
 </Project>

@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Csla" Version="8.0.0-R23122103" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Csla" Version="8.2.6" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Dynamo.Business.Shared\Dynamo.Business.Shared.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Dynamo.Business.Shared\Dynamo.Business.Shared.csproj" />
+	</ItemGroup>
 
 </Project>

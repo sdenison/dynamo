@@ -54,14 +54,14 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
 
             //Create a new backround service job
             var job = await portal.CreateAsync();
-            Assert.IsTrue(job.IsNew);
+            Assert.That(job.IsNew);
             job = await job.SaveAsync();
             //Make a change
             job.JobStatus = JobStatus.FinishedSuccess;
             job.JobOutput = "The answer to your question is 42";
             //Pull from the database before changes is saved
             var jobFromDatabase = await portal.FetchAsync(job.Id);
-            Assert.AreEqual(JobStatus.Initializing, jobFromDatabase.JobStatus);
+            Assert.That(JobStatus.Initializing, Is.EqualTo(jobFromDatabase.JobStatus));
             //Actually save 
             job = await job.SaveAsync();
             //Delete the job
@@ -69,7 +69,7 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
             job = await job.SaveAsync();
             var listPortal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJobList>>();
             var jobs = await listPortal.FetchAsync();
-            Assert.IsTrue(jobs.Count > 0);
+            Assert.That(jobs.Count > 0);
         }
     }
 }
