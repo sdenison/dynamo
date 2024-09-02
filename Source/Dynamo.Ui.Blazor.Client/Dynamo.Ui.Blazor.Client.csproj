@@ -4,11 +4,12 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>9197591c-9023-47fa-863e-4e0d2ec4540e</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazor.Bootstrap" Version="2.2.0" />
-		<PackageReference Include="Csla.Blazor.WebAssembly" Version="8.0.0-R23122103" />
+		<PackageReference Include="Blazor.Bootstrap" Version="3.0.0" />
+		<PackageReference Include="Csla.Blazor.WebAssembly" Version="8.2.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.6" PrivateAssets="all" />
 	</ItemGroup>

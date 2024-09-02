@@ -73,7 +73,7 @@ namespace Dynamo.Business.Unit.Tests.Utilities
             var services = new ServiceCollection();
             services.AddCsla(o => o
                 .DataPortal(dpo => dpo
-                    .UseLocalProxy()));
+                    .ClientSideDataPortal(x => x.UseLocalProxy())));
             services.AddTransient<IBackgroundJobDataService>(o => mockDataService.Object);
             var serviceProvider = services.BuildServiceProvider();
             _portal = serviceProvider.GetRequiredService<IDataPortal<BackgroundJob>>();
