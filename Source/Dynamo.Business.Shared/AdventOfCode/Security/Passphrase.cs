@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Security
 {
@@ -20,6 +19,18 @@ namespace Dynamo.Business.Shared.AdventOfCode.Security
             return true;
         }
 
+        public bool IsValidNoAnagrams()
+        {
+            var wordList = new List<string>();
+            foreach (var word in _words)
+            {
+                var deconstructedWord = new string(word.OrderBy(x => x).ToArray());
+                if (wordList.Contains(deconstructedWord))
+                    return false;
+                wordList.Add(deconstructedWord);
+            }
+            return true;
+        }
 
         public Passphrase(string passphrase)
         {

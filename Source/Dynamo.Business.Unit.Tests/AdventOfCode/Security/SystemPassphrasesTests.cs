@@ -7,12 +7,18 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Security
     [TestFixture]
     public class SystemPassphrasesTests
     {
-
         [Test]
         public void Can_determine_how_many_passphrases_are_valid_for_the_system()
         {
             var systemPassphrases = new SystemPassphrases(GetPuzzleInput());
             Assert.That(systemPassphrases.ValidPassphraseCount, Is.EqualTo(451));
+        }
+
+        [Test]
+        public void Can_determine_how_many_passphrases_are_valid_without_anagrams_for_the_system()
+        {
+            var systemPassphrases = new SystemPassphrases(GetPuzzleInput());
+            Assert.That(systemPassphrases.ValidPassphraseCountNoAnagrams, Is.EqualTo(223));
         }
 
         public List<string> GetPuzzleInput()
