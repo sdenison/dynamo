@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 {
@@ -9,31 +8,19 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
         public static List<Point> GetIncrementedMemory(int memorySquare)
         {
             var memory = new List<Point>();
-            int currentX = 0, currentY = 0, value = 1, spiralSize = 1;
-            memory.Add(new Point(currentX, currentY, value));
+            var values = new Dictionary<(int x, int y), int>();
+            AddPoint(memory, values, 0, 0, 1);
 
             Direction currentDirection = Direction.Right;
+            int currentX = 0, currentY = 0, value = 1, spiralSize = 1;
 
             while (value < memorySquare)
             {
-                var (dx, dy) = GetDxDy(currentDirection);
+                (currentX, currentY, value) = TraverseSpiral(
+                    currentDirection, spiralSize, currentX, currentY, value, memorySquare, memory, values, false);
+                if (value == memorySquare) return memory;
 
-                for (int i = 0; i < spiralSize; i++)
-                {
-                    currentX += dx;
-                    currentY += dy;
-                    value++;
-                    memory.Add(new Point(currentX, currentY, value));
-                    if (value == memorySquare) return memory;
-                }
-
-                // Increment the spiral size if we were just going Up or Down
-                if (currentDirection == Direction.Up || currentDirection == Direction.Down)
-                {
-                    spiralSize++;
-                }
-
-                // Move to the next direction in the sequence
+                if (currentDirection == Direction.Up || currentDirection == Direction.Down) spiralSize++;
                 currentDirection = GetNextDirection(currentDirection);
             }
 
@@ -43,38 +30,46 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
         public static List<Point> GetSummedMemory(int maxValue)
         {
             var memory = new List<Point>();
-            int currentX = 0, currentY = 0, value = 1, spiralSize = 1;
-            memory.Add(new Point(currentX, currentY, value));
+            var values = new Dictionary<(int x, int y), int>();
+            AddPoint(memory, values, 0, 0, 1);
 
             Direction currentDirection = Direction.Right;
+            int currentX = 0, currentY = 0, value = 1, spiralSize = 1;
 
-            while (value <= maxValue)
+            while (true)
             {
-                var (dx, dy) = GetDxDy(currentDirection);
+                (currentX, currentY, value) = TraverseSpiral(
+                    currentDirection, spiralSize, currentX, currentY, value, maxValue, memory, values, true);
+                if (value > maxValue) return memory;
 
-                for (int i = 0; i < spiralSize; i++)
-                {
-                    currentX += dx;
-                    currentY += dy;
-                    value = GetSummedValues(memory, currentX, currentY);
-                    memory.Add(new Point(currentX, currentY, value));
-                    if (value > maxValue) return memory;
-                }
-
-                // Increment the spiral size if we were just going Up or Down
-                if (currentDirection == Direction.Up || currentDirection == Direction.Down)
-                {
-                    spiralSize++;
-                }
-
-                // Move to the next direction in the sequence
+                if (currentDirection == Direction.Up || currentDirection == Direction.Down) spiralSize++;
                 currentDirection = GetNextDirection(currentDirection);
             }
-
-            return memory;
         }
 
-        private static (int dx, int dy) GetDxDy(Direction direction)
+        private static (int, int, int) TraverseSpiral(
+            Direction direction, int steps, int currentX, int currentY, int value, int limit,
+            List<Point> memory, Dictionary<(int x, int y), int> values, bool useSummedValues)
+        {
+            var (dx, dy) = GetDirectionVector(direction);
+
+            for (int i = 0; i < steps; i++)
+            {
+                currentX += dx;
+                currentY += dy;
+                value = useSummedValues ? GetSummedValue(values, currentX, currentY) : value + 1;
+
+                AddPoint(memory, values, currentX, currentY, value);
+
+                // Condition check based on the use case
+                if (useSummedValues && value > limit) return (currentX, currentY, value);
+                if (!useSummedValues && value == limit) return (currentX, currentY, value);
+            }
+
+            return (currentX, currentY, value);
+        }
+
+        private static (int dx, int dy) GetDirectionVector(Direction direction)
         {
             return direction switch
             {
@@ -98,19 +93,30 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
             };
         }
 
-        private static int GetSummedValues(List<Point> memory, int x, int y)
+        private static int GetSummedValue(Dictionary<(int x, int y), int> values, int x, int y)
         {
             int sum = 0;
-            sum += memory.SingleOrDefault(point => point.X == x - 1 && point.Y == y + 1)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x && point.Y == y + 1)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x + 1 && point.Y == y + 1)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x - 1 && point.Y == y)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x + 1 && point.Y == y)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x - 1 && point.Y == y - 1)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x && point.Y == y - 1)?.Value ?? 0;
-            sum += memory.SingleOrDefault(point => point.X == x + 1 && point.Y == y - 1)?.Value ?? 0;
+            var neighbors = new (int x, int y)[]
+            {
+            (x - 1, y + 1), (x, y + 1), (x + 1, y + 1),
+            (x - 1, y), /*(x, y)*/ (x + 1, y),
+            (x - 1, y - 1), (x, y - 1), (x + 1, y - 1)
+            };
+
+            foreach (var (nx, ny) in neighbors)
+            {
+                sum += values.GetValueOrDefault((nx, ny), 0);
+            }
 
             return sum;
+        }
+
+        private static void AddPoint(
+            List<Point> memory, Dictionary<(int x, int y), int> values, int x, int y, int value)
+        {
+            var point = new Point(x, y, value);
+            memory.Add(point);
+            values[(x, y)] = value;
         }
     }
 
