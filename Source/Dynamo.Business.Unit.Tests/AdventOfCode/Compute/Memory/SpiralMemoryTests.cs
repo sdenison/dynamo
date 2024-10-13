@@ -6,7 +6,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Memory
     [TestFixture]
     public class SpiralMemoryTests
     {
-        //[TestCase(1, 0)]
+        [TestCase(1, 0)]
         [TestCase(12, 3)]
         [TestCase(23, 2)]
         [TestCase(1024, 31)]
@@ -17,7 +17,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Memory
             Assert.That(finalPoint.ManhattanDistance, Is.EqualTo(manhattanDistance));
         }
 
-        [TestCase]
+        [Test]
         public void Can_get_correct_x_and_y_coordinates()
         {
             var memory = SpiralMemory.GetIncrementedMemory(2);
@@ -50,7 +50,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Memory
             Assert.That(memory.Count, Is.EqualTo(347991));
         }
 
-        [TestCase]
+        [Test]
         public void Can_get_correct_x_and_y_coordinates_with_summed_values()
         {
             var memory = SpiralMemory.GetSummedMemory(2);

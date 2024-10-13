@@ -15,10 +15,5 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
             Y = y;
             Value = value;
         }
-
-        //public Point GetNextPoint(Direction direction, int spiralSize, int value)
-        //{
-
-        //}
     }
 }

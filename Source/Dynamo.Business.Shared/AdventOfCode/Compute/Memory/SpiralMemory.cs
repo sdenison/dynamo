@@ -8,11 +8,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
     {
         public static List<Point> GetIncrementedMemory(int memorySquare)
         {
-            var currentPoint = new Point(0, 0, 1);
             var spiralWidth = 0;
             var memory = new List<Point>();
+            var currentX = 0;
+            var currentY = 0;
+            var value = 1;
 
-            memory.Add(currentPoint);
+            memory.Add(new Point(currentX, currentY, value));
 
             while (true)
             {
@@ -21,12 +23,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                     if (direction == Direction.Right)
                     {
                         spiralWidth++;
-                        for (var x = currentPoint.X; x < spiralWidth; x++)
+                        for (var x = currentX; x < spiralWidth; x++)
                         {
-                            currentPoint.X++;
-                            currentPoint.Value++;
-                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
-                            if (currentPoint.Value == memorySquare)
+                            currentX++;
+                            value++;
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value == memorySquare)
                             {
                                 return memory;
                             }
@@ -34,12 +36,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                     }
                     if (direction == Direction.Up)
                     {
-                        for (var y = currentPoint.Y; y < spiralWidth; y++)
+                        for (var y = currentY; y < spiralWidth; y++)
                         {
-                            currentPoint.Y++;
-                            currentPoint.Value++;
-                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
-                            if (currentPoint.Value == memorySquare)
+                            currentY++;
+                            value++;
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value == memorySquare)
                             {
                                 return memory;
                             }
@@ -47,12 +49,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                     }
                     if (direction == Direction.Left)
                     {
-                        for (var x = currentPoint.X; x > spiralWidth * -1; x--)
+                        for (var x = currentX; x > spiralWidth * -1; x--)
                         {
-                            currentPoint.X--;
-                            currentPoint.Value++;
-                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
-                            if (currentPoint.Value == memorySquare)
+                            currentX--;
+                            value++;
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value == memorySquare)
                             {
                                 return memory;
                             }
@@ -60,12 +62,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                     }
                     if (direction == Direction.Down)
                     {
-                        for (var y = currentPoint.Y; y > spiralWidth * -1; y--)
+                        for (var y = currentY; y > spiralWidth * -1; y--)
                         {
-                            currentPoint.Y--;
-                            currentPoint.Value++;
-                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
-                            if (currentPoint.Value == memorySquare)
+                            currentY--;
+                            value++;
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value == memorySquare)
                             {
                                 return memory;
                             }
@@ -77,15 +79,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 
         public static List<Point> GetSummedMemory(int maxMemoryValue)
         {
-            var currentPoint = new Point(0, 0, 1);
             var spiralWidth = 0;
             var memory = new List<Point>();
-
-            memory.Add(currentPoint);
-
-            var value = 0;
             var currentX = 0;
             var currentY = 0;
+            var value = 1;
+
+            memory.Add(new Point(currentX, currentY, value));
 
             while (true)
             {
