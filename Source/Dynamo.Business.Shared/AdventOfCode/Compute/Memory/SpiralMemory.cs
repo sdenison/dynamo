@@ -5,10 +5,9 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 {
     public abstract class SpiralMemory
     {
-        public List<Point> Memory { get; private set; }
         protected Dictionary<(int x, int y), int> Values { get; private set; }
 
-        public List<Point> Generate(int limit)
+        public Dictionary<(int x, int y), int> Generate(int limit)
         {
             InitializeMemory();
             Direction currentDirection = Direction.Right;
@@ -27,14 +26,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                 currentDirection = GetNextDirection(currentDirection);
             }
 
-            return Memory;
+            return Values;
         }
 
         protected abstract bool ShouldExit(int value, int limit);
 
         private void InitializeMemory()
         {
-            Memory = new List<Point>();
             Values = new Dictionary<(int x, int y), int>();
             AddPoint(0, 0, 1);
         }
@@ -61,8 +59,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 
         private void AddPoint(int x, int y, int value)
         {
-            var point = new Point(x, y, value);
-            Memory.Add(point);
             Values[(x, y)] = value;
         }
 
