@@ -5,38 +5,25 @@ namespace Dynamo.Business.Shared.AdventOfCode.Security
 {
     public class Passphrase
     {
-        private readonly string[] _words;
+        public readonly string[] Words;
+        public Dictionary<string, int> WordCount;
+        public Dictionary<string, List<string>> Anagrams;
 
         public bool IsValid()
         {
-            var wordList = new SortedDictionary<string, string>();
-            foreach (var word in _words)
+            foreach (var word in WordCount.Keys)
             {
-                if (wordList.Keys.Contains(word))
+                if (WordCount[word] > 1)
                     return false;
-                wordList.Add(word, word);
             }
             return true;
         }
 
         public bool IsValidNoAnagrams()
         {
-            var wordList = new SortedDictionary<string, List<string>>();
-            foreach (var word in _words)
+            foreach (var word in Anagrams.Keys)
             {
-                var deconstructedWord = new string(word.OrderBy(x => x).ToArray());
-                if (wordList.Keys.Contains(deconstructedWord))
-                {
-                    wordList[deconstructedWord].Add(word);
-                }
-                else
-                {
-                    wordList.Add(deconstructedWord, new List<string>() { word });
-                }
-            }
-            foreach (var word in wordList.Keys)
-            {
-                if (wordList[word].Count() > 1)
+                if (Anagrams[word].Count() > 1)
                     return false;
             }
             return true;
@@ -44,7 +31,29 @@ namespace Dynamo.Business.Shared.AdventOfCode.Security
 
         public Passphrase(string passphrase)
         {
-            _words = passphrase.Split(' ');
+            Words = passphrase.Split(' ');
+            WordCount = new Dictionary<string, int>();
+            Anagrams = new Dictionary<string, List<string>>();
+            foreach (var word in Words)
+            {
+                if (WordCount.Keys.Contains(word))
+                {
+                    WordCount[word] += 1;
+                }
+                else
+                {
+                    WordCount.Add(word, 1);
+                }
+                var deconstructedWord = new string(word.OrderBy(x => x).ToArray());
+                if (Anagrams.Keys.Contains(deconstructedWord))
+                {
+                    Anagrams[deconstructedWord].Add(word);
+                }
+                else
+                {
+                    Anagrams.Add(deconstructedWord, new List<string>() { word });
+                }
+            }
         }
     }
 }
