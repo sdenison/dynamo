@@ -6,7 +6,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 {
     public class SpiralMemory
     {
-        public static List<Point> GetIncrementedMemory(int memorySquare)
+
+        public static List<Point> GetMemory(int valueToSearchFor, Func<int, int> increment, Func<int, int> comparer)
         {
             var spiralWidth = 0;
             var memory = new List<Point>();
@@ -15,66 +16,46 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
             var value = 1;
 
             memory.Add(new Point(currentX, currentY, value));
+            return memory;
+        }
 
-            while (true)
+        public static List<Point> GetIncrementedMemory(int memorySquare)
+        {
+            var memory = new List<Point>();
+            int currentX = 0, currentY = 0, value = 1, spiralWidth = 1;
+            memory.Add(new Point(currentX, currentY, value));
+            var directions = new (int x, int y)[]
             {
-                foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+                (1, 0),  // Right
+                (0, 1),  // Up
+                (-1, 0), // Left
+                (0, -1)  // Down
+            };
+
+            var currentDirection = 0;
+
+            while (value < memorySquare)
+            {
+                var (dx, dy) = directions[currentDirection % 4];
+
+                for (int i = 0; i < spiralWidth; i++)
                 {
-                    if (direction == Direction.Right)
-                    {
-                        spiralWidth++;
-                        for (var x = currentX; x < spiralWidth; x++)
-                        {
-                            currentX++;
-                            value++;
-                            memory.Add(new Point(currentX, currentY, value));
-                            if (value == memorySquare)
-                            {
-                                return memory;
-                            }
-                        }
-                    }
-                    if (direction == Direction.Up)
-                    {
-                        for (var y = currentY; y < spiralWidth; y++)
-                        {
-                            currentY++;
-                            value++;
-                            memory.Add(new Point(currentX, currentY, value));
-                            if (value == memorySquare)
-                            {
-                                return memory;
-                            }
-                        }
-                    }
-                    if (direction == Direction.Left)
-                    {
-                        for (var x = currentX; x > spiralWidth * -1; x--)
-                        {
-                            currentX--;
-                            value++;
-                            memory.Add(new Point(currentX, currentY, value));
-                            if (value == memorySquare)
-                            {
-                                return memory;
-                            }
-                        }
-                    }
-                    if (direction == Direction.Down)
-                    {
-                        for (var y = currentY; y > spiralWidth * -1; y--)
-                        {
-                            currentY--;
-                            value++;
-                            memory.Add(new Point(currentX, currentY, value));
-                            if (value == memorySquare)
-                            {
-                                return memory;
-                            }
-                        }
-                    }
+                    currentX += dx;
+                    currentY += dy;
+                    value++;
+                    memory.Add(new Point(currentX, currentY, value));
+                    if (value == memorySquare) return memory;
                 }
+
+                // Increment the width if we were just going up or down
+                if (currentDirection % 4 == 1 || currentDirection % 4 == 3)
+                {
+                    spiralWidth++;
+                }
+                currentDirection++;
             }
+
+            return memory;
         }
 
         public static List<Point> GetSummedMemory(int maxMemoryValue)
