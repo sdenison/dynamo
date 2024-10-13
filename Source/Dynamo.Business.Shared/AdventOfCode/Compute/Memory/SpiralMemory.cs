@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 {
     public class SpiralMemory
     {
-        public Point FinalPoint { get; private set; }
-
-        public SpiralMemory(int memorySquare)
+        public static List<Point> GetIncrementedMemory(int memorySquare)
         {
             var currentPoint = new Point(0, 0, 1);
             var spiralWidth = 0;
+            var memory = new List<Point>();
+
+            memory.Add(currentPoint);
 
             while (true)
             {
@@ -22,10 +25,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                         {
                             currentPoint.X++;
                             currentPoint.Value++;
+                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
                             if (currentPoint.Value == memorySquare)
                             {
-                                FinalPoint = currentPoint;
-                                return;
+                                return memory;
                             }
                         }
                     }
@@ -35,10 +38,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                         {
                             currentPoint.Y++;
                             currentPoint.Value++;
+                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
                             if (currentPoint.Value == memorySquare)
                             {
-                                FinalPoint = currentPoint;
-                                return;
+                                return memory;
                             }
                         }
                     }
@@ -48,10 +51,10 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                         {
                             currentPoint.X--;
                             currentPoint.Value++;
+                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
                             if (currentPoint.Value == memorySquare)
                             {
-                                FinalPoint = currentPoint;
-                                return;
+                                return memory;
                             }
                         }
                     }
@@ -61,15 +64,103 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
                         {
                             currentPoint.Y--;
                             currentPoint.Value++;
+                            memory.Add(new Point(currentPoint.X, currentPoint.Y, currentPoint.Value));
                             if (currentPoint.Value == memorySquare)
                             {
-                                FinalPoint = currentPoint;
-                                return;
+                                return memory;
                             }
                         }
                     }
                 }
             }
+        }
+
+        public static List<Point> GetSummedMemory(int maxMemoryValue)
+        {
+            var currentPoint = new Point(0, 0, 1);
+            var spiralWidth = 0;
+            var memory = new List<Point>();
+
+            memory.Add(currentPoint);
+
+            var value = 0;
+            var currentX = 0;
+            var currentY = 0;
+
+            while (true)
+            {
+                foreach (Direction direction in Enum.GetValues(typeof(Direction)))
+                {
+                    if (direction == Direction.Right)
+                    {
+                        spiralWidth++;
+                        for (var x = currentX; x < spiralWidth; x++)
+                        {
+                            currentX++;
+                            value = GetSummedValues(memory, currentX, currentY);
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value > maxMemoryValue)
+                            {
+                                return memory;
+                            }
+                        }
+                    }
+                    if (direction == Direction.Up)
+                    {
+                        for (var y = currentY; y < spiralWidth; y++)
+                        {
+                            currentY++;
+                            value = GetSummedValues(memory, currentX, currentY);
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value > maxMemoryValue)
+                            {
+                                return memory;
+                            }
+                        }
+                    }
+                    if (direction == Direction.Left)
+                    {
+                        for (var x = currentX; x > spiralWidth * -1; x--)
+                        {
+                            currentX--;
+                            value = GetSummedValues(memory, currentX, currentY);
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value > maxMemoryValue)
+                            {
+                                return memory;
+                            }
+                        }
+                    }
+                    if (direction == Direction.Down)
+                    {
+                        for (var y = currentY; y > spiralWidth * -1; y--)
+                        {
+                            currentY--;
+                            value = GetSummedValues(memory, currentX, currentY);
+                            memory.Add(new Point(currentX, currentY, value));
+                            if (value > maxMemoryValue)
+                            {
+                                return memory;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private static int GetSummedValues(List<Point> memory, int x, int y)
+        {
+            int sum = 0;
+            sum += memory.SingleOrDefault(point => point.X == x - 1 && point.Y == y + 1)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x && point.Y == y + 1)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x + 1 && point.Y == y + 1)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x - 1 && point.Y == y)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x + 1 && point.Y == y)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x - 1 && point.Y == y - 1)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x && point.Y == y - 1)?.Value ?? 0;
+            sum += memory.SingleOrDefault(point => point.X == x + 1 && point.Y == y - 1)?.Value ?? 0;
+
+            return sum;
         }
     }
 
