@@ -1,44 +1,35 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 {
+
     public class BlockList
     {
-        public List<int> Blocks { get; set; } = new List<int>();
+        private readonly List<int> _blocks = new List<int>();
 
-        public override int GetHashCode()
-        {
-            var hashCode = new StringBuilder();
-            foreach (var block in Blocks)
-            {
-                hashCode.Append(block.GetHashCode());
-                hashCode.Append(" ");
-            }
-            return hashCode.ToString().GetHashCode();
-        }
+        public IReadOnlyList<int> Blocks => _blocks;
 
-        public void Add(int blockValue)
-        {
-            Blocks.Add(blockValue);
-        }
+        public void Add(int blockValue) => _blocks.Add(blockValue);
 
         public void Reallocate()
         {
-            var maxBlock = 0;
-            foreach (var block in Blocks)
+            if (_blocks.Count == 0) return;
+
+            int maxBlock = _blocks.Max();
+            int indexOf = _blocks.IndexOf(maxBlock);
+            _blocks[indexOf] = 0;
+
+            for (int i = 1; i <= maxBlock; i++)
             {
-                if (block > maxBlock)
-                    maxBlock = block;
+                int currentBlock = (indexOf + i) % _blocks.Count;
+                _blocks[currentBlock]++;
             }
-            var indexOf = Blocks.IndexOf(maxBlock);
-            var amountToRedistribute = maxBlock;
-            Blocks[indexOf] = 0;
-            for (var i = 1; i <= amountToRedistribute; i++)
-            {
-                var currentBlock = (indexOf + i) % Blocks.Count;
-                Blocks[currentBlock]++;
-            }
+        }
+
+        public string ToSnapshot()
+        {
+            return string.Join(",", _blocks); // Convert the block list to a string snapshot.
         }
     }
 }

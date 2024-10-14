@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
 {
@@ -7,49 +6,43 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Memory
     {
         public BlockList Blocks { get; private set; }
 
+        // Properties to store the loop index and loop size.
+        public int LoopIndex { get; private set; }
+        public int LoopSize { get; private set; }
+
         public Reallocator(string blocks)
         {
             Blocks = new BlockList();
-            var blockIndex = 0;
             foreach (var block in blocks.Split('\t'))
             {
                 Blocks.Add(int.Parse(block));
-                blockIndex++;
             }
+
+            Reallocate();
         }
 
-        public int Reallocate()
+        // Performs the reallocation and stores loop index and size.
+        private void Reallocate()
         {
-            var blockDictionary = new Dictionary<int, BlockList>();
-            blockDictionary.Add(Blocks.GetHashCode(), Blocks);
-            var loopIndex = 0;
-            do
-            {
-                loopIndex++;
-                Blocks.Reallocate();
-                if (blockDictionary.Keys.Contains(Blocks.GetHashCode()))
-                {
-                    return loopIndex;
-                }
-                blockDictionary.Add(Blocks.GetHashCode(), Blocks);
-            } while (true);
-        }
+            var seenConfigurations = new Dictionary<string, int>();
+            seenConfigurations[Blocks.ToSnapshot()] = 0;
 
-        public int ReallocateFiniteLoopSize()
-        {
-            var blockDictionary = new Dictionary<int, BlockList>();
-            blockDictionary.Add(Blocks.GetHashCode(), Blocks);
-            var loopIndex = 0;
-            do
+            LoopIndex = 0;
+
+            while (true)
             {
-                loopIndex++;
+                LoopIndex++;
                 Blocks.Reallocate();
-                if (blockDictionary.Keys.Contains(Blocks.GetHashCode()))
+                string snapshot = Blocks.ToSnapshot();
+
+                if (seenConfigurations.TryGetValue(snapshot, out int firstSeenIndex))
                 {
-                    return loopIndex - blockDictionary.Keys.ToList().IndexOf(Blocks.GetHashCode());
+                    LoopSize = LoopIndex - firstSeenIndex; // Calculate loop size.
+                    break;
                 }
-                blockDictionary.Add(Blocks.GetHashCode(), Blocks);
-            } while (true);
+
+                seenConfigurations[snapshot] = LoopIndex;
+            }
         }
     }
 }
