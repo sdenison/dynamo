@@ -50,10 +50,16 @@
                 <div class="card mt-4">
                     <div class="card-header">
                         Duplicated Anagram Passphrase Results
-                    </div>a
+                    </div>
                     <div class="card-body overflow-auto" style="max-height: 300px;">
                         @if (SystemPassphrases != null)
                         {
+                            <p>
+                                <strong>
+                                    Out of @SystemPassphrases.Passphrases.Count() passphrases,
+                                    @SystemPassphrases.ValidPassphraseCountNoAnagrams() were valid.
+                                </strong>
+                            </p>
                             @foreach (var line in SystemPassphrases.Passphrases)
                             {
                                 <PassphraseAnagram Passphrase="@line" />
@@ -71,6 +77,12 @@
                     <div class="card-body overflow-auto" style="max-height: 300px;">
                         @if (SystemPassphrases != null)
                         {
+                            <p>
+                                <strong>
+                                    Out of @SystemPassphrases.Passphrases.Count() passphrases,
+                                    @SystemPassphrases.ValidPassphraseCount() were valid.
+                                </strong>
+                            </p>
                             @foreach (var line in SystemPassphrases.Passphrases)
                             {
                                 <PassphraseRepeating Passphrase="@line" />
