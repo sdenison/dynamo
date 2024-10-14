@@ -1,0 +1,58 @@
+﻿@using Dynamo.Business.Shared.AdventOfCode.Security
+
+@if (Passphrase != null && Passphrase.Words.Any())
+{
+    <div class="d-inline-flex flex-wrap">
+        @foreach (var word in Passphrase.Words)
+        {
+            <span style="@GetWordStyle(word)" class="me-2 mb-2">@word</span>
+        }
+    </div>
+}
+else
+{
+    <p>No passphrase provided.</p>
+}
+
+@code {
+    [Parameter]
+    public Passphrase Passphrase { get; set; }
+
+    private Dictionary<string, string> WordColors { get; set; } = new();
+
+    // Assigns or retrieves the style for each word
+    private string GetWordStyle(string word)
+    {
+        var deconstructedWord = new string(word.OrderBy(x => x).ToArray());
+        if (Passphrase.Anagrams[deconstructedWord].Count > 1)
+        {
+            if (!WordColors.ContainsKey(deconstructedWord))
+            {
+                string color = GetRandomColorFromPalette();
+                WordColors[deconstructedWord] = $"background-color: {color}; color: white; padding: 5px; border-radius: 4px;";
+            }
+        }
+        else
+        {
+            WordColors[deconstructedWord] = $"background-color: white; color: black; padding: 5px; border-radius: 4px;";
+        }
+
+        return WordColors[deconstructedWord];
+    }
+
+    // Predefined list of vibrant colors
+    private readonly List<string> colorPalette = new()
+    {
+        "#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#33FFF5", "#FF9F33", "#8D33FF",
+        "#FF338D", "#33FF99", "#FFDC33", "#FF3333", "#33A8FF", "#91FF33"
+    };
+
+    // Selects a random color from the predefined palette
+    private string GetRandomColorFromPalette()
+    {
+        Random random = new();
+        int index = random.Next(colorPalette.Count);
+        return colorPalette[index];
+    }
+}
+
