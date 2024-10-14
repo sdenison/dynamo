@@ -1,0 +1,129 @@
+﻿@page "/passphraseanalyzer"
+@using Dynamo.Business.Shared.AdventOfCode.Security
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="text-center">Passphrase Analyzer</h3>
+
+            <!-- Radio button group to select the validation type -->
+            <div class="mb-3">
+                <label class="form-label">Validation Type</label>
+                <div>
+                    <input type="radio" id="checkWords" name="validationType" 
+                           checked="@(ValidationTypeValue == ValidationType.Words)"
+                           @onchange="@(() => ValidationTypeValue = ValidationType.Words)"/>
+                    <label for="checkWords" class="me-3">Check Repeating Words</label>
+
+                    <input type="radio" id="checkWords" name="validationType"
+                           checked="@(ValidationTypeValue == ValidationType.Anagrams)"
+                           @onchange="@(() => ValidationTypeValue = ValidationType.Anagrams)" />
+
+                    <label for="checkAnagrams">Check Repeating Anagrams</label>
+                </div>
+            </div>
+
+            <form>
+                <div class="mb-3">
+                    <label for="passphraseInput" class="form-label">Passphrase</label>
+                    <textarea id="passphraseInput"
+                              class="form-control"
+                              @bind="Passphrases"
+                              rows="5"
+                              placeholder="Enter your passphrase here...">
+                    </textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="fileInput" class="form-label">Upload Passphrase File</label>
+                    <InputFile id="fileInput" class="form-control" OnChange="HandleFileSelected" />
+                </div>
+
+                <button type="button" class="btn btn-primary w-100 mt-3" @onclick="HandleSubmit">
+                    Submit
+                </button>
+            </form>
+            @if (ValidationTypeValue == ValidationType.Anagrams)
+            {
+                <div class="card mt-4">
+                    <div class="card-header">
+                        Duplicated Anagram Passphrase Results
+                    </div>
+                    <div class="card-body overflow-auto" style="max-height: 300px;">
+                        @if (SystemPassphrases != null)
+                        {
+                            <p>
+                                <strong>
+                                    Out of @SystemPassphrases.Passphrases.Count() passphrases,
+                                    @SystemPassphrases.ValidPassphraseCountNoAnagrams() were valid.
+                                </strong>
+                            </p>
+                            @foreach (var line in SystemPassphrases.Passphrases)
+                            {
+                                <PassphraseAnagram Passphrase="@line" />
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card mt-4">
+                    <div class="card-header">
+                        Duplicated Passphrase Results
+                    </div>
+                    <div class="card-body overflow-auto" style="max-height: 300px;">
+                        @if (SystemPassphrases != null)
+                        {
+                            <p>
+                                <strong>
+                                    Out of @SystemPassphrases.Passphrases.Count() passphrases,
+                                    @SystemPassphrases.ValidPassphraseCount() were valid.
+                                </strong>
+                            </p>
+                            @foreach (var line in SystemPassphrases.Passphrases)
+                            {
+                                <PassphraseRepeating Passphrase="@line" />
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string Passphrases { get; set; } = string.Empty;
+
+    private SystemPassphrases SystemPassphrases { get; set; } 
+    private string SelectedValidationType { get; set; } = "Words";  // Default to "Words"
+    private ValidationType ValidationTypeValue { get; set; }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            using var reader = new StreamReader(file.OpenReadStream());
+            Passphrases = await reader.ReadToEndAsync();
+        }
+    }
+
+    private void HandleSubmit()
+    {
+        // This function could handle form submission logic
+        Console.WriteLine($"Passphrase entered: {Passphrases}");
+        var passphraseLines = Passphrases.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
+        SystemPassphrases = new SystemPassphrases(passphraseLines);
+        var x = SystemPassphrases.ValidPassphraseCount();
+    }
+
+    public enum ValidationType
+    {
+        Words,
+        Anagrams
+    }
+}
