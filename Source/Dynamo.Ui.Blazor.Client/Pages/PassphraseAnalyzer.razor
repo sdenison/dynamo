@@ -101,7 +101,6 @@
 
 @code {
     private string Passphrases { get; set; } = string.Empty;
-
     private SystemPassphrases SystemPassphrases { get; set; } 
     private ValidationType ValidationTypeValue { get; set; }
 
@@ -117,11 +116,8 @@
 
     private void HandleSubmit()
     {
-        // This function could handle form submission logic
-        Console.WriteLine($"Passphrase entered: {Passphrases}");
         var passphraseLines = Passphrases.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
         SystemPassphrases = new SystemPassphrases(passphraseLines);
-        var x = SystemPassphrases.ValidPassphraseCount();
     }
 
     public enum ValidationType
