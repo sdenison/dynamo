@@ -1,0 +1,58 @@
+﻿@page "/passphrase"
+@using Dynamo.Business.Shared.AdventOfCode.Security
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h3 class="text-center">Enter Passphrase</h3>
+
+            <form>
+                <div class="mb-3">
+                    <label for="passphraseInput" class="form-label">Passphrase</label>
+                    <textarea id="passphraseInput"
+                              class="form-control"
+                              @bind="Passphrases"
+                              rows="5"
+                              placeholder="Enter your passphrase here...">
+                    </textarea>
+                </div>
+
+                <button type="button" class="btn btn-primary w-100 mt-3" @onclick="HandleSubmit">
+                    Submit
+                </button>
+            </form>
+
+            <div class="mt-4">
+               <!-- Add passphrase logic here-->
+                @if (SystemPassphrases != null)
+                {
+                  @foreach (var line in SystemPassphrases.Passphrases)
+                  {
+                     <PassphraseRepeating Passphrase=@line />
+                  }
+                }
+            </div>
+
+            <div class="mt-4">
+                <h5>You entered:</h5>
+                <pre class="bg-light p-3 rounded">@Passphrases</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string Passphrases { get; set; } = string.Empty;
+
+    private SystemPassphrases SystemPassphrases { get; set; } 
+
+    private void HandleSubmit()
+    {
+        // This function could handle form submission logic
+        Console.WriteLine($"Passphrase entered: {Passphrases}");
+        var passphraseLines = Passphrases.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
+        SystemPassphrases = new SystemPassphrases(passphraseLines);
+        var x = SystemPassphrases.ValidPassphraseCount();
+    }
+}

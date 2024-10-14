@@ -5,25 +5,25 @@ namespace Dynamo.Business.Shared.AdventOfCode.Security
 {
     public class SystemPassphrases
     {
-        private readonly List<Passphrase> _passphrases;
+        public readonly List<Passphrase> Passphrases;
 
         public SystemPassphrases(List<string> passphrases)
         {
-            _passphrases = new List<Passphrase>();
+            Passphrases = new List<Passphrase>();
             foreach (var passphraseString in passphrases)
             {
-                _passphrases.Add(new Passphrase(passphraseString));
+                Passphrases.Add(new Passphrase(passphraseString));
             }
         }
 
         public int ValidPassphraseCount()
         {
-            return _passphrases.Count(x => x.IsValid());
+            return Passphrases.Count(x => x.IsValid());
         }
 
         public int ValidPassphraseCountNoAnagrams()
         {
-            return _passphrases.Count(x => x.IsValidNoAnagrams());
+            return Passphrases.Count(x => x.IsValidNoAnagrams());
         }
     }
 }
