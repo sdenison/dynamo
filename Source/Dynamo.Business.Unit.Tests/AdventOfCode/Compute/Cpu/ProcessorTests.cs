@@ -1,5 +1,6 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Cpu
 {
@@ -35,6 +36,26 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Cpu
             Assert.That(processor.Registers["b"], Is.EqualTo(0));
             Assert.That(processor.Registers["a"], Is.EqualTo(1));
             Assert.That(processor.Registers["c"], Is.EqualTo(-10));
+        }
+
+        [Test]
+        public void Can_solve_2017_day_8_part_1()
+        {
+            string[] instructions = PuzzleInputFactory.GetPuzzleInput();
+            var processor = new Processor(instructions);
+            processor.RunInstructions();
+            var maxRegisterValue = processor.Registers.Values.Max();
+            Assert.That(maxRegisterValue, Is.EqualTo(5215));
+        }
+
+
+        [Test]
+        public void Can_solve_2017_day_8_part_2()
+        {
+            string[] instructions = PuzzleInputFactory.GetPuzzleInput();
+            var processor = new Processor(instructions);
+            processor.RunInstructions();
+            Assert.That(processor.HighestRegisterValueSeen, Is.EqualTo(6419));
         }
     }
 }

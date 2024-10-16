@@ -4,7 +4,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 {
     public class Processor
     {
-        public Dictionary<string, int> Registers { get; set; }
+        public Dictionary<string, int> Registers { get; private set; }
+        public int HighestRegisterValueSeen { get; private set; }
         public List<Instruction> Instructions { get; private set; }
 
         public Processor(string[] instructions)
@@ -28,6 +29,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 
         public void RunInstructions()
         {
+            HighestRegisterValueSeen = 0;
             foreach (var instruction in Instructions)
             {
                 var operationRegister = Registers[instruction.OperationRegister];
@@ -66,6 +68,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
                         Registers[instruction.OperationRegister] += instruction.Amount;
                     if (instruction.Operation == OperationType.Dec)
                         Registers[instruction.OperationRegister] -= instruction.Amount;
+                    if (Registers[instruction.OperationRegister] > HighestRegisterValueSeen)
+                        HighestRegisterValueSeen = Registers[instruction.OperationRegister];
                 }
             }
         }
