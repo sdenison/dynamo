@@ -60,5 +60,21 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Algorithms
             }
             Assert.That(spinlock.Next.Value, Is.EqualTo(1244));
         }
+
+        [Test, Ignore("Takes too long")]
+        public void Can_get_puzzle_answer_2017_day_17_part_2()
+        {
+            var spinlock = new Spinlock();
+            var steps = 370;
+            for (var i = 1; i <= 50000000; i++)
+            {
+                spinlock = spinlock.Add(steps, i);
+            }
+            while (spinlock.Value != 0)
+            {
+                spinlock = spinlock.Next;
+            }
+            Assert.That(spinlock.Next.Value, Is.EqualTo(11162912));
+        }
     }
 }
