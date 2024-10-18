@@ -1,0 +1,27 @@
+﻿@page "/debugger"
+@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
+
+<h3>Program Debugger</h3>
+
+@if(Processor != null)
+{
+    <ProcessorControl Processor="@Processor"/>
+}
+
+@code {
+    private Processor Processor { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Example initialization of a new Processor with dummy instructions
+        string[] instructions = new string[]
+        {
+            "b inc 5 if a > 1",
+            "a inc 1 if b < 5",
+            "c dec -10 if a >= 1",
+            "c inc -20 if c == 10"
+        };
+        Processor = new Processor(instructions);
+    }
+
+}

@@ -1,0 +1,21 @@
+﻿@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
+
+<div class="d-flex justify-content-end">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Registers and their Values</h5>
+            @foreach (var register in Processor.Registers)
+            {
+                <p class="card-text">@register.Key: @register.Value</p>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Processor Processor { get; set; }
+
+
+}
+

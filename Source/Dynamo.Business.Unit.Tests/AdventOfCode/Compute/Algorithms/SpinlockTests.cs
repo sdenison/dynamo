@@ -1,5 +1,6 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Compute.Algorithms;
 using NUnit.Framework;
+using System.Diagnostics;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Algorithms
 {
@@ -64,6 +65,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Algorithms
         [Test, Ignore("Takes too long")]
         public void Can_get_puzzle_answer_2017_day_17_part_2()
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             var spinlock = new Spinlock();
             var steps = 370;
             for (var i = 1; i <= 50000000; i++)
@@ -74,6 +77,8 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Algorithms
             {
                 spinlock = spinlock.Next;
             }
+            stopWatch.Stop();
+            var totalSeconds = stopWatch.ElapsedMilliseconds / 1000;
             Assert.That(spinlock.Next.Value, Is.EqualTo(11162912));
         }
     }

@@ -10,6 +10,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
         public string ConditionRegister { get; private set; }
         public ConditionOperator ConditionOperator { get; private set; }
         public int ConditionValue { get; private set; }
+        public bool IsValid { get; private set; }
+        public string ValidationMessage { get; private set; }
 
 
         public Instruction(string instructionString)
