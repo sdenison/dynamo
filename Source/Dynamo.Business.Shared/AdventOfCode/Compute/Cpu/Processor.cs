@@ -73,5 +73,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
                 }
             }
         }
+
+        public void ResetRegisters()
+        {
+            foreach (var registerKeys in Registers.Keys)
+            {
+                Registers[registerKeys] = 0;
+            }
+        }
     }
 }

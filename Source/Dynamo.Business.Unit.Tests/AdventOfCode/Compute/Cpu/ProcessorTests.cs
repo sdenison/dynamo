@@ -39,6 +39,28 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Cpu
         }
 
         [Test]
+        public void Can_reset_registers()
+        {
+            string[] instructions =
+            {
+                "b inc 5 if a > 1",
+                "a inc 1 if b < 5",
+                "c dec -10 if a >= 1",
+                "c inc -20 if c == 10"
+            };
+
+            var processor = new Processor(instructions);
+            processor.RunInstructions();
+            Assert.That(processor.Registers["b"], Is.EqualTo(0));
+            Assert.That(processor.Registers["a"], Is.EqualTo(1));
+            Assert.That(processor.Registers["c"], Is.EqualTo(-10));
+            processor.ResetRegisters();
+            Assert.That(processor.Registers["b"], Is.EqualTo(0));
+            Assert.That(processor.Registers["a"], Is.EqualTo(0));
+            Assert.That(processor.Registers["c"], Is.EqualTo(0));
+        }
+
+        [Test]
         public void Can_solve_2017_day_8_part_1()
         {
             string[] instructions = PuzzleInputFactory.GetPuzzleInput();

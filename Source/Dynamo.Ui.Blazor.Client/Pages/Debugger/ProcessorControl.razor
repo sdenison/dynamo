@@ -1,13 +1,23 @@
 ﻿@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 
-<div class="d-flex justify-content-end">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Registers and their Values</h5>
-            @foreach (var register in Processor.Registers)
-            {
-                <p class="card-text">@register.Key: @register.Value</p>
-            }
+<div class="d-flex">
+    <!-- Play Button on the Left -->
+    <div class="me-auto">
+        <button class="btn btn-primary" @onclick="RunInstructions">
+            <i class="fas fa-play"></i> Run Instructions
+        </button>
+    </div>
+
+    <!-- Register Values on the Right -->
+    <div class="d-flex justify-content-end">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Registers and their Values</h5>
+                @foreach (var register in Processor.Registers)
+                {
+                    <p class="card-text">@register.Key: @register.Value</p>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -16,6 +26,28 @@
     [Parameter]
     public Processor Processor { get; set; }
 
+    protected override void OnInitialized()
+    {
+        // Only initialize the Processor if it's not already set by the parent
+        if (Processor == null)
+        {
+            // Example initialization of a new Processor with dummy instructions
+            string[] instructions = new string[]
+            {
+                "b inc 5 if a > 1",
+                "a inc 1 if b < 5",
+                "c dec -10 if a >= 1",
+                "c inc -20 if c == 10"
+            };
+            Processor = new Processor(instructions);
+        }
+    }
 
+    // Method to run instructions
+    private void RunInstructions()
+    {
+        Processor.RunInstructions();
+    }
 }
+
 
