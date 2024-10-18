@@ -15,10 +15,12 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
         public bool IsCurrent { get; set; } = false;
         public bool IsBreakpoint { get; set; } = false;
         public bool BreakpointHasBeenHit { get; set; } = false;
+        public string InstructionString { get; set; }
 
 
         public Instruction(string instructionString)
         {
+            InstructionString = instructionString;
             OperationRegister = instructionString.Split(" ")[0];
             Operation = (OperationType)Enum.Parse(typeof(OperationType), instructionString.Split(" ")[1], ignoreCase: true);
             Amount = int.Parse(instructionString.Split(" ")[2]);

@@ -1,7 +1,7 @@
 ﻿@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 
 <div class="d-flex">
-    <!-- Play Button on the Left -->
+    <!-- Play and Reset Buttons on the Left -->
     <div class="me-auto">
         <button class="btn btn-primary me-2" @onclick="RunInstructions">
             <i class="fas fa-play"></i> Run Instructions
@@ -13,12 +13,23 @@
 
     <!-- Register Values on the Right -->
     <div class="d-flex justify-content-end">
-        <div class="card">
+        <div class="card me-2">
             <div class="card-body">
                 <h5 class="card-title">Registers and their Values</h5>
                 @foreach (var register in Processor.Registers)
                 {
                     <p class="card-text">@register.Key: @register.Value</p>
+                }
+            </div>
+        </div>
+
+        <!-- Displaying Instructions -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Instructions</h5>
+                @foreach (var instruction in Processor.Instructions)
+                {
+                    <p class="card-text">@instruction.InstructionString</p>
                 }
             </div>
         </div>
