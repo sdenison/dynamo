@@ -12,6 +12,9 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
         public int ConditionValue { get; private set; }
         public bool IsValid { get; private set; }
         public string ValidationMessage { get; private set; }
+        public bool IsCurrent { get; set; } = false;
+        public bool IsBreakpoint { get; set; } = false;
+        public bool BreakpointHasBeenHit { get; set; } = false;
 
 
         public Instruction(string instructionString)

@@ -3,8 +3,11 @@
 <div class="d-flex">
     <!-- Play Button on the Left -->
     <div class="me-auto">
-        <button class="btn btn-primary" @onclick="RunInstructions">
+        <button class="btn btn-primary me-2" @onclick="RunInstructions">
             <i class="fas fa-play"></i> Run Instructions
+        </button>
+        <button class="btn btn-secondary" @onclick="ResetRegisters">
+            <i class="fas fa-redo"></i> Reset Registers
         </button>
     </div>
 
@@ -48,6 +51,11 @@
     {
         Processor.RunInstructions();
     }
-}
 
+    // Method to reset the registers
+    private void ResetRegisters()
+    {
+        Processor.ResetRegisters();
+    }
+}
 
