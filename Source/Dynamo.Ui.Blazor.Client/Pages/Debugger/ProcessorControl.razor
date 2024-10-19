@@ -10,48 +10,48 @@
             <Icon Name="IconName.PlayBtn" /> Step
         </button>
         <button class="btn btn-secondary" @onclick="Reset">
-            <Icon Name="IconName.Repeat" /> Reset 
+            <Icon Name="IconName.Repeat" /> Reset
         </button>
     </div>
+</div>
 
-    <!-- Register Values on the Right -->
-    <div class="d-flex justify-content-end">
-        <div class="card me-2">
-            <div class="card-body">
-                <h5 class="card-title">Registers and their Values</h5>
-                @foreach (var register in Processor.Registers.OrderBy(x => x.Key))
-                {
-                    <p class="card-text">@register.Key: @register.Value</p>
-                }
-            </div>
-        </div>
-
-        <!-- Displaying Instructions with Breakpoints -->
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Instructions</h5>
-                @foreach (var instruction in Processor.Instructions)
-                {
-                    <div class="d-flex align-items-center">
-                        <!-- Gutter for Breakpoints -->
-                        <div class="gutter me-2" style="width: 20px; cursor: pointer;" @onclick="() => ToggleBreakpoint(instruction)">
-                            @if (instruction.IsBreakpoint)
-                            {
-                                <Icon Name="IconName.StopCircle" /> <!-- Show an icon or dot for breakpoint -->
-                            }
-                            else
-                            {
-                                <Icon Name="IconName.Circle" /> <!-- Empty circle or other icon -->
-                            }
-                        </div>
-
-                        <!-- Instruction Text -->
-                        <p class="card-text" style="@GetInstructionStyle(instruction)">
-                            @instruction.InstructionString
-                        </p>
+<div class="d-flex">
+    <!-- Instructions Card (Pulled to the Left) -->
+    <div class="card me-3" style="flex-basis: 50%; max-width: 50%;">
+        <div class="card-body">
+            <h5 class="card-title">Instructions</h5>
+            @foreach (var instruction in Processor.Instructions)
+            {
+                <div class="d-flex align-items-center">
+                    <!-- Gutter for Breakpoints -->
+                    <div class="gutter me-2" style="width: 20px; cursor: pointer;" @onclick="() => ToggleBreakpoint(instruction)">
+                        @if (instruction.IsBreakpoint)
+                        {
+                            <Icon Name="IconName.StopCircle" /> <!-- Show an icon or dot for breakpoint -->
+                        }
+                        else
+                        {
+                            <Icon Name="IconName.Circle" /> <!-- Empty circle or other icon -->
+                        }
                     </div>
-                }
-            </div>
+
+                    <!-- Instruction Text -->
+                    <p class="card-text" style="@GetInstructionStyle(instruction)">
+                        @instruction.InstructionString
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Registers Card (Independent Size) -->
+    <div class="card" style="flex-basis: 50%; max-width: 50%;">
+        <div class="card-body">
+            <h5 class="card-title">Registers and their Values</h5>
+            @foreach (var register in Processor.Registers.OrderBy(x => x.Key))
+            {
+                <p class="card-text">@register.Key: @register.Value</p>
+            }
         </div>
     </div>
 </div>
@@ -60,13 +60,10 @@
     [Parameter]
     public Processor Processor { get; set; }
 
-
     protected override void OnInitialized()
     {
-        // Only initialize the Processor if it's not already set by the parent
         if (Processor == null)
         {
-            // Example initialization of a new Processor with dummy instructions
             string[] instructions = new string[]
             {
                 "b inc 5 if a > 1",
@@ -88,7 +85,6 @@
         Processor.RunNextInstruction();
     }
 
-    // Method to reset the registers
     private void Reset()
     {
         Processor.ResetRegisters();
@@ -101,7 +97,6 @@
         instruction.IsBreakpoint = !instruction.IsBreakpoint;
     }
 
-    // Method to conditionally style the next instruction
     private string GetInstructionStyle(Instruction instruction)
     {
         string style = "";
@@ -111,13 +106,13 @@
             var index = Processor.Instructions.IndexOf(instruction);
             if (index == Processor.InstructionPointer)
             {
-                style = "background-color: yellow;"; // Highlight the next instruction
+                style = "background-color: yellow;";
             }
         }
 
         if (instruction.IsBreakpoint)
         {
-            style += " color: red;"; // Style for breakpoints (e.g., change text color)
+            style += " color: red;";
         }
 
         return style;
