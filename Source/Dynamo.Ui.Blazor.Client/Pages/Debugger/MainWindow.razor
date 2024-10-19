@@ -1,15 +1,28 @@
 ﻿@page "/debugger"
 @using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
 
 <h3>Program Debugger</h3>
 
-@if(Processor != null)
+@if (Processor != null)
 {
-    <ProcessorControl Processor="@Processor"/>
+    <ProcessorControl Processor="@Processor" />
 }
+
+<!-- File Upload Section -->
+<div class="mt-4">
+    <h5>Upload Instructions File</h5>
+    <InputFile OnChange="HandleFileSelected" />
+    @if (!string.IsNullOrEmpty(UploadMessage))
+    {
+        <p class="text-success">@UploadMessage</p>
+    }
+</div>
 
 @code {
     private Processor Processor { get; set; }
+    private string UploadMessage { get; set; }
 
     protected override void OnInitialized()
     {
@@ -24,4 +37,33 @@
         Processor = new Processor(instructions);
     }
 
+    // Handle file selection
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            // Get the uploaded file
+            IBrowserFile file = e.File;
+
+            // Read the file content as a string
+            using var stream = file.OpenReadStream();
+            using var reader = new StreamReader(stream);
+            var fileContents = await reader.ReadToEndAsync();
+
+            // Split the contents into instructions (assuming each line is an instruction)
+            string[] instructions = fileContents.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Create a new Processor with the instructions from the file
+            Processor = new Processor(instructions);
+
+            // Display a success message
+            UploadMessage = "File uploaded successfully and Processor created!";
+        }
+        catch (Exception ex)
+        {
+            // Handle errors and display a message
+            UploadMessage = $"Error uploading file: {ex.Message}";
+        }
+    }
 }
+
