@@ -1,6 +1,7 @@
 ﻿@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
+@inject IJSRuntime JSRuntime
 
-<div class="d-flex">
+<div class="d-flex mb-4">
     <!-- Play, Step, and Reset Buttons on the Left -->
     <div class="me-auto">
         <button class="btn btn-primary me-2" @onclick="RunInstructions">
@@ -17,12 +18,12 @@
 
 <div class="d-flex">
     <!-- Instructions Card (Pulled to the Left) -->
-    <div class="card me-3" style="flex-basis: 50%; max-width: 50%;">
+    <div class="card me-3" style="flex-basis: 50%; max-width: 50%; overflow-y: auto; max-height: 500px;" id="instructionsContainer">
         <div class="card-body">
             <h5 class="card-title">Instructions</h5>
             @foreach (var instruction in Processor.Instructions)
             {
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center" id="instruction-@Processor.Instructions.IndexOf(instruction)">
                     <!-- Gutter for Breakpoints -->
                     <div class="gutter me-2" style="width: 20px; cursor: pointer;" @onclick="() => ToggleBreakpoint(instruction)">
                         @if (instruction.IsBreakpoint)
@@ -75,21 +76,24 @@
         }
     }
 
-    private void RunInstructions()
+    private async Task RunInstructions()
     {
         Processor.RunInstructions();
+        await ScrollToCurrentInstruction();
     }
 
-    private void Step()
+    private async Task Step()
     {
         Processor.RunNextInstruction();
+        await ScrollToCurrentInstruction();
     }
 
-    private void Reset()
+    private async Task Reset()
     {
         Processor.ResetRegisters();
         Processor.ProgramIsRunning = false;
         Processor.InstructionPointer = 0;
+        await ScrollToCurrentInstruction();
     }
 
     private void ToggleBreakpoint(Instruction instruction)
@@ -117,4 +121,12 @@
 
         return style;
     }
+
+    private async Task ScrollToCurrentInstruction()
+    {
+        var currentInstructionIndex = Processor.InstructionPointer;
+        var id = $"instruction-{currentInstructionIndex}";
+        await JSRuntime.InvokeVoidAsync("scrollToInstruction", id);
+    }
 }
+
