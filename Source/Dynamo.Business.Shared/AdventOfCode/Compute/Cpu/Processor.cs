@@ -8,7 +8,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
         public int HighestRegisterValueSeen { get; private set; }
         public List<Instruction> Instructions { get; private set; }
         public int InstructionPointer { get; set; }
-        public bool HasRun { get; set; } = false;
+        public bool ProgramIsRunning { get; set; } = false;
 
         public Processor(string[] instructions)
         {
@@ -33,6 +33,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 
         public void RunNextInstruction()
         {
+            ProgramIsRunning = true;
             var instruction = Instructions[InstructionPointer];
             var operationRegister = Registers[instruction.OperationRegister];
             var conditionRegister = Registers[instruction.ConditionRegister];
@@ -77,15 +78,16 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
             if (InstructionPointer == Instructions.Count)
             {
                 InstructionPointer = 0;
-                HasRun = true;
+                ProgramIsRunning = false;
             }
         }
 
         public void RunInstructions()
         {
             HighestRegisterValueSeen = 0;
+            ProgramIsRunning = true;
 
-            while (!HasRun)
+            while (ProgramIsRunning)
             {
                 var currentInstruction = Instructions[InstructionPointer];
                 if (currentInstruction.IsBreakpoint && !currentInstruction.BreakpointHasBeenHit)
@@ -103,7 +105,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
             {
                 Registers[registerKeys] = 0;
             }
-            HasRun = false;
+            ProgramIsRunning = false;
         }
     }
 }

@@ -4,13 +4,13 @@
     <!-- Play, Step, and Reset Buttons on the Left -->
     <div class="me-auto">
         <button class="btn btn-primary me-2" @onclick="RunInstructions">
-            <i class="fas fa-play"></i> Run Instructions
+            <Icon Name="IconName.FastForward" /> Run
         </button>
-        <button class="btn btn-warning me-2" @onclick="Step">
-            <i class="fas fa-forward"></i> Step
+        <button class="btn btn-primary me-2" @onclick="Step">
+            <Icon Name="IconName.PlayBtn" /> Step
         </button>
         <button class="btn btn-secondary" @onclick="ResetRegisters">
-            <i class="fas fa-redo"></i> Reset Registers
+            <Icon Name="IconName.Repeat" /> Reset Registers
         </button>
     </div>
 
@@ -63,7 +63,6 @@
         }
     }
 
-    // Method to run instructions
     private void RunInstructions()
     {
         Processor.RunInstructions();
@@ -78,17 +77,20 @@
     private void ResetRegisters()
     {
         Processor.ResetRegisters();
-        Processor.HasRun = false;
+        Processor.ProgramIsRunning = false;
         Processor.InstructionPointer = 0;
     }
 
     // Method to conditionally style the next instruction
     private string GetInstructionStyle(Instruction instruction)
     {
-        var index = Processor.Instructions.IndexOf(instruction);
-        if (index == Processor.InstructionPointer)
+        if (Processor.ProgramIsRunning)
         {
-            return "background-color: #ffffcc;"; // Highlight the next instruction with Visual Studio yellow
+            var index = Processor.Instructions.IndexOf(instruction);
+            if (index == Processor.InstructionPointer)
+            {
+                return "background-color: #ffffcc;"; // Highlight the next instruction with Visual Studio yellow
+            }
         }
         return "";
     }
