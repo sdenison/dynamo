@@ -103,6 +103,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
             {
                 Registers[registerKeys] = 0;
             }
+            HasRun = false;
         }
     }
 }

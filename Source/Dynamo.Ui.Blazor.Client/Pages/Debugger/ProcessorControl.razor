@@ -1,10 +1,13 @@
 ﻿@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 
 <div class="d-flex">
-    <!-- Play and Reset Buttons on the Left -->
+    <!-- Play, Step, and Reset Buttons on the Left -->
     <div class="me-auto">
         <button class="btn btn-primary me-2" @onclick="RunInstructions">
             <i class="fas fa-play"></i> Run Instructions
+        </button>
+        <button class="btn btn-warning me-2" @onclick="Step">
+            <i class="fas fa-forward"></i> Step
         </button>
         <button class="btn btn-secondary" @onclick="ResetRegisters">
             <i class="fas fa-redo"></i> Reset Registers
@@ -23,13 +26,15 @@
             </div>
         </div>
 
-        <!-- Displaying Instructions -->
+        <!-- Displaying Instructions with Highlight -->
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Instructions</h5>
                 @foreach (var instruction in Processor.Instructions)
                 {
-                    <p class="card-text">@instruction.InstructionString</p>
+                    <p class="card-text" style="@GetInstructionStyle(instruction)">
+                        @instruction.InstructionString
+                    </p>
                 }
             </div>
         </div>
@@ -39,6 +44,7 @@
 @code {
     [Parameter]
     public Processor Processor { get; set; }
+
 
     protected override void OnInitialized()
     {
@@ -63,10 +69,27 @@
         Processor.RunInstructions();
     }
 
+    private void Step()
+    {
+        Processor.RunNextInstruction();
+    }
+
     // Method to reset the registers
     private void ResetRegisters()
     {
         Processor.ResetRegisters();
+        Processor.HasRun = false;
+        Processor.InstructionPointer = 0;
+    }
+
+    // Method to conditionally style the next instruction
+    private string GetInstructionStyle(Instruction instruction)
+    {
+        var index = Processor.Instructions.IndexOf(instruction);
+        if (index == Processor.InstructionPointer)
+        {
+            return "background-color: #ffffcc;"; // Highlight the next instruction with Visual Studio yellow
+        }
+        return "";
     }
 }
-
