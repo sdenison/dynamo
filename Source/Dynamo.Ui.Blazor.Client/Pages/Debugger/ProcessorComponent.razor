@@ -54,6 +54,8 @@
     <div class="card" style="flex-basis: 50%; max-width: 50%;">
         <div class="card-body">
             <h5 class="card-title">Registers and their Values</h5>
+            <p class="card-text"><strong>Highest Register Value Seen:</strong> @Processor.HighestRegisterValueSeen</p>
+            <p class="card-text"><strong>Largest Register Value:</strong> @Processor.LargestRegisterValue</p>
             @foreach (var register in Processor.Registers.OrderBy(x => x.Key))
             {
                 <p class="card-text">@register.Key: @register.Value</p>

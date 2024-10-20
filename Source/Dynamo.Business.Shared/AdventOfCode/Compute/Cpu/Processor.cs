@@ -79,9 +79,16 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
             InstructionPointer++;
             if (InstructionPointer == Instructions.Count)
             {
-                InstructionPointer = 0;
-                ProgramIsRunning = false;
+                FinalizeProgramRun();
             }
+        }
+
+        private void FinalizeProgramRun()
+        {
+            InstructionPointer = 0;
+            ProgramIsRunning = false;
+            // Reset all breakpoints
+            Instructions.ForEach(x => x.BreakpointHasBeenHit = false);
         }
 
         public void RunInstructions()
