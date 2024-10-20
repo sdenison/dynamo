@@ -11,6 +11,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
         public List<Instruction> Instructions { get; private set; }
         public int InstructionPointer { get; set; }
         public bool ProgramIsRunning { get; set; } = false;
+        public int RunCount { get; set; } = 0;
 
         public Processor(string[] instructions)
         {
@@ -89,11 +90,11 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
             ProgramIsRunning = false;
             // Reset all breakpoints
             Instructions.ForEach(x => x.BreakpointHasBeenHit = false);
+            RunCount++;
         }
 
         public void RunInstructions()
         {
-            HighestRegisterValueSeen = 0;
             ProgramIsRunning = true;
 
             while (ProgramIsRunning)
@@ -114,7 +115,9 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
             {
                 Registers[registerKeys] = 0;
             }
-            ProgramIsRunning = false;
+            HighestRegisterValueSeen = 0;
+            FinalizeProgramRun();
+            RunCount = 0;
         }
     }
 }

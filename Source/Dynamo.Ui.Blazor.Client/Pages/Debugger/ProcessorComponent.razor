@@ -16,6 +16,8 @@
     </div>
 </div>
 
+@if(Processor != null)
+{
 <div class="d-flex">
     <!-- Instructions Card (Pulled to the Left) -->
     <div class="card me-3" style="flex-basis: 50%; max-width: 50%; overflow-y: auto; max-height: 500px;" id="instructionsContainer">
@@ -49,39 +51,41 @@
             }
         </div>
     </div>
+        <!-- Registers Card (Independent Size) -->
+        <div class="card" style="flex-basis: 50%; max-width: 50%;">
+            <div class="card-body">
+                <h5 class="card-title">Registers and their Values</h5>
 
-    <!-- Registers Card (Independent Size) -->
-    <div class="card" style="flex-basis: 50%; max-width: 50%;">
-        <div class="card-body">
-            <h5 class="card-title">Registers and their Values</h5>
-            <p class="card-text"><strong>Highest Register Value Seen:</strong> @Processor.HighestRegisterValueSeen</p>
-            <p class="card-text"><strong>Largest Register Value:</strong> @Processor.LargestRegisterValue</p>
-            @foreach (var register in Processor.Registers.OrderBy(x => x.Key))
-            {
-                <p class="card-text">@register.Key: @register.Value</p>
-            }
+                <div class="d-flex justify-content-between">
+                    <!-- Registers on the left -->
+                    <div>
+                        @foreach (var register in Processor.Registers.OrderBy(x => x.Key))
+                        {
+                            <p class="card-text">@register.Key: @register.Value</p>
+                        }
+                    </div>
+
+                    <!-- HighestRegisterValueSeen and LargestRegisterValue on the right -->
+                    <div class="text-end">
+                        <p class="card-text">Program Is Running: @Processor.ProgramIsRunning</p>
+                        <p class="card-text">Highest Current Value: @Processor.LargestRegisterValue</p>
+                        <p class="card-text">Highest Value Seen: @Processor.HighestRegisterValueSeen</p>
+                        <p class="card-text">Run Count: @Processor.RunCount</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
 </div>
+} 
+@if (Processor == null)
+{
+    <h2>No instructions have been loaded</h2>
+}
 
 @code {
     [Parameter]
     public Processor Processor { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (Processor == null)
-        {
-            string[] instructions = new string[]
-            {
-                "b inc 5 if a > 1",
-                "a inc 1 if b < 5",
-                "c dec -10 if a >= 1",
-                "c inc -20 if c == 10"
-            };
-            Processor = new Processor(instructions);
-        }
-    }
 
     private async Task RunInstructions()
     {
