@@ -1,0 +1,150 @@
+﻿@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
+@inject IJSRuntime JSRuntime
+
+<div class="d-flex mb-4">
+    <!-- Play, Step, and Reset Buttons on the Left -->
+    <div class="me-auto">
+        <button class="btn btn-primary me-2" @onclick="RunInstructions">
+            <Icon Name="IconName.FastForward" /> Run
+        </button>
+        <button class="btn btn-primary me-2" @onclick="Step">
+            <Icon Name="IconName.PlayBtn" /> Step
+        </button>
+        <button class="btn btn-secondary" @onclick="Reset">
+            <Icon Name="IconName.Repeat" /> Reset
+        </button>
+    </div>
+</div>
+
+@if(Processor != null)
+{
+<div class="d-flex">
+    <!-- Instructions Card (Pulled to the Left) -->
+    <div class="card me-3" style="flex-basis: 50%; max-width: 50%; overflow-y: auto; max-height: 500px;" id="instructionsContainer">
+        <div class="card-body">
+            <h5 class="card-title">Instructions</h5>
+            @foreach (var instruction in Processor.Instructions)
+            {
+                <div class="d-flex align-items-center" id="instruction-@Processor.Instructions.IndexOf(instruction)">
+                    <!-- Row Number -->
+                    <div class="row-number me-2" style="width: 40px; text-align: right;">
+                        @(Processor.Instructions.IndexOf(instruction) + 1)
+                    </div>
+
+                    <!-- Gutter for Breakpoints -->
+                    <div class="gutter me-2" style="width: 20px; cursor: pointer;" @onclick="() => ToggleBreakpoint(instruction)">
+                        @if (instruction.IsBreakpoint)
+                        {
+                            <Icon Name="IconName.StopCircle" /> <!-- Show an icon or dot for breakpoint -->
+                        }
+                        else
+                        {
+                            <Icon Name="IconName.Circle" /> <!-- Empty circle or other icon -->
+                        }
+                    </div>
+
+                    <!-- Instruction Text -->
+                    <p class="card-text" style="@GetInstructionStyle(instruction)">
+                        @instruction.InstructionString
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+        <!-- Registers Card (Independent Size) -->
+        <div class="card" style="flex-basis: 50%; max-width: 50%;">
+            <div class="card-body">
+                <h5 class="card-title">Registers and their Values</h5>
+
+                <div class="d-flex justify-content-between">
+                    <!-- Registers on the left -->
+                    <div>
+                        @foreach (var register in Processor.Registers.OrderBy(x => x.Key))
+                        {
+                            <p class="card-text">@register.Key: @register.Value</p>
+                        }
+                    </div>
+
+                    <!-- HighestRegisterValueSeen and LargestRegisterValue on the right -->
+                    <div class="text-end">
+                        <p class="card-text">Program Is Running: @Processor.ProgramIsRunning</p>
+                        <p class="card-text">Highest Current Value: @Processor.LargestRegisterValue</p>
+                        <p class="card-text">Highest Value Seen: @Processor.HighestRegisterValueSeen</p>
+                        <p class="card-text">Run Count: @Processor.RunCount</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+} 
+@if (Processor == null)
+{
+    <h2>No instructions have been loaded</h2>
+}
+
+@code {
+    [Parameter]
+    public Processor Processor { get; set; }
+
+    private async Task RunInstructions()
+    {
+        Processor.RunInstructions();
+        await ScrollToCurrentInstruction();
+    }
+
+    private async Task Step()
+    {
+        if (Processor.InstructionPointer == 0 && !Processor.ProgramIsRunning)
+        {
+            Processor.ProgramIsRunning = true;
+        }
+        else
+        {
+            Processor.RunNextInstruction();
+        }
+        await ScrollToCurrentInstruction();
+    }
+
+    private async Task Reset()
+    {
+        Processor.ResetRegisters();
+        Processor.ProgramIsRunning = false;
+        Processor.InstructionPointer = 0;
+        await ScrollToCurrentInstruction();
+    }
+
+    private void ToggleBreakpoint(Instruction instruction)
+    {
+        instruction.IsBreakpoint = !instruction.IsBreakpoint;
+    }
+
+    private string GetInstructionStyle(Instruction instruction)
+    {
+        string style = "";
+
+        if (Processor.ProgramIsRunning)
+        {
+            var index = Processor.Instructions.IndexOf(instruction);
+            if (index == Processor.InstructionPointer)
+            {
+                style = "background-color: yellow;";
+            }
+        }
+
+        if (instruction.IsBreakpoint)
+        {
+            style += " color: red;";
+        }
+
+        return style;
+    }
+
+    private async Task ScrollToCurrentInstruction()
+    {
+        var currentInstructionIndex = Processor.InstructionPointer;
+        var id = $"instruction-{currentInstructionIndex}";
+        await JSRuntime.InvokeVoidAsync("scrollToInstruction", id);
+    }
+}
+

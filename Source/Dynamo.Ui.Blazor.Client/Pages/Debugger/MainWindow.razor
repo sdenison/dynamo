@@ -1,0 +1,71 @@
+﻿@page "/debugger"
+@using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+
+<h3>Program Debugger</h3>
+
+<!-- File Upload Section -->
+<div class="mt-5 p-4">
+    <div class="mb-4">
+        <h5>Upload Instructions File</h5>
+        <InputFile class="form-control" OnChange="HandleFileSelected" />
+    </div>
+    @if (!string.IsNullOrEmpty(UploadMessage))
+    {
+        <p class="text-success mt-3">@UploadMessage</p>
+    }
+</div>
+
+@if (Processor != null)
+{
+    <ProcessorComponent Processor="@Processor" />
+}
+
+@code {
+    private Processor Processor { get; set; }
+    private string UploadMessage { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Example initialization of a new Processor with dummy instructions
+        string[] instructions = new string[]
+        {
+            "b inc 5 if a > 1",
+            "a inc 1 if b < 5",
+            "c dec -10 if a >= 1",
+            "c inc -20 if c == 10"
+        };
+        Processor = new Processor(instructions);
+    }
+
+    // Handle file selection
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            // Get the uploaded file
+            IBrowserFile file = e.File;
+
+            // Read the file content as a string
+            using var stream = file.OpenReadStream();
+            using var reader = new StreamReader(stream);
+            var fileContents = await reader.ReadToEndAsync();
+
+            // Split the contents into instructions (assuming each line is an instruction)
+            string[] instructions = fileContents.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Create a new Processor with the instructions from the file
+            Processor = new Processor(instructions);
+
+            // Display a success message
+            UploadMessage = "File uploaded successfully and Processor created!";
+        }
+        catch (Exception ex)
+        {
+            // Handle errors and display a message
+            UploadMessage = $"Error uploading file: {ex.Message}";
+        }
+    }
+}
+
