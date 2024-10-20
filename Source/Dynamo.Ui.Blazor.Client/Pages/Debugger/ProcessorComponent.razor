@@ -24,6 +24,11 @@
             @foreach (var instruction in Processor.Instructions)
             {
                 <div class="d-flex align-items-center" id="instruction-@Processor.Instructions.IndexOf(instruction)">
+                    <!-- Row Number -->
+                    <div class="row-number me-2" style="width: 40px; text-align: right;">
+                        @(Processor.Instructions.IndexOf(instruction) + 1)
+                    </div>
+
                     <!-- Gutter for Breakpoints -->
                     <div class="gutter me-2" style="width: 20px; cursor: pointer;" @onclick="() => ToggleBreakpoint(instruction)">
                         @if (instruction.IsBreakpoint)
@@ -84,7 +89,14 @@
 
     private async Task Step()
     {
-        Processor.RunNextInstruction();
+        if (Processor.InstructionPointer == 0 && !Processor.ProgramIsRunning)
+        {
+            Processor.ProgramIsRunning = true;
+        }
+        else
+        {
+            Processor.RunNextInstruction();
+        }
         await ScrollToCurrentInstruction();
     }
 

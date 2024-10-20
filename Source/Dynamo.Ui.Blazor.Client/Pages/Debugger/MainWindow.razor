@@ -7,13 +7,17 @@
 
 <!-- File Upload Section -->
 <div class="mt-4">
-    <h5>Upload Instructions File</h5>
-    <InputFile OnChange="HandleFileSelected" />
+    <div class="mb=3">
+        <h5>Upload Instructions File</h5>
+        <InputFile class="form-control" OnChange="HandleFileSelected" />
+    </div>
     @if (!string.IsNullOrEmpty(UploadMessage))
     {
         <p class="text-success">@UploadMessage</p>
     }
 </div>
+
+
 
 @if (Processor != null)
 {

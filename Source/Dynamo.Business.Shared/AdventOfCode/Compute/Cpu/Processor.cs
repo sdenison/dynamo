@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
 {
@@ -6,6 +7,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Cpu
     {
         public Dictionary<string, int> Registers { get; private set; }
         public int HighestRegisterValueSeen { get; private set; }
+        public int LargestRegisterValue { get { return Registers.Values.Max(); } }
         public List<Instruction> Instructions { get; private set; }
         public int InstructionPointer { get; set; }
         public bool ProgramIsRunning { get; set; } = false;

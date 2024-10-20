@@ -1,6 +1,5 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Compute.Cpu;
 using NUnit.Framework;
-using System.Linq;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Cpu
 {
@@ -91,7 +90,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Cpu
             string[] instructions = PuzzleInputFactory.GetPuzzleInput();
             var processor = new Processor(instructions);
             processor.RunInstructions();
-            var maxRegisterValue = processor.Registers.Values.Max();
+            var maxRegisterValue = processor.LargestRegisterValue;
             Assert.That(maxRegisterValue, Is.EqualTo(5215));
         }
 
