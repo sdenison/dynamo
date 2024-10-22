@@ -27,15 +27,17 @@
 
         public void AdvanceOnePicosecond()
         {
-            if (SecurityScanDepth == Range && _goingDown && Range > 0)
+            if (Range == 0)
+                return;
+            if (SecurityScanDepth == Range && _goingDown)
             {
                 _goingDown = false;
             }
-            if (SecurityScanDepth == 1 && !_goingDown && Range > 0)
+            if (SecurityScanDepth == 1 && !_goingDown)
             {
                 _goingDown = true;
             }
-            if (_goingDown)
+            if (_goingDown && Range > 0)
             {
                 SecurityScanDepth++;
             }

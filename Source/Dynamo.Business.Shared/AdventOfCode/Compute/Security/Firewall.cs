@@ -6,6 +6,9 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
     public class Firewall
     {
         public List<Layer> Layers { get; private set; }
+        public int PacketIndex { get; private set; } = 0;
+        public int CaughtCount { get; private set; } = 0;
+        public int SeverityCount { get; private set; } = 0;
 
         public Firewall(string[] layerStrings)
         {
@@ -30,9 +33,24 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
 
         public void AdvanceOnePicosecond()
         {
+            var packetLayer = Layers[PacketIndex];
+            if (packetLayer.SecurityScanDepth == 1 && packetLayer.Range > 0)
+            {
+                CaughtCount++;
+                SeverityCount += packetLayer.LayerId * packetLayer.Range;
+            }
             foreach (var layer in Layers)
             {
                 layer.AdvanceOnePicosecond();
+            }
+            PacketIndex++;
+        }
+
+        public void AdvanceAllPicoseconds()
+        {
+            for (var i = 0; i < Layers.Count; i++)
+            {
+                AdvanceOnePicosecond();
             }
         }
     }
