@@ -62,6 +62,42 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             Assert.That(fireWall.SeverityCount, Is.EqualTo(632));
         }
 
+        [Test]
+        public void Can_get_correct_for_clean_run()
+        {
+            string[] layerStrings = new string[]
+            {
+                "0: 3",
+                "1: 2",
+                "4: 4",
+                "6: 4"
+            };
+            var fireWall = new Firewall(layerStrings);
+            var delayWorks = fireWall.AdvanceAllPicosecondsWithDelay(10);
+            Assert.That(delayWorks, Is.EqualTo(true));
+            fireWall = new Firewall(layerStrings);
+            delayWorks = fireWall.AdvanceAllPicosecondsWithDelay(11);
+            Assert.That(delayWorks, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void Can_get_2017_day_13_part_2_answer()
+        {
+            var delay = 0;
+            var layerStrings = GetPuzzleData();
+            for (var i = 9999; i < 10000000; i++)
+            {
+                var fireWall = new Firewall(layerStrings);
+                if (fireWall.AdvanceAllPicosecondsWithDelay(i))
+                {
+                    delay = i;
+                    break;
+                }
+            }
+            Assert.That(delay, Is.EqualTo(33));
+        }
+
+
         public string[] GetPuzzleData()
         {
             return new string[] {

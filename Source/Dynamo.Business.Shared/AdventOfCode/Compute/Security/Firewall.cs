@@ -7,6 +7,8 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
     {
         public List<Layer> Layers { get; private set; }
         public int PacketIndex { get; private set; } = 0;
+        public int LayerIndex { get; private set; } = 0;
+        public int ElapsedPicoseconds { get; private set; } = 0;
         public int CaughtCount { get; private set; } = 0;
         public int SeverityCount { get; private set; } = 0;
 
@@ -52,6 +54,41 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
             {
                 AdvanceOnePicosecond();
             }
+        }
+
+
+
+        public bool AdvanceAllPicosecondsWithDelay(int delay)
+        {
+            ElapsedPicoseconds = 0;
+            PacketIndex = 0;
+            LayerIndex = 0;
+            while (PacketIndex < Layers.Count)
+            {
+                if (delay <= ElapsedPicoseconds)
+                {
+                    var packetLayer = Layers[PacketIndex];
+                    if (packetLayer.SecurityScanDepth == 1 && packetLayer.Range > 0)
+                    {
+                        return false;
+                    }
+                    PacketIndex++;
+                }
+
+                foreach (var layer in Layers)
+                {
+                    layer.AdvanceOnePicosecond();
+                }
+
+                LayerIndex++;
+                if (LayerIndex == Layers.Count)
+                {
+                    LayerIndex = 0;
+                }
+
+                ElapsedPicoseconds++;
+            }
+            return true;
         }
     }
 }
