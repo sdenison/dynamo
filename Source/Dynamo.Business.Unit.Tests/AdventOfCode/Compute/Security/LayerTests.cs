@@ -11,22 +11,21 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
         {
             var layer = new Layer(0, 4);
             Assert.That(layer.LayerId, Is.EqualTo(0));
-            Assert.That(layer.CurrentDepth, Is.EqualTo(1));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(1));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(2));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(2));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(3));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(3));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(4));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(4));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(3));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(3));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(2));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(2));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(1));
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(1));
             layer.AdvanceOnePicosecond();
-            Assert.That(layer.CurrentDepth, Is.EqualTo(2));
-
+            Assert.That(layer.SecurityScanDepth, Is.EqualTo(2));
         }
     }
 }
