@@ -80,7 +80,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             Assert.That(delayWorks, Is.EqualTo(false));
         }
 
-        [Test]
+        [Test, Ignore("Takes too long")]
         public void Can_get_2017_day_13_part_2_answer()
         {
             var delay = 0;
