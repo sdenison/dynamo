@@ -41,7 +41,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.DuelingGenerators
         {
             var generatorA = new Generator(id: "A", 16807, 65);
             var generatorB = new Generator(id: "B", 48271, 8921);
-            var judge = new Judge(new List<Generator> { generatorA, generatorB });
+            var judge = new Judge(new List<IGenerator> { generatorA, generatorB });
             var matches = judge.CountMatches(5);
             Assert.That(matches, Is.EqualTo(1));
         }
@@ -52,7 +52,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.DuelingGenerators
         {
             var generatorA = new Generator(id: "A", 16807, 65);
             var generatorB = new Generator(id: "B", 48271, 8921);
-            var judge = new Judge(new List<Generator> { generatorA, generatorB });
+            var judge = new Judge(new List<IGenerator> { generatorA, generatorB });
             var matches = judge.CountMatches(40000000);
             Assert.That(matches, Is.EqualTo(588));
         }
@@ -63,7 +63,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.DuelingGenerators
         { 
             var generatorA = new Generator(id: "A", 16807, 512);
             var generatorB = new Generator(id: "B", 48271, 191);
-            var judge = new Judge(new List<Generator> { generatorA, generatorB });
+            var judge = new Judge(new List<IGenerator> { generatorA, generatorB });
             var matches = judge.CountMatches(40000000);
             Assert.That(matches, Is.EqualTo(567));
         }
@@ -71,19 +71,20 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.DuelingGenerators
         [Test]
         public void Judge_can_return_number_of_matches_using_multiples()
         {
-            var generatorA = new Generator(id: "A", 16807, 65, 4);
-            var generatorB = new Generator(id: "B", 48271, 8921, 8);
-            var judge = new Judge(new List<Generator> { generatorA, generatorB });
+            var generatorA = new MultipleGenerator(id: "A", 16807, 65, 4);
+            var generatorB = new MultipleGenerator(id: "B", 48271, 8921, 8);
+            var judge = new Judge(new List<IGenerator> { generatorA, generatorB });
             var matches = judge.CountMatches(1056);
             Assert.That(matches, Is.EqualTo(1));
         }
 
-        [Test, Ignore("Takes too long")]
+        //[Test, Ignore("Takes too long")]
+        [Test]
         public void Judge_can_solve_2017_day_15_part_2()
         {
-            var generatorA = new Generator(id: "A", 16807, 512, 4);
-            var generatorB = new Generator(id: "B", 48271, 191, 8);
-            var judge = new Judge(new List<Generator> { generatorA, generatorB });
+            var generatorA = new MultipleGenerator(id: "A", 16807, 512, 4);
+            var generatorB = new MultipleGenerator(id: "B", 48271, 191, 8);
+            var judge = new Judge(new List<IGenerator> { generatorA, generatorB });
             var matches = judge.CountMatches(5000000);
             Assert.That(matches, Is.EqualTo(323));
         }

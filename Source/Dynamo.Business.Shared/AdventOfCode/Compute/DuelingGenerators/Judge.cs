@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.DuelingGenerators
 {
     public class Judge
     {
-        private readonly List<Generator> _generators;
+        private readonly List<IGenerator> _generators;
 
-        public Judge(List<Generator> generators)
+        public Judge(List<IGenerator> generators)
         {
             _generators = generators;
         }
