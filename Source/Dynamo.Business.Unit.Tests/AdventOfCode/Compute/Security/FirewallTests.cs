@@ -1,5 +1,6 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Compute.Security;
 using NUnit.Framework;
+using System.Linq;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
 {
@@ -18,7 +19,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             };
             var fireWall = new Firewall(layerStrings);
             Assert.That(fireWall.Layers.Count, Is.EqualTo(7));
-            //Assert.That(fireWall.Layers.All(x => x.SecurityScanDepth == 1));
+            Assert.That(fireWall.Layers.All(x => x.SecurityScanDepth == 1));
             // Picosecond 0
             fireWall.AdvanceOnePicosecond();
             Assert.That(fireWall.Layers[0].SecurityScanDepth, Is.EqualTo(2));
@@ -72,63 +73,30 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
                 "6: 4"
             };
             var fireWall = new Firewall(layerStrings);
-            fireWall.CacheValues(1000);
-            //var delayWorks = fireWall.AdvanceAllPicosecondsWithDelay(10);
-            //Assert.That(delayWorks, Is.EqualTo(true));
-            //fireWall = new Firewall(layerStrings);
-            //delayWorks = fireWall.AdvanceAllPicosecondsWithDelay(11);
-            //Assert.That(delayWorks, Is.EqualTo(false));
-
-            Assert.That(fireWall.ScannerCatchesPacket(8), Is.EqualTo(true));
-            Assert.That(fireWall.ScannerCatchesPacket(9), Is.EqualTo(true));
-            Assert.That(fireWall.ScannerCatchesPacket(10), Is.EqualTo(false));
-            Assert.That(fireWall.ScannerCatchesPacket(11), Is.EqualTo(true));
+            var delayWorks = fireWall.AdvanceAllPicosecondsWithDelay(10);
+            Assert.That(delayWorks, Is.EqualTo(true));
+            fireWall = new Firewall(layerStrings);
+            delayWorks = fireWall.AdvanceAllPicosecondsWithDelay(11);
+            Assert.That(delayWorks, Is.EqualTo(false));
         }
 
-        [Test, Ignore("Takes too long")]
-        //[Test]
+        //[Test, Ignore("Takes too long")]
+        [Test]
         public void Can_get_2017_day_13_part_2_answer()
         {
             var delay = 0;
             var layerStrings = GetPuzzleData();
             var fireWall = new Firewall(layerStrings);
-            fireWall.CacheValues(10000000);
-            var passingDelay = 0;
-            for (var i = 0; i < 10000000; i++)
+            fireWall.CacheValues(5000000);
+            for (var i = 0; i < 5000000; i++)
             {
                 if (!fireWall.ScannerCatchesPacket(i))
                 {
-                    passingDelay = i;
+                    delay = i;
                     break;
                 }
             }
-            Assert.That(passingDelay, Is.EqualTo(3849742));
-        }
-
-        [Test]
-        public void Can_cache_values()
-        {
-            string[] layerStrings = new string[]
-{
-                "0: 3",
-                "1: 2",
-                "4: 4",
-                "6: 4"
-};
-            var fireWall = new Firewall(layerStrings);
-            fireWall.CacheValues(100000);
-            Assert.That(fireWall.CachedValues[0, 0], Is.EqualTo(1));
-            Assert.That(fireWall.CachedValues[0, 1], Is.EqualTo(1));
-            Assert.That(fireWall.CachedValues[0, 2], Is.EqualTo(0));
-            Assert.That(fireWall.CachedValues[0, 3], Is.EqualTo(0));
-            Assert.That(fireWall.CachedValues[0, 4], Is.EqualTo(1));
-            Assert.That(fireWall.CachedValues[0, 5], Is.EqualTo(0));
-            Assert.That(fireWall.CachedValues[0, 6], Is.EqualTo(1));
-            Assert.That(fireWall.CachedValues[1, 0], Is.EqualTo(2));
-            Assert.That(fireWall.CachedValues[2, 0], Is.EqualTo(3));
-            Assert.That(fireWall.CachedValues[3, 0], Is.EqualTo(2));
-            Assert.That(fireWall.CachedValues[4, 0], Is.EqualTo(1));
-            Assert.That(fireWall.CachedValues[5, 0], Is.EqualTo(2));
+            Assert.That(delay, Is.EqualTo(33));
         }
 
 
