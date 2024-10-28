@@ -81,8 +81,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
             }
         }
 
-
-
         public bool AdvanceAllPicosecondsWithDelay(int delay)
         {
             ElapsedPicoseconds = 0;
