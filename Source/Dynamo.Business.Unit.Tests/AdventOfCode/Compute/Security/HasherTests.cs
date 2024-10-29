@@ -63,5 +63,21 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             var hash = hasher.GetHash(salt);
             Assert.That(hash, Is.EqualTo(13760));
         }
+
+        [Test]
+        public void Can_create_knot_hash_for_1_2_3()
+        {
+            var hasher = new Hasher(256);
+            var knotHash = hasher.GetKnotHash("1,2,3");
+            Assert.That(knotHash, Is.EqualTo("3efbe78a8d82f29979031a4aa0b16a9d"));
+        }
+
+        [Test]
+        public void Can_create_knot_hash_for_empty_string()
+        {
+            var hasher = new Hasher(256);
+            var knotHash = hasher.GetKnotHash("");
+            Assert.That(knotHash, Is.EqualTo("a2582a3a0e66e6e86e3812dcb672a272"));
+        }
     }
 }

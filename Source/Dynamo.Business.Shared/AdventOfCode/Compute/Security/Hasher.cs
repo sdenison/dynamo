@@ -1,4 +1,7 @@
-﻿namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
+﻿using System.Collections.Generic;
+using System.Text;
+
+namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
 {
     public class Hasher
     {
@@ -47,6 +50,47 @@
                 ApplyLength(length);
             }
             return Elements[0] * Elements[1];
+        }
+
+        public string GetKnotHash(string salt)
+        {
+
+            var lengths = new List<int>();
+            foreach (var ch in salt.ToCharArray())
+            {
+                lengths.Add((int)ch);
+            }
+            lengths.Add(17);
+            lengths.Add(31);
+            lengths.Add(73);
+            lengths.Add(47);
+            lengths.Add(23);
+
+            for (var i = 0; i < 64; i++)
+            {
+                var x = GetHash(lengths.ToArray());
+            }
+
+            var denseHash = new List<int>();
+            var totalLength = 0;
+            while (totalLength < Elements.Length)
+            {
+                var currentDenseHash = 0;
+                for (var i = 0; i < 16; i++)
+                {
+                    currentDenseHash ^= Elements[totalLength];
+                    totalLength++;
+                }
+                denseHash.Add(currentDenseHash);
+            }
+
+            var returnStringBuilder = new StringBuilder();
+            foreach (var hash in denseHash)
+            {
+                returnStringBuilder.Append(hash.ToString("X2").ToLower());
+            }
+
+            return returnStringBuilder.ToString();
         }
     }
 }
