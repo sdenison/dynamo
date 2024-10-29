@@ -79,5 +79,21 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             var knotHash = hasher.GetKnotHash("");
             Assert.That(knotHash, Is.EqualTo("a2582a3a0e66e6e86e3812dcb672a272"));
         }
+
+        [Test]
+        public void Can_create_knot_hash_for_AoC_2017()
+        {
+            var hasher = new Hasher(256);
+            var knotHash = hasher.GetKnotHash("AoC 2017");
+            Assert.That(knotHash, Is.EqualTo("33efeb34ea91902bb2f59c9920caa6cd"));
+        }
+
+        [Test]
+        public void Can_solve_2017_day_10_part_2()
+        {
+            var hasher = new Hasher(256);
+            var knotHash = hasher.GetKnotHash("227,169,3,166,246,201,0,47,1,255,2,254,96,3,97,144");
+            Assert.That(knotHash, Is.EqualTo("2da93395f1a6bb3472203252e3b17fe5"));
+        }
     }
 }
