@@ -22,16 +22,31 @@
             return Elements[index % Elements.Length];
         }
 
+        public void SetElement(int index, int value)
+        {
+            Elements[index % Elements.Length] = value;
+        }
+
         public void ApplyLength(int length)
         {
             for (var i = 0; i < length / 2; i++)
             {
-                var element1 = Elements[i + CurrentPosition];
-                var element2 = Elements[CurrentPosition + ((length - 1) - i)];
-                Elements[i + CurrentPosition] = element2;
-                Elements[CurrentPosition + ((length - 1) - i)] = element1;
+                var element1 = GetElement(i + CurrentPosition);
+                var element2 = GetElement(CurrentPosition + ((length - 1) - i));
+                SetElement(i + CurrentPosition, element2);
+                SetElement(CurrentPosition + ((length - 1) - i), element1);
             }
-            CurrentPosition += SkipSize + length;
+            CurrentPosition = (CurrentPosition + SkipSize + length) % Elements.Length;
+            SkipSize++;
+        }
+
+        public int GetHash(int[] salt)
+        {
+            foreach (var length in salt)
+            {
+                ApplyLength(length);
+            }
+            return Elements[0] * Elements[1];
         }
     }
 }
