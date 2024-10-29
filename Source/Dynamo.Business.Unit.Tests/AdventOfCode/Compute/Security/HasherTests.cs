@@ -58,10 +58,10 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
         [Test]
         public void Can_get_2017_day_10_part_1()
         {
-            var hasher = new Hasher(255);
+            var hasher = new Hasher(256);
             int[] salt = [227, 169, 3, 166, 246, 201, 0, 47, 1, 255, 2, 254, 96, 3, 97, 144];
             var hash = hasher.GetHash(salt);
-            Assert.That(hash, Is.EqualTo(48180));
+            Assert.That(hash, Is.EqualTo(13760));
         }
     }
 }
