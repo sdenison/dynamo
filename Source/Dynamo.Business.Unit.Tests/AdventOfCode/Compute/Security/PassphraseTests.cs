@@ -1,7 +1,7 @@
-﻿using Dynamo.Business.Shared.AdventOfCode.Security;
+﻿using Dynamo.Business.Shared.AdventOfCode.Compute.Security;
 using NUnit.Framework;
 
-namespace Dynamo.Business.Unit.Tests.AdventOfCode.Security
+namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
 {
     [TestFixture]
     public class PassphraseTests
