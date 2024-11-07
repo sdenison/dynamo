@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Dynamo.Business.Shared.AdventOfCode.Security
+namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
 {
     public class Passphrase
     {

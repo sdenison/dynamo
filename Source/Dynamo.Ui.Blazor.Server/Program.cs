@@ -1,9 +1,7 @@
 using Amazon;
 using Amazon.DynamoDBv2;
-using Csla;
 using Csla.Configuration;
 using Dynamo.Business.Shared.Utilities;
-using Dynamo.Business.Utilities;
 using Dynamo.Data.DynamoDb.Utilities;
 using Dynamo.IO.S3.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
