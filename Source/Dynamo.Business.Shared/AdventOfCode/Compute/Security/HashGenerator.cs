@@ -3,13 +3,13 @@ using System.Text;
 
 namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
 {
-    public class Hasher
+    public class HashGenerator
     {
         public int[] Elements { get; private set; }
         public int CurrentPosition { get; private set; }
         public int SkipSize { get; private set; }
 
-        public Hasher(int size)
+        public HashGenerator(int size)
         {
             CurrentPosition = 0;
             SkipSize = 0;
@@ -68,7 +68,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Security
 
             for (var i = 0; i < 64; i++)
             {
-                var x = GetHash(lengths.ToArray());
+                GetHash(lengths.ToArray());
             }
 
             var denseHash = new List<int>();

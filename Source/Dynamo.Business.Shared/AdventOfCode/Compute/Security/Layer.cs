@@ -46,14 +46,5 @@
                 SecurityScanDepth--;
             }
         }
-
-        public bool IsScannerActive()
-        {
-            if (Range > 0 && SecurityScanDepth == 1)
-            {
-                return true;
-            }
-            return false;
-        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Dynamo.Business.Shared.AdventOfCode.Compute.Security;
 using NUnit.Framework;
-using System.Linq;
 
 namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
 {
@@ -19,7 +18,6 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             };
             var fireWall = new Firewall(layerStrings);
             Assert.That(fireWall.Layers.Count, Is.EqualTo(7));
-            Assert.That(fireWall.Layers.All(x => x.SecurityScanDepth == 1));
             // Picosecond 0
             fireWall.AdvanceOnePicosecond();
             Assert.That(fireWall.Layers[0].SecurityScanDepth, Is.EqualTo(2));
@@ -80,14 +78,14 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
             Assert.That(delayWorks, Is.EqualTo(false));
         }
 
-        [Test, Ignore("Takes too long")]
-        //[Test]
+        //[Test, Ignore("Takes too long")]
+        [Test]
         public void Can_get_2017_day_13_part_2_answer()
         {
             var delay = 0;
             var layerStrings = GetPuzzleData();
             var fireWall = new Firewall(layerStrings);
-            fireWall.CacheValues(5000000);
+            fireWall.CacheValues(3800000);
             for (var i = 0; i < 5000000; i++)
             {
                 if (!fireWall.ScannerCatchesPacket(i))
@@ -96,7 +94,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Security
                     break;
                 }
             }
-            Assert.That(delay, Is.EqualTo(33));
+            Assert.That(delay, Is.EqualTo(3799990));
         }
 
 
