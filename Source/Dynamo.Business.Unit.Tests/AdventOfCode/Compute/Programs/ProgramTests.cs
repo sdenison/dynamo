@@ -18,7 +18,39 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Programs
         [Test]
         public void Can_create_Program_data_structure_from_list_of_string()
         {
-            var programStrings = new List<string>()
+            var programStrings = GetPuzzleInput();
+            var program = Program.Parse(programStrings);
+            Assert.That(program.Name, Is.EqualTo("tknk"));
+            var lastChild = program.GetLastChild();
+            Assert.That(lastChild.Name, Is.EqualTo("xhth"));
+        }
+
+        [Test]
+        public void Can_solve_2017_day_7_part_1()
+        {
+            var program = Program.Parse(GetPuzzleInput());
+            Assert.That(program.Name, Is.EqualTo("hmvwl"));
+        }
+
+        [Test]
+        public void Can_get_unbalanced()
+        {
+            var programStrings = GetExampleInput();
+            var program = Program.Parse(programStrings);
+            Assert.That(program.GetUnbalancedWeight(), Is.EqualTo(60));
+        }
+
+        [Test]
+        public void Can_solve_2017_day_7_part_2()
+        {
+            var programStrings = GetPuzzleInput();
+            var program = Program.Parse(programStrings);
+            Assert.That(program.GetUnbalancedWeight(), Is.EqualTo(1853));
+        }
+
+        private List<string> GetExampleInput()
+        {
+            return new List<string>()
             {
                 "pbga (66)",
                 "xhth (57)",
@@ -34,20 +66,9 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Programs
                 "gyxo (61)",
                 "cntj (57)"
             };
-            var program = Program.Parse(programStrings);
-            Assert.That(program.Name, Is.EqualTo("tknk"));
-            var lastChild = program.GetLastChild();
-            Assert.That(lastChild.Name, Is.EqualTo("xhth"));
         }
 
-        [Test]
-        public void Can_solve_2017_day_7_part_1()
-        {
-            var program = Program.Parse(GetPuzzleData());
-            Assert.That(program.Name, Is.EqualTo("hmvwl"));
-        }
-
-        private List<string> GetPuzzleData()
+        private List<string> GetPuzzleInput()
         {
             return new List<string>()
             {

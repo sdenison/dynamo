@@ -60,5 +60,43 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs
             else
                 return this;
         }
+
+        public int GetTotalWeight()
+        {
+            var totalWeight = this.Weight;
+            foreach (var child in Children)
+            {
+                totalWeight += child.GetTotalWeight();
+            }
+            return totalWeight;
+        }
+
+        public int GetUnbalancedWeight(int diff = 0)
+        {
+            var weights = new Dictionary<int, int>();
+            foreach (var child in Children)
+            {
+                if (weights.ContainsKey(child.GetTotalWeight()))
+                {
+                    weights[child.GetTotalWeight()]++;
+                }
+                else
+                {
+                    weights.Add(child.GetTotalWeight(), 1);
+                }
+            }
+            if (weights.Count > 1)
+            {
+                var oddManOut = weights.Single(x => x.Value == 1).Key;
+                var matchingWeights = weights.Single(x => x.Value > 1).Key;
+                return Children.Single(x => x.GetTotalWeight() == oddManOut).GetUnbalancedWeight(oddManOut - matchingWeights);
+            }
+            if (weights.Count == 1)
+            {
+                return Weight - diff;
+            }
+            return 0;
+
+        }
     }
 }
