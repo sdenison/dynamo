@@ -18,7 +18,7 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Programs
         [Test]
         public void Can_create_Program_data_structure_from_list_of_string()
         {
-            var programStrings = GetPuzzleInput();
+            var programStrings = GetExampleInput();
             var program = Program.Parse(programStrings);
             Assert.That(program.Name, Is.EqualTo("tknk"));
             var lastChild = program.GetLastChild();
