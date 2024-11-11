@@ -34,6 +34,24 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Programs.Plumbing
             Assert.That(connectedPrograms.Count, Is.EqualTo(141));
         }
 
+        [Test]
+        public void Can_get_number_of_Groups()
+        {
+            var input = GetExampleInput();
+            var pipeAnalyzer = new PipeAnalyzer(input);
+            var groups = pipeAnalyzer.GetAllGroups();
+            Assert.That(groups.Count, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Can_solve_2017_day_12_part_2()
+        {
+            var input = PipeAnalyzerPuzzleInput.GetPuzzleInput();
+            var pipeAnalyzer = new PipeAnalyzer(input);
+            var groups = pipeAnalyzer.GetAllGroups();
+            Assert.That(groups.Count, Is.EqualTo(171));
+        }
+
         public List<string> GetExampleInput()
         {
             return new List<string>

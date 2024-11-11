@@ -36,26 +36,40 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs.Plumber
             return connectdPrograms;
         }
 
-        //public int GetNumberOfPipesInGroup(int pipeId)
-        //{
-        //    var numberOfPipesInGroup = 0;
-        //    foreach (var pipe in Pipes)
-        //    {
-        //        if (pipe.Key == pipeId)
-        //        {
-        //            numberOfPipesInGroup++;
-        //        }
-        //        else if (pipe.Value.Contains(pipeId))
-        //        {
-        //            numberOfPipesInGroup++;
-        //        }
-        //        else
-        //        {
-        //            foreach (var subPipe in Pipes)
-        //            {
-        //            }
-        //        }
-        //    }
-        //}
+        public List<List<Program>> GetAllGroups()
+        {
+            var groups = new List<List<Program>>();
+            foreach (var program in Programs)
+            {
+                var group = GetAllConnected(program).OrderBy(x => x.ProgramId).ToList();
+                var groupExists = false;
+                foreach (var existingGroup in groups)
+                {
+                    if (GroupsAreEqual(existingGroup, group))
+                    {
+                        groupExists = true;
+                        break;
+                    }
+                }
+                if (!groupExists)
+                {
+                    groups.Add(group);
+                }
+            }
+            return groups;
+        }
+
+        public bool GroupsAreEqual(List<Program> program1, List<Program> program2)
+        {
+            if (program1.Count != program2.Count)
+                return false;
+            for (var i = 0; i < program1.Count; i++)
+            {
+                if (program1[i].ProgramId != program2[i].ProgramId)
+                    return false;
+            }
+            return true;
+        }
+
     }
 }
