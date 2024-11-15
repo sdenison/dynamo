@@ -18,8 +18,42 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Grid
         {
             var hexGrid = new HexGrid();
             hexGrid.ApplyDirections("ne,ne,ne");
-            Assert.That(hexGrid.Coordinate.X, Is.EqualTo(3));
-            Assert.That(hexGrid.Coordinate.Y, Is.EqualTo(3));
+            Assert.That(hexGrid.Coordinate.Q, Is.EqualTo(3));
+            Assert.That(hexGrid.Coordinate.R, Is.EqualTo(-3));
+            Assert.That(hexGrid.Coordinate.S, Is.EqualTo(0));
+            Assert.That(hexGrid.GetStepsFromOrigin(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public void Can_apply_directions_to_new_HexGrid_example_2()
+        {
+            var hexGrid = new HexGrid();
+            hexGrid.ApplyDirections("ne,ne,sw,sw");
+            Assert.That(hexGrid.Coordinate.Q, Is.EqualTo(0));
+            Assert.That(hexGrid.Coordinate.R, Is.EqualTo(0));
+            Assert.That(hexGrid.Coordinate.S, Is.EqualTo(0));
+            Assert.That(hexGrid.GetStepsFromOrigin(), Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Can_apply_directions_to_new_HexGrid_example_3()
+        {
+            var hexGrid = new HexGrid();
+            hexGrid.ApplyDirections("ne,ne,s,s");
+            Assert.That(hexGrid.Coordinate.Q, Is.EqualTo(2));
+            Assert.That(hexGrid.Coordinate.R, Is.EqualTo(0));
+            Assert.That(hexGrid.Coordinate.S, Is.EqualTo(-2));
+            Assert.That(hexGrid.GetStepsFromOrigin(), Is.EqualTo(2));
+        }
+
+        [Test]
+        public void Can_apply_directions_to_new_HexGrid_example_4()
+        {
+            var hexGrid = new HexGrid();
+            hexGrid.ApplyDirections("se,sw,se,sw,sw");
+            Assert.That(hexGrid.Coordinate.Q, Is.EqualTo(-1));
+            Assert.That(hexGrid.Coordinate.R, Is.EqualTo(3));
+            Assert.That(hexGrid.Coordinate.S, Is.EqualTo(-2));
             Assert.That(hexGrid.GetStepsFromOrigin(), Is.EqualTo(3));
         }
     }

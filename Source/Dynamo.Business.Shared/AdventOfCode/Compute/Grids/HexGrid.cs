@@ -11,7 +11,16 @@
 
         public int GetStepsFromOrigin()
         {
-            return 0;
+            var stepsFromOrigin = 0;
+            if (Coordinate.Q == 0 && Coordinate.R == 0 && Coordinate.S == 0)
+            {
+                return stepsFromOrigin;
+            }
+            while (Coordinate.StepTowardZero())
+            {
+                stepsFromOrigin++;
+            }
+            return stepsFromOrigin;
         }
 
         public void ApplyDirections(string directions)
