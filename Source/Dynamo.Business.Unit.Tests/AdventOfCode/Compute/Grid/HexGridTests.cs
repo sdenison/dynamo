@@ -56,5 +56,16 @@ namespace Dynamo.Business.Unit.Tests.AdventOfCode.Compute.Grid
             Assert.That(hexGrid.Coordinate.S, Is.EqualTo(-2));
             Assert.That(hexGrid.GetStepsFromOrigin(), Is.EqualTo(3));
         }
+
+        [Test]
+        public void Can_solve_2017_day_11_part_1()
+        {
+            var hexGrid = new HexGrid();
+            hexGrid.ApplyDirections(HexGridPuzzleInput.GetPuzzleInput());
+            Assert.That(hexGrid.Coordinate.Q, Is.EqualTo(-484));
+            Assert.That(hexGrid.Coordinate.R, Is.EqualTo(808));
+            Assert.That(hexGrid.Coordinate.S, Is.EqualTo(-324));
+            Assert.That(hexGrid.GetStepsFromOrigin(), Is.EqualTo(808));
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
             }
             else if (S == 0)
             {
-                Q = MoveTowardZero(R);
+                Q = MoveTowardZero(Q);
                 R = MoveTowardZero(R);
                 return true;
             }
@@ -59,7 +59,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
                     R = MoveTowardZero(R);
                 else
                     Q = MoveTowardZero(Q);
-                S = MoveTowardZero(Q);
+                S = MoveTowardZero(S);
             }
             return true;
         }
