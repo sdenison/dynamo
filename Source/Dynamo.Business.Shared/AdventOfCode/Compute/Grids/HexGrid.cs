@@ -3,20 +3,21 @@
     public class HexGrid
     {
         public Coordinate Coordinate { get; set; }
+        public int FarthestAway { get; set; }
 
         public HexGrid()
         {
             Coordinate = new Coordinate();
         }
 
-        public int GetStepsFromOrigin()
+        public int GetStepsFromOrigin(Coordinate coordinate)
         {
             var stepsFromOrigin = 0;
-            if (Coordinate.Q == 0 && Coordinate.R == 0 && Coordinate.S == 0)
+            if (coordinate.Q == 0 && coordinate.R == 0 && coordinate.S == 0)
             {
                 return stepsFromOrigin;
             }
-            while (Coordinate.StepTowardZero())
+            while (coordinate.StepTowardZero())
             {
                 stepsFromOrigin++;
             }
@@ -29,6 +30,10 @@
             {
                 var dxdy = new Coordinate(direction);
                 Coordinate.Add(dxdy);
+
+                var stepsFromOrigin = GetStepsFromOrigin(new Coordinate(Coordinate));
+                if (FarthestAway < stepsFromOrigin)
+                    FarthestAway = stepsFromOrigin;
             }
         }
     }

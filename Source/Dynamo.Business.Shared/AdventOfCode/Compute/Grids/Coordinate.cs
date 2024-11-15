@@ -15,6 +15,13 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
             S = 0;
         }
 
+        public Coordinate(Coordinate coordinate)
+        {
+            Q = coordinate.Q;
+            R = coordinate.R;
+            S = coordinate.S;
+        }
+
         public bool StepTowardZero()
         {
             if (Q == 0 && R == 0 && S == 0)
