@@ -1,4 +1,6 @@
-﻿namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
+﻿using System;
+
+namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
 {
     public class HexGrid
     {
@@ -13,13 +15,32 @@
         public int GetStepsFromOrigin(Coordinate coordinate)
         {
             var stepsFromOrigin = 0;
-            if (coordinate.Q == 0 && coordinate.R == 0 && coordinate.S == 0)
+            var q = Math.Abs(coordinate.Q);
+            var r = Math.Abs(coordinate.R);
+            var s = Math.Abs(coordinate.S);
+            if (q <= r && q <= s)
             {
-                return stepsFromOrigin;
+                stepsFromOrigin += q;
+                if (r >= s)
+                    stepsFromOrigin += r - q;
+                else
+                    stepsFromOrigin += s - q;
             }
-            while (coordinate.StepTowardZero())
+            else if (r <= q && r <= s)
             {
-                stepsFromOrigin++;
+                stepsFromOrigin += r;
+                if (q >= s)
+                    stepsFromOrigin += q - r;
+                else
+                    stepsFromOrigin += s - r;
+            }
+            else
+            {
+                stepsFromOrigin += s;
+                if (q >= r)
+                    stepsFromOrigin += q - s;
+                else
+                    stepsFromOrigin += r - s;
             }
             return stepsFromOrigin;
         }

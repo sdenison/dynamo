@@ -22,65 +22,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
             S = coordinate.S;
         }
 
-        public bool StepTowardZero()
-        {
-            if (Q == 0 && R == 0 && S == 0)
-                return false;
-            else if (Q == 0)
-            {
-                R = MoveTowardZero(R);
-                S = MoveTowardZero(S);
-                return true;
-            }
-            else if (R == 0)
-            {
-                Q = MoveTowardZero(Q);
-                S = MoveTowardZero(S);
-                return true;
-            }
-            else if (S == 0)
-            {
-                Q = MoveTowardZero(Q);
-                R = MoveTowardZero(R);
-                return true;
-            }
-            if (Math.Abs(Q) <= Math.Abs(R) && Math.Abs(Q) <= Math.Abs(S))
-            {
-                if (Q < 0)
-                    R = MoveTowardZero(R);
-                else
-                    S = MoveTowardZero(S);
-                Q = MoveTowardZero(Q);
-            }
-            else if (Math.Abs(R) <= Math.Abs(Q) && Math.Abs(R) <= Math.Abs(S))
-            {
-                if (R < 0)
-                    Q = MoveTowardZero(Q);
-                else
-                    S = MoveTowardZero(S);
-                R = MoveTowardZero(R);
-            }
-            else if (Math.Abs(S) <= Math.Abs(Q) && Math.Abs(S) <= Math.Abs(R))
-            {
-                if (S < 0)
-                    R = MoveTowardZero(R);
-                else
-                    Q = MoveTowardZero(Q);
-                S = MoveTowardZero(S);
-            }
-            return true;
-        }
-
-        private int MoveTowardZero(int value)
-        {
-            if (value > 0)
-                return value - 1;
-            else if (value < 1)
-                return value + 1;
-            else
-                return value;
-        }
-
         public void Add(Coordinate coord)
         {
             Q += coord.Q;
