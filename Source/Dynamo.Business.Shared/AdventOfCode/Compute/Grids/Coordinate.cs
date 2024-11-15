@@ -15,13 +15,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
             S = 0;
         }
 
-        public Coordinate(Coordinate coordinate)
-        {
-            Q = coordinate.Q;
-            R = coordinate.R;
-            S = coordinate.S;
-        }
-
         public void Add(Coordinate coord)
         {
             Q += coord.Q;

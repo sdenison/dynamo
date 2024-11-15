@@ -13,11 +13,11 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
             Coordinate = new Coordinate();
         }
 
-        public int GetStepsFromOrigin(Coordinate coordinate)
+        public int GetStepsFromOrigin()
         {
-            var q = Math.Abs(coordinate.Q);
-            var r = Math.Abs(coordinate.R);
-            var s = Math.Abs(coordinate.S);
+            var q = Math.Abs(Coordinate.Q);
+            var r = Math.Abs(Coordinate.R);
+            var s = Math.Abs(Coordinate.S);
 
             var orderedList = new List<int> { q, r, s };
             orderedList.Sort();
@@ -31,7 +31,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
                 var delta = new Coordinate(direction);
                 Coordinate.Add(delta);
 
-                var stepsFromOrigin = GetStepsFromOrigin(new Coordinate(Coordinate));
+                var stepsFromOrigin = GetStepsFromOrigin();
                 if (FarthestAway < stepsFromOrigin)
                     FarthestAway = stepsFromOrigin;
             }
