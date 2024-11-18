@@ -21,6 +21,7 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Grids
 
             var orderedList = new List<int> { q, r, s };
             orderedList.Sort();
+            //return orderedList[0] + (orderedList[2] - orderedList[0]);
             return orderedList[2];
         }
 
