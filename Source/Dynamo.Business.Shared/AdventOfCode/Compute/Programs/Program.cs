@@ -96,7 +96,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs
                 return Weight - diff;
             }
             return 0;
-
         }
     }
 }

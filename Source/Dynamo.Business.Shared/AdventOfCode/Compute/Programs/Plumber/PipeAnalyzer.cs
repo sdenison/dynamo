@@ -14,7 +14,6 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs.Plumber
             {
                 var pipeId = int.Parse(inputString.Split(' ')[0]);
                 Programs.Add(new Program(pipeId));
-
             }
             foreach (var inputString in inputStrings)
             {
@@ -70,6 +69,5 @@ namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs.Plumber
             }
             return true;
         }
-
     }
 }
