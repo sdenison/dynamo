@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs
+﻿namespace Dynamo.Business.Shared.AdventOfCode.Compute.Programs
 {
     public class DanceMove
     {
