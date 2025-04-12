@@ -18,4 +18,4 @@
 		<ProjectReference Include="..\Dynamo.Data.DynamoDb\Dynamo.Data.DynamoDb.csproj" />
 	</ItemGroup>
 
-		</Project>
+</Project>

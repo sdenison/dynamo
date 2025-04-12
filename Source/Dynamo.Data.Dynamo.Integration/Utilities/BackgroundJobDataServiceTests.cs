@@ -11,10 +11,11 @@ using ServiceStack.Aws.DynamoDb;
 
 namespace Dynamo.Data.DynamoDb.Integration.Utilities
 {
-    [TestFixture, Ignore("Uses live connection to DynamoDB")]
+    //[TestFixture, Ignore("Uses live connection to DynamoDB")]
+    //[TestFixture]
     public class BackgroundJobDataServiceTests
     {
-        [Test]
+        //[Test]
         public void Can_read_and_write_to_dynamodb()
         {
             var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);
@@ -34,7 +35,7 @@ namespace Dynamo.Data.DynamoDb.Integration.Utilities
             dataService.Delete(backgroundJob.Id);
         }
 
-        [Test]
+        //[Test]
         public async Task Use_csla_BackgroundJob_and_dynamo_together()
         {
             //Set up DynamoDb dataService
