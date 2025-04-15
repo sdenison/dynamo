@@ -8,7 +8,7 @@
                 return ShiftLower(c, shift);
 
             if (c >= 'A' && c <= 'Z')
-                return ShiftLower(c, shift);
+                return ShiftUpper(c, shift);
 
             return c;
         }
@@ -19,5 +19,10 @@
             return (char)(((index + shift) % 26) + 97);
         }
 
+        private static char ShiftUpper(char c, int shift)
+        {
+            var index = (int)c - 65;
+            return (char)(((index + shift) % 26) + 65);
+        }
     }
 }

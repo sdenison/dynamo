@@ -31,5 +31,18 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var e = CharacterShifter.Shift(z, 31);
             Assert.That(e, Is.EqualTo('e'));
         }
+
+        [Test]
+        public void Shifting_characters_should_work_for_upper_case()
+        {
+            var a = 'A';
+            var b = CharacterShifter.Shift(a, 1);
+            Assert.That(b, Is.EqualTo(b));
+            var z = 'Z';
+            var d = CharacterShifter.Shift(z, 4);
+            Assert.That(d, Is.EqualTo('D'));
+            var e = CharacterShifter.Shift(z, 31);
+            Assert.That(e, Is.EqualTo('E'));
+        }
     }
 }
