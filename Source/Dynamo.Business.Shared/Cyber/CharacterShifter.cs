@@ -1,22 +1,48 @@
-﻿namespace Dynamo.Business.Shared.Cyber
+﻿using System;
+
+namespace Dynamo.Business.Shared.Cyber
 {
     public static class CharacterShifter
     {
-        public static char Shift(char c, int shift)
+        public static char ShiftRight(char c, int shift)
         {
             if (c >= 'a' && c <= 'z')
-                return Shift(c, shift, 'a');
+                return ShiftRight(c, shift, 'a');
 
             if (c >= 'A' && c <= 'Z')
-                return Shift(c, shift, 'A');
+                return ShiftRight(c, shift, 'A');
 
             return c;
         }
 
-        private static char Shift(char c, int shift, char beginnningChar)
+        private static char ShiftRight(char c, int shift, char beginningChar)
         {
-            var index = c - beginnningChar;
-            return (char)(((index + shift) % 26) + beginnningChar);
+            var index = c - beginningChar;
+            return (char)(((index + shift) % 26) + beginningChar);
+        }
+
+        public static char ShiftLeft(char c, int shift)
+        {
+            if (c >= 'a' && c <= 'z')
+                return ShiftLeft(c, shift, 'a', 'z');
+
+            if (c >= 'A' && c <= 'Z')
+                return ShiftLeft(c, shift, 'a', 'Z');
+
+            return c;
+        }
+
+        public static char ShiftLeft(char c, int shift, char beginningChar, char endingChar)
+        {
+            var index = c - beginningChar;
+            if ((index - shift) % 26 < 0)
+            {
+                return (char)(endingChar - Math.Abs((index - shift) % 26) + 1);
+            }
+            else
+            {
+                return (char)((beginningChar + (index - shift) % 26));
+            }
         }
     }
 }

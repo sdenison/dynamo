@@ -6,6 +6,7 @@
 	<ItemGroup>
 	  <None Remove="FakeFiles\BoxScans.txt" />
 	  <None Remove="FakeFiles\MineLayout.txt" />
+	  <None Remove="FakeFiles\Week1Part1.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="FakeFiles\BoxScans.txt" />
@@ -25,5 +26,13 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Dynamo.Business\Dynamo.Business.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Cyber\DataFiles\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="FakeFiles\Week1Part1.txt">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	</ItemGroup>
 		</Project>
