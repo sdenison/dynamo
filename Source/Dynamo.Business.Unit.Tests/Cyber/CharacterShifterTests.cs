@@ -25,6 +25,11 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var a = 'a';
             var b = CharacterShifter.Shift(a, 1);
             Assert.That(b, Is.EqualTo(b));
+            var z = 'z';
+            var d = CharacterShifter.Shift(z, 4);
+            Assert.That(d, Is.EqualTo('d'));
+            var e = CharacterShifter.Shift(z, 31);
+            Assert.That(e, Is.EqualTo('e'));
         }
     }
 }
