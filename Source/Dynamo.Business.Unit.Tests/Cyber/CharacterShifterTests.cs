@@ -93,5 +93,32 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var inbetweenWords = CaesarCipher.GetInbetweenWords(fileContents, 10, "triceratops");
             Assert.That(inbetweenWords, Is.EqualTo("the first four digits of the pin are the current year. the last four digits of the pin are the product of nine and three hundred thirty-seven."));
         }
+
+        [Test]
+        public void Can_get_week1_part2()
+        {
+            var correctShiftValue = 0;
+            var magicWord = "triceratops";
+
+            string fileContents = string.Empty;
+            for (var i = 0; i < 999; i++)
+            {
+                var stream = FileGetter.GetMemoryStreamFromFile("Week1Part2.txt");
+                stream.Position = 0;
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    fileContents = reader.ReadToEnd();
+                }
+                var decryptedFileContents = CaesarCipher.Decrypt(fileContents, i);
+                if (decryptedFileContents.Contains(magicWord))
+                {
+                    correctShiftValue = i;
+                    break;
+                }
+            }
+            var inbetweenWords = CaesarCipher.GetInbetweenWords(fileContents, correctShiftValue, "triceratops");
+            Assert.That(inbetweenWords, Is.EqualTo("the first four digits of the pin are the product of seventeen and one hundred twenty-five. the next two digits are the ninth prime number. the final two digits are the tenth prime number."));
+        }
+
     }
 }
