@@ -6,6 +6,8 @@
 	<ItemGroup>
 	  <None Remove="FakeFiles\BoxScans.txt" />
 	  <None Remove="FakeFiles\MineLayout.txt" />
+	  <None Remove="FakeFiles\Week1ChallengeInputText.txt" />
+	  <None Remove="FakeFiles\Week1InputKeys.txt" />
 	  <None Remove="FakeFiles\Week1Part1.txt" />
 	  <None Remove="FakeFiles\Week1Part2.txt" />
 	</ItemGroup>
@@ -13,6 +15,8 @@
 		<EmbeddedResource Include="FakeFiles\BoxScans.txt" />
 		<EmbeddedResource Include="FakeFiles\BusyBox1Second.txt" />
 		<EmbeddedResource Include="FakeFiles\MineLayout.txt" />
+		<EmbeddedResource Include="FakeFiles\Week1ChallengeInputText.txt" />
+		<EmbeddedResource Include="FakeFiles\Week1InputKeys.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1Part2.txt">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>

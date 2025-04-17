@@ -1,6 +1,9 @@
-﻿using Dynamo.Business.Shared.Cyber;
+﻿using Dynamo.Business.Shared;
+using Dynamo.Business.Shared.Cyber;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.IO;
+
 
 namespace Dynamo.Business.Unit.Tests.Cyber
 {
@@ -120,5 +123,104 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             Assert.That(inbetweenWords, Is.EqualTo("the first four digits of the pin are the product of seventeen and one hundred twenty-five. the next two digits are the ninth prime number. the final two digits are the tenth prime number."));
         }
 
+        [Test]
+        public void Can_encrypt_vigenere_cipher()
+        {
+            var decrypted = "MAY THE FORCE BE WITH YOU";
+            var keyWord = "DOG";
+            var encrypted = VigenereCipher.Encrypt(decrypted, keyWord);
+            Assert.That(encrypted, Is.EqualTo("POE WVK ICXFS HH KOWV ERI"));
+        }
+
+        [Test]
+        public void Can_decrypt_vigenere_cipher()
+        {
+            var encrypted = "POE WVK ICXFS HH KOWV ERI. ";
+            var keyWord = "DOG";
+            var decrypted = VigenereCipher.Decrypt(encrypted, keyWord);
+            Assert.That(decrypted, Is.EqualTo("MAY THE FORCE BE WITH YOU. "));
+        }
+
+        [Test]
+        public void Can_decrypt_vigenere_cipher_lower()
+        {
+            var encrypted = "poe wvk icxfs hh kowv eri. ";
+            var keyWord = "dog";
+            var decrypted = VigenereCipher.Decrypt(encrypted, keyWord);
+            Assert.That(decrypted, Is.EqualTo("may the force be with you. "));
+        }
+
+        [Test]
+        public void Can_decrypt_vigenere_cipher_from_wiki()
+        {
+            var encrypted = "attacking tonight";
+            var keyWord = "oculorhinolaryngology";
+            var decrypted = VigenereCipher.Decrypt(encrypted, keyWord);
+            Assert.That(decrypted, Is.EqualTo("ovnlqbpvt hznzeuz"));
+        }
+
+
+        [Test]
+        public void Can_get_week1_challenge()
+        {
+            var correctShiftValue = 0;
+            var magicWord = "tricer";
+
+            //var keys = new;
+            string keysString = string.Empty;
+            var keyStream = FileGetter.GetMemoryStreamFromFile("Week1InputKeys.txt");
+            using (StreamReader keyReader = new StreamReader(keyStream))
+            {
+                keysString = keyReader.ReadToEnd();
+            }
+
+            var keys = keysString.Split('\r');
+
+            Assert.That(keys.Length, Is.EqualTo(63));
+
+            var encryptedStream = FileGetter.GetMemoryStreamFromFile("Week1ChallengeInputText.txt");
+            var encrypted = string.Empty;
+            using (StreamReader inputReader = new StreamReader(encryptedStream))
+            {
+                encrypted = inputReader.ReadToEnd();
+            }
+
+            var decryptedList = new List<string>();
+            foreach (var key in keys)
+            {
+                var decrypted = VigenereCipher.Decrypt(encrypted.ToLower(), key.ToLower());
+                decryptedList.Add(decrypted);
+                if (decrypted.Contains(magicWord))
+                {
+                    var x = decrypted;
+                }
+            }
+            var y = decryptedList;
+            string filePath = @"D:\decrypted-list.txt";
+            File.WriteAllLines(filePath, decryptedList);
+
+
+
+
+
+            //string fileContents = string.Empty;
+            //for (var i = 0; i < 999; i++)
+            //{
+            //    var stream = FileGetter.GetMemoryStreamFromFile("Week1Part2.txt");
+            //    stream.Position = 0;
+            //    using (StreamReader reader = new StreamReader(stream))
+            //    {
+            //        fileContents = reader.ReadToEnd();
+            //    }
+            //    var decryptedFileContents = CaesarCipher.Decrypt(fileContents, i);
+            //    if (decryptedFileContents.Contains(magicWord))
+            //    {
+            //        correctShiftValue = i;
+            //        break;
+            //    }
+            //}
+            //var inbetweenWords = CaesarCipher.GetInbetweenWords(fileContents, correctShiftValue, "triceratops");
+            //Assert.That(inbetweenWords, Is.EqualTo("the first four digits of the pin are the product of seventeen and one hundred twenty-five. the next two digits are the ninth prime number. the final two digits are the tenth prime number."));
+        }
     }
 }

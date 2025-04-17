@@ -15,10 +15,32 @@ namespace Dynamo.Business.Shared.Cyber
             return c;
         }
 
+        public static char ShiftRight(char c, char shift)
+        {
+            if (c >= 'a' && c <= 'z')
+                return ShiftRight(c, shift - 97, 'a');
+
+            if (c >= 'A' && c <= 'Z')
+                return ShiftRight(c, shift - 65, 'A');
+
+            return c;
+        }
+
         private static char ShiftRight(char c, int shift, char beginningChar)
         {
             var index = c - beginningChar;
             return (char)(((index + shift) % 26) + beginningChar);
+        }
+
+        public static char ShiftLeft(char c, char shift)
+        {
+            if (c >= 'a' && c <= 'z')
+                return ShiftLeft(c, shift - 97, 'a', 'z');
+
+            if (c >= 'A' && c <= 'Z')
+                return ShiftLeft(c, shift - 65, 'A', 'Z');
+
+            return c;
         }
 
         public static char ShiftLeft(char c, int shift)
@@ -27,7 +49,7 @@ namespace Dynamo.Business.Shared.Cyber
                 return ShiftLeft(c, shift, 'a', 'z');
 
             if (c >= 'A' && c <= 'Z')
-                return ShiftLeft(c, shift, 'a', 'Z');
+                return ShiftLeft(c, shift, 'A', 'Z');
 
             return c;
         }
