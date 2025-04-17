@@ -42,9 +42,6 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var b = 'b';
             var a = CharacterShifter.ShiftLeft(b, 1);
             Assert.That(a, Is.EqualTo('a'));
-
-
-            //var a = 'a';
             var y = CharacterShifter.ShiftLeft(a, 2);
             Assert.That(y, Is.EqualTo('y'));
             var z = 'z';
@@ -153,18 +150,27 @@ namespace Dynamo.Business.Unit.Tests.Cyber
         [Test]
         public void Can_decrypt_vigenere_cipher_from_wiki()
         {
-            var encrypted = "attacking tonight";
+            var encrypted = "ovnlqbpvt hznzeuz";
             var keyWord = "oculorhinolaryngology";
             var decrypted = VigenereCipher.Decrypt(encrypted, keyWord);
-            Assert.That(decrypted, Is.EqualTo("ovnlqbpvt hznzeuz"));
+            Assert.That(decrypted, Is.EqualTo("attacking tonight"));
         }
 
+        [Test]
+        public void Can_decrypt_vigenere_cipher_from_wiki_2()
+        {
+            var encrypted = "LXFOPV EF RNHR";
+            var keyWord = "LEMON";
+            var decrypted = VigenereCipher.Decrypt(encrypted, keyWord);
+            Assert.That(decrypted, Is.EqualTo("ATTACK AT DAWN"));
+        }
 
         [Test]
         public void Can_get_week1_challenge()
         {
             var correctShiftValue = 0;
-            var magicWord = "tricer";
+            var magicWord = "tric";
+            //var magicWord = "fmxbv";
 
             //var keys = new;
             string keysString = string.Empty;
@@ -190,7 +196,7 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             {
                 var decrypted = VigenereCipher.Decrypt(encrypted.ToLower(), key.ToLower());
                 decryptedList.Add(decrypted);
-                if (decrypted.Contains(magicWord))
+                if (decrypted.Contains(magicWord.ToLower()))
                 {
                     var x = decrypted;
                 }
