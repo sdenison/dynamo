@@ -9,17 +9,17 @@ namespace Dynamo.Business.Shared.Cyber
             var returnString = new StringBuilder();
             foreach (char c in encrypted)
             {
-                returnString.Append(CharacterShifter.ShiftLeft(c, shift));
+                returnString.Append(CharacterShifter.Shift(c, -shift));
             }
             return returnString.ToString();
         }
 
-        public static string Encrypt(string encrypted, int shift)
+        public static string Encrypt(string plaintext, int shift)
         {
             var returnString = new StringBuilder();
-            foreach (char c in encrypted)
+            foreach (char c in plaintext)
             {
-                returnString.Append(CharacterShifter.ShiftRight(c, shift));
+                returnString.Append(CharacterShifter.Shift(c, shift));
             }
             return returnString.ToString();
         }
@@ -29,8 +29,15 @@ namespace Dynamo.Business.Shared.Cyber
             var decrypted = Decrypt(encrypted, shift);
             var firstIndex = decrypted.IndexOf(bookEndWord);
             var secondIndex = decrypted.IndexOf(bookEndWord, firstIndex + bookEndWord.Length);
-            int start = firstIndex + bookEndWord.Length;
-            return decrypted.Substring(start, secondIndex - start).Trim();
+
+            if (firstIndex >= 0 && secondIndex > firstIndex)
+            {
+                int start = firstIndex + bookEndWord.Length;
+                return decrypted.Substring(start, secondIndex - start).Trim();
+            }
+
+            return string.Empty;
         }
     }
 }
+

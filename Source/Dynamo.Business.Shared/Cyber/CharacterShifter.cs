@@ -2,31 +2,38 @@
 {
     public static class CharacterShifter
     {
+        // Caesar-style shifting
+        public static char Shift(char c, int shift)
+        {
+            if (char.IsUpper(c))
+            {
+                return (char)('A' + (26 + (c - 'A' + shift) % 26) % 26);
+            }
+            else if (char.IsLower(c))
+            {
+                return (char)('a' + (26 + (c - 'a' + shift) % 26) % 26);
+            }
+            else
+            {
+                return c;
+            }
+        }
+
         public static char ShiftRight(char c, int shift) => Shift(c, shift);
-        public static char ShiftRight(char c, char shift) => Shift(c, shift - GetBaseChar(c));
-
         public static char ShiftLeft(char c, int shift) => Shift(c, -shift);
-        public static char ShiftLeft(char c, char shift) => Shift(c, -(shift - GetBaseChar(c)));
 
-        private static char Shift(char c, int shift)
+        // Vigenère-style shifting using a key character
+        public static char ShiftRight(char c, char key)
         {
-            if (IsLower(c))
-                return ShiftWithinAlphabet(c, shift, 'a');
-            if (IsUpper(c))
-                return ShiftWithinAlphabet(c, shift, 'A');
-
-            return c;
+            int shift = char.IsUpper(key) ? key - 'A' : key - 'a';
+            return Shift(c, shift);
         }
 
-        private static char ShiftWithinAlphabet(char c, int shift, char baseChar)
+        public static char ShiftLeft(char c, char key)
         {
-            int offset = c - baseChar;
-            int normalizedShift = ((offset + shift) % 26 + 26) % 26; // handles negative shifts
-            return (char)(baseChar + normalizedShift);
+            int shift = char.IsUpper(key) ? key - 'A' : key - 'a';
+            return Shift(c, -shift);
         }
-
-        private static bool IsLower(char c) => c >= 'a' && c <= 'z';
-        private static bool IsUpper(char c) => c >= 'A' && c <= 'Z';
-        private static char GetBaseChar(char c) => IsLower(c) ? 'a' : IsUpper(c) ? 'A' : '\0';
     }
 }
+
