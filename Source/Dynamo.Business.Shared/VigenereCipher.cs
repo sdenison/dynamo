@@ -1,56 +1,39 @@
-﻿using Dynamo.Business.Shared.Cyber;
-using System.Text;
+﻿using System.Text;
 
-namespace Dynamo.Business.Shared
+namespace Dynamo.Business.Shared.Cyber
 {
     public static class VigenereCipher
     {
-        public static string Encrypt(string encrypted, string keyWord)
-        {
-            var returnString = new StringBuilder();
-            var shiftIndex = 0;
-            var shift = keyWord[shiftIndex];
+        public static string Encrypt(string input, string keyword)
+            => Transform(input, keyword, isDecrypt: false);
 
-            foreach (char c in encrypted)
+        public static string Decrypt(string input, string keyword)
+            => Transform(input, keyword, isDecrypt: true);
+
+        private static string Transform(string input, string keyword, bool isDecrypt)
+        {
+            var result = new StringBuilder();
+            int shiftIndex = 0;
+
+            foreach (char c in input)
             {
-                var encrptedChar = CharacterShifter.ShiftRight(c, shift);
-                if (encrptedChar != c)
+                if (char.IsLetter(c))
                 {
-                    returnString.Append(encrptedChar);
+                    char shift = keyword[shiftIndex % keyword.Length];
+                    char transformedChar = isDecrypt
+                        ? CharacterShifter.ShiftLeft(c, shift)
+                        : CharacterShifter.ShiftRight(c, shift);
+
+                    result.Append(transformedChar);
                     shiftIndex++;
-                    shiftIndex = shiftIndex % keyWord.Length;
-                    shift = keyWord[shiftIndex];
                 }
                 else
                 {
-                    returnString.Append(c);
+                    result.Append(c);
                 }
             }
-            return returnString.ToString();
-        }
 
-        public static string Decrypt(string encrypted, string keyWord)
-        {
-            var returnString = new StringBuilder();
-            var shiftIndex = 0;
-            var shift = keyWord[shiftIndex];
-
-            foreach (char c in encrypted)
-            {
-                if (!(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z'))
-                {
-                    returnString.Append(c);
-                }
-                else
-                {
-                    var encrptedChar = CharacterShifter.ShiftLeft(c, shift);
-                    returnString.Append(encrptedChar);
-                    shiftIndex++;
-                    shiftIndex = shiftIndex % keyWord.Length;
-                    shift = keyWord[shiftIndex];
-                }
-            }
-            return returnString.ToString();
+            return result.ToString();
         }
     }
 }
