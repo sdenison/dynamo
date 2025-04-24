@@ -18,6 +18,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Ui.Blazor.Server", "Dynamo.Ui.Blazor.Server\Dynamo.Ui.Blazor.Server.csproj", "{8FE5B86B-C8CC-42C6-AF39-206E31D3AC4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{4B5EF2A5-D266-45E9-AAEA-8838FAFF82FE}"
+	ProjectSection(SolutionItems) = preProject
+		Dynamo.Business.Shared\VigenereCipher.cs = Dynamo.Business.Shared\VigenereCipher.cs
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Business.Shared", "Dynamo.Business.Shared\Dynamo.Business.Shared.csproj", "{0F67D1D5-8FCE-4833-9E11-1E96619E1861}"
 EndProject
@@ -35,7 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lambda", "Lambda", "{214E4F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.IO.S3", "Dynamo.IO.S3\Dynamo.IO.S3.csproj", "{BF0403CD-83DC-4FEF-A106-3B5E03DAD00D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamo.Aws.Services", "Dynamo.Aws.Services\Dynamo.Aws.Services.csproj", "{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Aws.Services", "Dynamo.Aws.Services\Dynamo.Aws.Services.csproj", "{D7886B0C-85D0-4624-96A0-8F9C3661ABFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

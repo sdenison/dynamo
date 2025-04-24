@@ -49,22 +49,8 @@ namespace Dynamo.Business.Shared
                     shiftIndex = shiftIndex % keyWord.Length;
                     shift = keyWord[shiftIndex];
                 }
-
-                //if (encrptedChar != c)
-                //{
-                //    returnString.Append(encrptedChar);
-                //    shiftIndex++;
-                //    shiftIndex = shiftIndex % keyWord.Length;
-                //    shift = keyWord[shiftIndex];
-                //}
-                //else
-                //{
-                //    returnString.Append(c);
-                //}
             }
             return returnString.ToString();
         }
-
-
     }
 }

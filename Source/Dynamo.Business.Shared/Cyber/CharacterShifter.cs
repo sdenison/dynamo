@@ -1,70 +1,32 @@
-﻿using System;
-
-namespace Dynamo.Business.Shared.Cyber
+﻿namespace Dynamo.Business.Shared.Cyber
 {
     public static class CharacterShifter
     {
-        public static char ShiftRight(char c, int shift)
-        {
-            if (c >= 'a' && c <= 'z')
-                return ShiftRight(c, shift, 'a');
+        public static char ShiftRight(char c, int shift) => Shift(c, shift);
+        public static char ShiftRight(char c, char shift) => Shift(c, shift - GetBaseChar(c));
 
-            if (c >= 'A' && c <= 'Z')
-                return ShiftRight(c, shift, 'A');
+        public static char ShiftLeft(char c, int shift) => Shift(c, -shift);
+        public static char ShiftLeft(char c, char shift) => Shift(c, -(shift - GetBaseChar(c)));
+
+        private static char Shift(char c, int shift)
+        {
+            if (IsLower(c))
+                return ShiftWithinAlphabet(c, shift, 'a');
+            if (IsUpper(c))
+                return ShiftWithinAlphabet(c, shift, 'A');
 
             return c;
         }
 
-        public static char ShiftRight(char c, char shift)
+        private static char ShiftWithinAlphabet(char c, int shift, char baseChar)
         {
-            if (c >= 'a' && c <= 'z')
-                return ShiftRight(c, shift - 97, 'a');
-
-            if (c >= 'A' && c <= 'Z')
-                return ShiftRight(c, shift - 65, 'A');
-
-            return c;
+            int offset = c - baseChar;
+            int normalizedShift = ((offset + shift) % 26 + 26) % 26; // handles negative shifts
+            return (char)(baseChar + normalizedShift);
         }
 
-        private static char ShiftRight(char c, int shift, char beginningChar)
-        {
-            var index = c - beginningChar;
-            return (char)(((index + shift) % 26) + beginningChar);
-        }
-
-        public static char ShiftLeft(char c, char shift)
-        {
-            if (c >= 'a' && c <= 'z')
-                return ShiftLeft(c, shift - 97, 'a', 'z');
-
-            if (c >= 'A' && c <= 'Z')
-                return ShiftLeft(c, shift - 65, 'A', 'Z');
-
-            return c;
-        }
-
-        public static char ShiftLeft(char c, int shift)
-        {
-            if (c >= 'a' && c <= 'z')
-                return ShiftLeft(c, shift, 'a', 'z');
-
-            if (c >= 'A' && c <= 'Z')
-                return ShiftLeft(c, shift, 'A', 'Z');
-
-            return c;
-        }
-
-        public static char ShiftLeft(char c, int shift, char beginningChar, char endingChar)
-        {
-            var index = c - beginningChar;
-            if ((index - shift) % 26 < 0)
-            {
-                return (char)(endingChar - Math.Abs((index - shift) % 26) + 1);
-            }
-            else
-            {
-                return (char)((beginningChar + (index - shift) % 26));
-            }
-        }
+        private static bool IsLower(char c) => c >= 'a' && c <= 'z';
+        private static bool IsUpper(char c) => c >= 'A' && c <= 'Z';
+        private static char GetBaseChar(char c) => IsLower(c) ? 'a' : IsUpper(c) ? 'A' : '\0';
     }
 }

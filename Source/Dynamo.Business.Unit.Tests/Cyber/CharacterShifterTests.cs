@@ -169,10 +169,8 @@ namespace Dynamo.Business.Unit.Tests.Cyber
         public void Can_get_week1_challenge()
         {
             var correctShiftValue = 0;
-            var magicWord = "tric";
-            //var magicWord = "fmxbv";
+            var magicWord = "triceratops";
 
-            //var keys = new;
             string keysString = string.Empty;
             var keyStream = FileGetter.GetMemoryStreamFromFile("Week1InputKeys.txt");
             using (StreamReader keyReader = new StreamReader(keyStream))
@@ -192,41 +190,17 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             }
 
             var decryptedList = new List<string>();
+            var magicKey = string.Empty;
             foreach (var key in keys)
             {
-                var decrypted = VigenereCipher.Decrypt(encrypted.ToLower(), key.ToLower());
+                var decrypted = VigenereCipher.Decrypt(encrypted, key.Trim());
                 decryptedList.Add(decrypted);
-                if (decrypted.Contains(magicWord.ToLower()))
+                if (decrypted.Contains(magicWord))
                 {
-                    var x = decrypted;
+                    magicKey = key.Trim();
                 }
             }
-            var y = decryptedList;
-            string filePath = @"D:\decrypted-list.txt";
-            File.WriteAllLines(filePath, decryptedList);
-
-
-
-
-
-            //string fileContents = string.Empty;
-            //for (var i = 0; i < 999; i++)
-            //{
-            //    var stream = FileGetter.GetMemoryStreamFromFile("Week1Part2.txt");
-            //    stream.Position = 0;
-            //    using (StreamReader reader = new StreamReader(stream))
-            //    {
-            //        fileContents = reader.ReadToEnd();
-            //    }
-            //    var decryptedFileContents = CaesarCipher.Decrypt(fileContents, i);
-            //    if (decryptedFileContents.Contains(magicWord))
-            //    {
-            //        correctShiftValue = i;
-            //        break;
-            //    }
-            //}
-            //var inbetweenWords = CaesarCipher.GetInbetweenWords(fileContents, correctShiftValue, "triceratops");
-            //Assert.That(inbetweenWords, Is.EqualTo("the first four digits of the pin are the product of seventeen and one hundred twenty-five. the next two digits are the ninth prime number. the final two digits are the tenth prime number."));
+            Assert.That(magicKey, Is.EqualTo("spiderman"));
         }
     }
 }
