@@ -1,5 +1,4 @@
-﻿using Dynamo.Business.Shared;
-using Dynamo.Business.Shared.Cyber;
+﻿using Dynamo.Business.Shared.Cyber;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -8,21 +7,8 @@ using System.IO;
 namespace Dynamo.Business.Unit.Tests.Cyber
 {
     [TestFixture]
-    public class CharacterShifterTests
+    public class CipherTests
     {
-        [Test]
-        public void Play_with_characters()
-        {
-            var a = 'a';
-            Assert.That((int)a, Is.EqualTo(97));
-            var z = 'z';
-            Assert.That((int)z, Is.EqualTo(122));
-            var A = 'A';
-            Assert.That((int)A, Is.EqualTo(65));
-            var Z = 'Z';
-            Assert.That((int)Z, Is.EqualTo(90));
-        }
-
         [Test]
         public void Shifting_characters_should_work_for_lower_case()
         {
@@ -168,7 +154,6 @@ namespace Dynamo.Business.Unit.Tests.Cyber
         [Test]
         public void Can_get_week1_challenge()
         {
-            var correctShiftValue = 0;
             var magicWord = "triceratops";
 
             string keysString = string.Empty;
