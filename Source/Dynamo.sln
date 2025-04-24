@@ -18,6 +18,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Ui.Blazor.Server", "Dynamo.Ui.Blazor.Server\Dynamo.Ui.Blazor.Server.csproj", "{8FE5B86B-C8CC-42C6-AF39-206E31D3AC4A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{4B5EF2A5-D266-45E9-AAEA-8838FAFF82FE}"
+	ProjectSection(SolutionItems) = preProject
+		Dynamo.Business.Shared\VigenereCipher.cs = Dynamo.Business.Shared\VigenereCipher.cs
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dynamo.Business.Shared", "Dynamo.Business.Shared\Dynamo.Business.Shared.csproj", "{0F67D1D5-8FCE-4833-9E11-1E96619E1861}"
 EndProject

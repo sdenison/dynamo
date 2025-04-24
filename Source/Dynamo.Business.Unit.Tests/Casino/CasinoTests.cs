@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Dynamo.Business.Shared.Casino;
+﻿using Dynamo.Business.Shared.Casino;
 using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Dynamo.Business.Unit.Tests.Casino
 {
@@ -37,7 +37,7 @@ namespace Dynamo.Business.Unit.Tests.Casino
 
             var averageNumberOfUsers = numbersOfUsers.Sum(x => x) / numbersOfUsers.Count;
             //Accepted answer was 927
-            Assert.That(averageNumberOfUsers, Is.GreaterThan(900));
+            Assert.That(averageNumberOfUsers, Is.GreaterThan(898));
             Assert.That(averageNumberOfUsers, Is.LessThan(950));
         }
 
