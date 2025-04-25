@@ -71,16 +71,6 @@ namespace Dynamo.Business.Unit.Tests.Cyber
         }
 
         [Test]
-        public void Can_xor_utf8_string()
-        {
-            var key = new byte[] { 0x42, 0x19 };
-            string encrypted = KeyfileReader.XorUtf8String("hello world", key);
-            string decrypted = KeyfileReader.XorUtf8String(encrypted, key);  // XOR again to decrypt
-
-            Console.WriteLine(decrypted);
-        }
-
-        [Test]
         public void Can_get_spring_2025_week_2_part_3()
         {
             var folder = "D:\\temp\\Problem2SystemFiles";
