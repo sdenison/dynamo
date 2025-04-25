@@ -1,6 +1,8 @@
 ﻿using Dynamo.Business.Shared.Cyber.Scanner;
 using NUnit.Framework;
+using System;
 using System.IO;
+using System.Text;
 
 namespace Dynamo.Business.Unit.Tests.Cyber
 {
@@ -59,13 +61,56 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var total = 0;
             using (StreamReader inputReader = new StreamReader(keyFileStream))
             {
-                var keys = inputReader.ReadToEnd().Split(' ');
+                var keys = KeyfileReader.ConvertKeys(inputReader.ReadToEnd());
                 foreach (var key in keys)
                 {
-                    total += KeyfileReader.ConvertKey(key);
+                    total += key;
                 }
             }
             Assert.That(total, Is.EqualTo(63382816));
+        }
+
+        [Test]
+        public void Can_xor_utf8_string()
+        {
+            var key = new byte[] { 0x42, 0x19 };
+            string encrypted = KeyfileReader.XorUtf8String("hello world", key);
+            string decrypted = KeyfileReader.XorUtf8String(encrypted, key);  // XOR again to decrypt
+
+            Console.WriteLine(decrypted);
+        }
+
+        [Test]
+        public void Can_get_spring_2025_week_2_part_3()
+        {
+            var folder = "D:\\temp\\Problem2SystemFiles";
+            var start = "4920414d2054574f20464f4f4c53";
+            var end = "444945204e4f542c20504f4f52204445415448";
+            var message = FolderScanner.ScanFolder(folder, start, end);
+            var keys = GetKeys();
+            var keyIndex = 0;
+
+            //var decrypted = new StringBuilder();
+            byte[] decrypted = new byte[message.Length];
+            foreach (var charToXor in Encoding.UTF8.GetBytes(message))
+            {
+                var decryptedChar = charToXor ^ keys[keyIndex % keys.Length];
+                decrypted[keyIndex] = (byte)decryptedChar;
+                keyIndex++;
+            }
+
+            string decrypted2 = KeyfileReader.XorUtf8String(message, keys);  // XOR again to decrypt
+
+            Assert.That(decrypted2, Is.EqualTo("xxx"));
+        }
+
+        public static byte[] GetKeys()
+        {
+            var keyFileStream = FileGetter.GetMemoryStreamFromFile("Problem2Keyfile.txt");
+            using (StreamReader inputReader = new StreamReader(keyFileStream))
+            {
+                return KeyfileReader.ConvertKeys(inputReader.ReadToEnd());
+            }
         }
     }
 }

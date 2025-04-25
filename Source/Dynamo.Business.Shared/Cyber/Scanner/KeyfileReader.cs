@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Dynamo.Business.Shared.Cyber.Scanner
 {
@@ -19,9 +20,14 @@ namespace Dynamo.Business.Shared.Cyber.Scanner
             return (byte)(b ^ 255);
         }
 
-        public static int ConvertKey(string str)
+        public static byte ConvertKey(string str)
         {
             return InvertDigits(AddInvertedParityBit(ParseByte(str)));
+        }
+
+        public static byte[] ConvertKeys(string keys)
+        {
+            return keys.Split(' ').Select(ConvertKey).ToArray();
         }
     }
 }
