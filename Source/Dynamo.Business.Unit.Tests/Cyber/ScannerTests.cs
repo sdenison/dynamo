@@ -28,5 +28,17 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var message = FolderScanner.ScanFolder(folder, start, end);
             Assert.That(FolderScanner.CountTheChar(message, 'a'), Is.EqualTo(820));
         }
+
+        [Test]
+        public void Can_parse_string_to_byte()
+        {
+            var str = "0000001";
+            var b = KeyfileReader.ParseByte(str);
+            Assert.That(b, Is.EqualTo(1));
+            str = "0000010";
+            b = KeyfileReader.ParseByte(str);
+            Assert.That(b, Is.EqualTo(2));
+            Assert.That(KeyfileReader.AddInvertedParityBit(b), Is.EqualTo(5));
+        }
     }
 }
