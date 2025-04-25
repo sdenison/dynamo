@@ -91,17 +91,34 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var keyIndex = 0;
 
             //var decrypted = new StringBuilder();
-            byte[] decrypted = new byte[message.Length];
+            char[] decrypted = new char[message.Length];
+            var key = Convert.ToString(63382816, 2);
+
+            var x = Convert.ToByte("11110001", 2);
+
+
+            var count = 0;
             foreach (var charToXor in Encoding.UTF8.GetBytes(message))
             {
-                var decryptedChar = charToXor ^ keys[keyIndex % keys.Length];
-                decrypted[keyIndex] = (byte)decryptedChar;
+                var xorKey = KeyfileReader.GetByteFromString(key, count % key.Length, 8);
+                var decryptedChar = (byte)(charToXor ^ xorKey);
+                var charToXorStr = Convert.ToString(charToXor, 2);
+                var xorKeyStr = Convert.ToString(xorKey, 2);
+                var decryptedCharStr = Convert.ToString(decryptedChar, 2);
+                decrypted[keyIndex] = Convert.ToChar(decryptedChar);
+                //decrypted[keyIndex] = (char)decryptedChar;
+                count += 8;
                 keyIndex++;
             }
 
-            string decrypted2 = KeyfileReader.XorUtf8String(message, keys);  // XOR again to decrypt
 
-            Assert.That(decrypted2, Is.EqualTo("xxx"));
+            Assert.That(string.Concat(decrypted), Is.EqualTo("xxx"));
+            //Assert.That(Encoding.UTF8.GetString(decrypted), Is.EqualTo("xxx"));
+
+
+            //string decrypted2 = KeyfileReader.XorUtf8String(message, keys);  // XOR again to decrypt
+
+            //Assert.That(decrypted2, Is.EqualTo("xxx"));
         }
 
         public static byte[] GetKeys()

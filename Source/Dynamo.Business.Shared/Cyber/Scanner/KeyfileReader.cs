@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace Dynamo.Business.Shared.Cyber.Scanner
 {
@@ -28,6 +29,34 @@ namespace Dynamo.Business.Shared.Cyber.Scanner
         public static byte[] ConvertKeys(string keys)
         {
             return keys.Split(' ').Select(ConvertKey).ToArray();
+        }
+
+        public static string XorUtf8String(string input, byte[] key)
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] outputBytes = new byte[inputBytes.Length];
+
+            for (int i = 0; i < inputBytes.Length; i++)
+            {
+                outputBytes[i] = (byte)(inputBytes[i] ^ key[i % key.Length]);
+            }
+
+            return Encoding.UTF8.GetString(outputBytes);
+        }
+
+        public static byte GetByteFromString(string str, int start, int length)
+        {
+            if ((start + length) <= str.Length)
+            {
+                var x = str.Substring(start, length);
+                return Convert.ToByte(str.Substring(start, length), 2);
+            }
+            else
+            {
+                var starting = str.Substring(start);
+                var ending = str.Substring(0, length - starting.Length);
+                return Convert.ToByte(starting + ending, 2);
+            }
         }
     }
 }
