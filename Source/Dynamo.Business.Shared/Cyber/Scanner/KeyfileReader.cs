@@ -13,5 +13,15 @@ namespace Dynamo.Business.Shared.Cyber.Scanner
         {
             return (byte)((b * 2) + 1);
         }
+
+        public static byte InvertDigits(byte b)
+        {
+            return (byte)(b ^ 255);
+        }
+
+        public static int ConvertKey(string str)
+        {
+            return InvertDigits(AddInvertedParityBit(ParseByte(str)));
+        }
     }
 }

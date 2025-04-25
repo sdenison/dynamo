@@ -1,5 +1,6 @@
 ﻿using Dynamo.Business.Shared.Cyber.Scanner;
 using NUnit.Framework;
+using System.IO;
 
 namespace Dynamo.Business.Unit.Tests.Cyber
 {
@@ -39,6 +40,32 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             b = KeyfileReader.ParseByte(str);
             Assert.That(b, Is.EqualTo(2));
             Assert.That(KeyfileReader.AddInvertedParityBit(b), Is.EqualTo(5));
+        }
+
+        [Test]
+        public void Can_invert_binary_digits()
+        {
+            var str = "00000010";
+            var b = KeyfileReader.ParseByte(str);
+            var inverted = KeyfileReader.InvertDigits(b);
+            var invertedStr = "11111101";
+            Assert.That(inverted, Is.EqualTo(253));
+        }
+
+        [Test]
+        public void Can_solve_spring_2025_week_2_part_2()
+        {
+            var keyFileStream = FileGetter.GetMemoryStreamFromFile("Problem2Keyfile.txt");
+            var total = 0;
+            using (StreamReader inputReader = new StreamReader(keyFileStream))
+            {
+                var keys = inputReader.ReadToEnd().Split(' ');
+                foreach (var key in keys)
+                {
+                    total += KeyfileReader.ConvertKey(key);
+                }
+            }
+            Assert.That(total, Is.EqualTo(63382816));
         }
     }
 }
