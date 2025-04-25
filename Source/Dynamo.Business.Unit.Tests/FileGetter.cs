@@ -16,6 +16,7 @@ namespace Dynamo.Business.Unit.Tests
                 throw new Exception("Could not open example file for test");
             var memoryStream = new MemoryStream();
             fileStream.CopyTo(memoryStream);
+            memoryStream.Position = 0;
             return memoryStream;
         }
     }

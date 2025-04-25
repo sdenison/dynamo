@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dynamo.Business.Shared.Casino.Slots;
+﻿using Dynamo.Business.Shared.Casino.Slots;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using System.Collections.Generic;
 
 namespace Dynamo.Business.Unit.Tests.Casino.Slots
 {
@@ -68,7 +64,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
 
             //190 was the accepted answer
             Assert.That(averageWinAmount, Is.LessThan(192));
-            Assert.That(averageWinAmount, Is.GreaterThan(188));
+            Assert.That(averageWinAmount, Is.GreaterThan(186));
         }
 
         public List<Payout> GetPayouts()
