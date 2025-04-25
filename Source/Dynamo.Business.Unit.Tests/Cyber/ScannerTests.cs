@@ -87,38 +87,15 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var start = "4920414d2054574f20464f4f4c53";
             var end = "444945204e4f542c20504f4f52204445415448";
             var message = FolderScanner.ScanFolder(folder, start, end);
-            var keys = GetKeys();
-            var keyIndex = 0;
 
-            //var decrypted = new StringBuilder();
-            char[] decrypted = new char[message.Length];
-            var key = Convert.ToString(63382816, 2);
-
-            var x = Convert.ToByte("11110001", 2);
-
-
-            var count = 0;
-            foreach (var charToXor in Encoding.UTF8.GetBytes(message))
+            var key = Encoding.ASCII.GetBytes("63382816");
+            var messageAsBytes = Convert.FromHexString(message);
+            var decrypted = new StringBuilder();
+            for (var i = 0; i < messageAsBytes.Length; i++)
             {
-                var xorKey = KeyfileReader.GetByteFromString(key, count % key.Length, 8);
-                var decryptedChar = (byte)(charToXor ^ xorKey);
-                var charToXorStr = Convert.ToString(charToXor, 2);
-                var xorKeyStr = Convert.ToString(xorKey, 2);
-                var decryptedCharStr = Convert.ToString(decryptedChar, 2);
-                decrypted[keyIndex] = Convert.ToChar(decryptedChar);
-                //decrypted[keyIndex] = (char)decryptedChar;
-                count += 8;
-                keyIndex++;
+                decrypted.Append((char)(messageAsBytes[i] ^ key[i % key.Length]));
             }
-
-
-            Assert.That(string.Concat(decrypted), Is.EqualTo("xxx"));
-            //Assert.That(Encoding.UTF8.GetString(decrypted), Is.EqualTo("xxx"));
-
-
-            //string decrypted2 = KeyfileReader.XorUtf8String(message, keys);  // XOR again to decrypt
-
-            //Assert.That(decrypted2, Is.EqualTo("xxx"));
+            Assert.That(decrypted.ToString(), Does.StartWith("Meet me at the flagpole, 4:30pm."));
         }
 
         public static byte[] GetKeys()

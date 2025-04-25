@@ -43,20 +43,5 @@ namespace Dynamo.Business.Shared.Cyber.Scanner
 
             return Encoding.UTF8.GetString(outputBytes);
         }
-
-        public static byte GetByteFromString(string str, int start, int length)
-        {
-            if ((start + length) <= str.Length)
-            {
-                var x = str.Substring(start, length);
-                return Convert.ToByte(str.Substring(start, length), 2);
-            }
-            else
-            {
-                var starting = str.Substring(start);
-                var ending = str.Substring(0, length - starting.Length);
-                return Convert.ToByte(starting + ending, 2);
-            }
-        }
     }
 }
