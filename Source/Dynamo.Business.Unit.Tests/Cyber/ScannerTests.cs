@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Dynamo.Business.Unit.Tests.Cyber
 {
@@ -86,6 +87,93 @@ namespace Dynamo.Business.Unit.Tests.Cyber
                 decrypted.Append((char)(messageAsBytes[i] ^ key[i % key.Length]));
             }
             Assert.That(decrypted.ToString(), Does.StartWith("Meet me at the flagpole, 4:30pm."));
+        }
+
+        [Test]
+        public void Can_get_challenge_problem_spring_2025_week_2()
+        {
+            var folder = "D:\\temp\\Problem2SystemFiles";
+            var start = "4920414d2054574f20464f4f4c53";
+            var end = "444945204e4f542c20504f4f52204445415448";
+            var message = FolderScanner.ScanFolder(folder, start, end);
+
+            var key = Encoding.ASCII.GetBytes("63382816");
+            var messageAsBytes = Convert.FromHexString(message);
+            var decrypted = new StringBuilder();
+            for (var i = 0; i < messageAsBytes.Length; i++)
+            {
+                decrypted.Append((char)(messageAsBytes[i] ^ key[i % key.Length]));
+            }
+            var altered = decrypted.ToString();
+            Assert.That(decrypted.ToString(), Does.StartWith("Meet me at the flagpole, 4:30pm."));
+
+            altered = altered.Replace("4:30pm", "10:30am");
+
+            // This cuts the first sentenace Chamberlain says
+            //altered = Regex.Replace(
+            //    altered,
+            //    @"CHAMBERLAIN\..*?[.?!]\s?",  // Regex pattern
+            //    "",                        // Replace with nothing
+            //    RegexOptions.Singleline    // Allow '.' to match across lines if needed
+            //);
+
+            // This cuts all text said by Chanberlain
+            altered = Regex.Replace(
+                altered,
+                @"CHAMBERLAIN\..*?(?=[A-Z]+\.)",
+                "",
+                RegexOptions.Singleline
+            );
+
+
+            //altered = altered.Replace(" CHAMBERLAIN. ", " ");
+            //altered = altered.Replace("CHAMBERLAIN. ", " ");
+            altered = altered.Replace(" Chamberlain  and Lord Sandys", "");
+            altered = altered.Replace(" Chamberlain, Lord Sandys and Sir Thomas Lovell", "");
+            //altered = altered.Replace(".  ", ". ");
+            //altered = altered.Replace("  ", " ");
+            altered = altered.Replace(" CHAMBERLAIN.", "");
+            altered = altered.Replace("Look out there, some of ye.", "");
+            altered = altered.Trim();
+            altered = altered + " ";
+            var xxx = altered;
+
+            //var key = Encoding.ASCII.GetBytes("63382816");
+            //var messageAsBytes = Convert.FromHexString(message);
+            //var decrypted = new StringBuilder();
+
+
+
+            //byte[] encrypted = new byte[altered.Length];
+            //for (var i = 0; i < altered.Length; i++)
+            //{
+            //    encrypted[i] = (byte)(altered[i] ^ key[i % key.Length]);
+            //}
+
+
+            // Convert the altered string to a UTF-8 byte array
+            byte[] alteredBytes = Encoding.UTF8.GetBytes(altered);
+            byte[] encrypted = new byte[alteredBytes.Length];
+
+            for (int i = 0; i < alteredBytes.Length; i++)
+            {
+                encrypted[i] = (byte)(alteredBytes[i] ^ key[i % key.Length]);
+            }
+
+            //var hexString = BitConverter.ToString(encrypted).Replace("-", "").ToLower();
+            var hexString = Convert.ToHexString(encrypted).ToLower();
+
+            string encodedFilePath = @"D:\temp\flagpole\encoded.txt";
+            Directory.CreateDirectory(Path.GetDirectoryName(encodedFilePath)); // Make sure the folder exists
+            File.WriteAllText(encodedFilePath, altered);
+
+            string encodedHexPath = @"D:\temp\flagpole\encoded-hex.txt";
+            Directory.CreateDirectory(Path.GetDirectoryName(encodedHexPath)); // Make sure the folder exists
+            File.WriteAllText(encodedHexPath, hexString);
+
+            var x = hexString;
+            var numAInPayload = FolderScanner.CountTheChar(altered, 'a');// 703 is too high
+            Assert.That(FolderScanner.CountTheChar(hexString, 'a'), Is.LessThan(75));  // 756 too high
         }
 
         public static byte[] GetKeys()
