@@ -1,4 +1,4 @@
-﻿using Dynamo.Business.Shared.Cyber;
+﻿using Dynamo.Business.Shared.Cyber.Ciphers;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
