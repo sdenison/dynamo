@@ -23,23 +23,12 @@ namespace Dynamo.Business.Shared.Cyber.LogAnalyzer
 
         public List<string> FindFailedLogins()
         {
-            var failedLogins = new Dictionary<string, int>();
-            foreach (var logEntry in LogEntries.Where(x => x.StatusCode == 401 || x.StatusCode == 403))
-            {
-                if (!failedLogins.ContainsKey(logEntry.IpAddress))
-                    failedLogins.Add(logEntry.IpAddress, 1);
-                else
-                    failedLogins[logEntry.IpAddress] += 1;
-            }
-            var ipList = new List<string>();
-            foreach (var ip in failedLogins.Keys)
-            {
-                if (failedLogins[ip] >= 5)
-                {
-                    ipList.Add(ip);
-                }
-            }
-            return ipList;
+            return LogEntries
+                .Where(x => x.StatusCode == 401 || x.StatusCode == 403)
+                .GroupBy(x => x.IpAddress)
+                .Where(g => g.Count() >= 5)
+                .Select(g => g.Key)
+                .ToList();
         }
 
         public List<string> FindSuspiciousResponseTimes()
