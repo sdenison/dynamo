@@ -41,5 +41,12 @@ namespace Dynamo.Business.Shared.Cyber.LogAnalyzer
             }
             return ipList;
         }
+
+        public List<string> FindSuspiciousResponseTimes()
+        {
+            return LogEntries.Where(x =>
+                x.ResponseTime > 5000
+                ).Select(x => x.IpAddress).Distinct().ToList();
+        }
     }
 }

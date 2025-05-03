@@ -17,7 +17,7 @@ namespace Dynamo.Business.Shared.Cyber.LogAnalyzer
         public string Endpoint { get; set; }
         [JsonPropertyName("status_code")]
         public int StatusCode { get; set; }
-        [JsonPropertyName("resonse_time")]
+        [JsonPropertyName("response_time")]
         public int ResponseTime { get; set; }
         [JsonPropertyName("user_agent")]
         public string UserAgent { get; set; }

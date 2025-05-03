@@ -42,5 +42,31 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var failedLogins = logAnalyzer.FindFailedLogins();
             Assert.That(failedLogins.Count, Is.EqualTo(3));
         }
+
+        [Test]
+        public void Can_get_ips_with_suspious_response_times()
+        {
+            var stream = FileGetter.GetMemoryStreamFromFile("server_logs.json");
+            var logEntries = JsonSerializer.Deserialize<List<LogEntry>>(stream);
+            var logAnalyzer = new LogAnalyzer(logEntries);
+            var suspiciousResponseTimes = logAnalyzer.FindSuspiciousResponseTimes();
+            Assert.That(suspiciousResponseTimes.Count, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void Can_solve_TMYC_2025_spring_week_3_part_2()
+        {
+            var stream = FileGetter.GetMemoryStreamFromFile("server_logs.json");
+            var logEntries = JsonSerializer.Deserialize<List<LogEntry>>(stream);
+            var logAnalyzer = new LogAnalyzer(logEntries);
+            var unauthorized = logAnalyzer.FindUnauthorizedRequests();
+            var failedLogins = logAnalyzer.FindFailedLogins();
+            var suspiciousResponseTimes = logAnalyzer.FindSuspiciousResponseTimes();
+
+            // Find the IP that fits all three criteria
+            var common = unauthorized.Intersect(failedLogins).Intersect(suspiciousResponseTimes).ToList();
+            Assert.That(common.Count, Is.EqualTo(1));
+            Assert.That(common[0], Is.EqualTo("45.33.49.78"));
+        }
     }
 }
