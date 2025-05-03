@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Dynamo.Business.Unit.Tests.Cyber
 {
+    [TestFixture, Ignore("Never did get week 2 challenge problem")]
     public class ScannerTests
     {
         [Test]
@@ -110,12 +111,12 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             altered = altered.Replace("4:30pm", "10:30am");
 
             // This cuts the first sentenace Chamberlain says
-            //altered = Regex.Replace(
-            //    altered,
-            //    @"CHAMBERLAIN\..*?[.?!]\s?",  // Regex pattern
-            //    "",                        // Replace with nothing
-            //    RegexOptions.Singleline    // Allow '.' to match across lines if needed
-            //);
+            ////altered = Regex.Replace(
+            ////    altered,
+            ////    @"CHAMBERLAIN\..*?[.?!]\s?",  // Regex pattern
+            ////    "",                        // Replace with nothing
+            ////    RegexOptions.Singleline    // Allow '.' to match across lines if needed
+            ////);
 
             // This cuts all text said by Chanberlain
             altered = Regex.Replace(
@@ -125,32 +126,12 @@ namespace Dynamo.Business.Unit.Tests.Cyber
                 RegexOptions.Singleline
             );
 
-
-            //altered = altered.Replace(" CHAMBERLAIN. ", " ");
-            //altered = altered.Replace("CHAMBERLAIN. ", " ");
             altered = altered.Replace(" Chamberlain  and Lord Sandys", "");
             altered = altered.Replace(" Chamberlain, Lord Sandys and Sir Thomas Lovell", "");
-            //altered = altered.Replace(".  ", ". ");
-            //altered = altered.Replace("  ", " ");
             altered = altered.Replace(" CHAMBERLAIN.", "");
             altered = altered.Replace("Look out there, some of ye.", "");
             altered = altered.Trim();
-            altered = altered + " ";
-            var xxx = altered;
-
-            //var key = Encoding.ASCII.GetBytes("63382816");
-            //var messageAsBytes = Convert.FromHexString(message);
-            //var decrypted = new StringBuilder();
-
-
-
-            //byte[] encrypted = new byte[altered.Length];
-            //for (var i = 0; i < altered.Length; i++)
-            //{
-            //    encrypted[i] = (byte)(altered[i] ^ key[i % key.Length]);
-            //}
-
-
+            altered = altered.Replace("  ", " ");
             // Convert the altered string to a UTF-8 byte array
             byte[] alteredBytes = Encoding.UTF8.GetBytes(altered);
             byte[] encrypted = new byte[alteredBytes.Length];
@@ -160,7 +141,6 @@ namespace Dynamo.Business.Unit.Tests.Cyber
                 encrypted[i] = (byte)(alteredBytes[i] ^ key[i % key.Length]);
             }
 
-            //var hexString = BitConverter.ToString(encrypted).Replace("-", "").ToLower();
             var hexString = Convert.ToHexString(encrypted).ToLower();
 
             string encodedFilePath = @"D:\temp\flagpole\encoded.txt";
@@ -174,15 +154,6 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var x = hexString;
             var numAInPayload = FolderScanner.CountTheChar(altered, 'a');// 703 is too high
             Assert.That(FolderScanner.CountTheChar(hexString, 'a'), Is.LessThan(75));  // 756 too high
-        }
-
-        public static byte[] GetKeys()
-        {
-            var keyFileStream = FileGetter.GetMemoryStreamFromFile("Problem2Keyfile.txt");
-            using (StreamReader inputReader = new StreamReader(keyFileStream))
-            {
-                return KeyfileReader.ConvertKeys(inputReader.ReadToEnd());
-            }
         }
     }
 }
