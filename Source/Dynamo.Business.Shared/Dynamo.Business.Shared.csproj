@@ -6,6 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Konscious.Security.Cryptography.Blake2" Version="1.1.1" />
 		<PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
 		<PackageReference Include="System.Text.Json" Version="8.0.0" />
 	</ItemGroup>

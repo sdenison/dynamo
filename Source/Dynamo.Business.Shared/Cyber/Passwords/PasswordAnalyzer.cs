@@ -60,10 +60,10 @@ namespace Dynamo.Business.Shared.Cyber.Passwords
 
         public static List<string> ComputeBlake2bHash(List<string> inputs)
         {
-            return inputs.Select(x => ComputeSha512Hash(x)).ToList();
+            return inputs.Select(x => ComputeBlake2bHash(x)).ToList();
         }
 
-        public static string ComputeShaBlake2bHash(string input)
+        public static string ComputeBlake2bHash(string input)
         {
             using (var blake2b = new Konscious.Security.Cryptography.HMACBlake2B(64)) // 64 bytes = 512 bits
             {
@@ -73,7 +73,12 @@ namespace Dynamo.Business.Shared.Cyber.Passwords
             }
         }
 
-        public static string ComputeShaMd5Hash(string input)
+        public static List<string> ComputeMd5Hash(List<string> inputs)
+        {
+            return inputs.Select(x => ComputeMd5Hash(x)).ToList();
+        }
+
+        public static string ComputeMd5Hash(string input)
         {
             using (var md5 = System.Security.Cryptography.MD5.Create())
             {
