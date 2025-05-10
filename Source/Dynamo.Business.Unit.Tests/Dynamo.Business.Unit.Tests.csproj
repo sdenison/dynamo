@@ -9,10 +9,14 @@
 		<None Remove="FakeFiles\MineLayout.txt" />
 		<None Remove="FakeFiles\Problem2Keyfile.txt" />
 		<None Remove="FakeFiles\server_logs.json" />
+		<None Remove="FakeFiles\tmyc-week4-pt1-example1.txt" />
+		<None Remove="FakeFiles\tmyc-week4-pt1-example2.txt" />
 	  <None Remove="FakeFiles\Week1ChallengeInputText.txt" />
 	  <None Remove="FakeFiles\Week1InputKeys.txt" />
 	  <None Remove="FakeFiles\Week1Part1.txt" />
 	  <None Remove="FakeFiles\Week1Part2.txt" />
+	  <None Remove="FakeFiles\week4_pt1_input.txt" />
+	  <None Remove="FakeFiles\week4_pt2_input.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="FakeFiles\blkjckhands.csv" />
@@ -21,11 +25,15 @@
 		<EmbeddedResource Include="FakeFiles\MineLayout.txt" />
 		<EmbeddedResource Include="FakeFiles\Problem2Keyfile.txt" />
 		<EmbeddedResource Include="FakeFiles\server_logs.json" />
+		<EmbeddedResource Include="FakeFiles\tmyc-week4-pt1-example1.txt" />
+		<EmbeddedResource Include="FakeFiles\tmyc-week4-pt1-example2.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1ChallengeInputText.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1InputKeys.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1Part2.txt">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
+		<EmbeddedResource Include="FakeFiles\week4_pt1_input.txt" />
+		<EmbeddedResource Include="FakeFiles\week4_pt2_input.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="coverlet.msbuild" Version="6.0.2">
