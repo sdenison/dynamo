@@ -35,10 +35,50 @@ namespace Dynamo.Business.Shared.Cyber.Passwords
 
         public static string ComputeSha256Hash(string input)
         {
-            using (var sha1 = System.Security.Cryptography.SHA256.Create())
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
-                var hashBytes = sha1.ComputeHash(inputBytes);
+                var hashBytes = sha256.ComputeHash(inputBytes);
+                return string.Concat(hashBytes.Select(b => b.ToString("x2")));
+            }
+        }
+
+        public static List<string> ComputeSha512Hash(List<string> inputs)
+        {
+            return inputs.Select(x => ComputeSha512Hash(x)).ToList();
+        }
+
+        public static string ComputeSha512Hash(string input)
+        {
+            using (var sha512 = System.Security.Cryptography.SHA512.Create())
+            {
+                var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
+                var hashBytes = sha512.ComputeHash(inputBytes);
+                return string.Concat(hashBytes.Select(b => b.ToString("x2")));
+            }
+        }
+
+        public static List<string> ComputeBlake2bHash(List<string> inputs)
+        {
+            return inputs.Select(x => ComputeSha512Hash(x)).ToList();
+        }
+
+        public static string ComputeShaBlake2bHash(string input)
+        {
+            using (var blake2b = new Konscious.Security.Cryptography.HMACBlake2B(64)) // 64 bytes = 512 bits
+            {
+                var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
+                var hashBytes = blake2b.ComputeHash(inputBytes);
+                return string.Concat(hashBytes.Select(b => b.ToString("x2")));
+            }
+        }
+
+        public static string ComputeShaMd5Hash(string input)
+        {
+            using (var md5 = System.Security.Cryptography.MD5.Create())
+            {
+                var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
+                var hashBytes = md5.ComputeHash(inputBytes);
                 return string.Concat(hashBytes.Select(b => b.ToString("x2")));
             }
         }
