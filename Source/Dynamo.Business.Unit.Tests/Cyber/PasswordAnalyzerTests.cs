@@ -9,13 +9,16 @@ namespace Dynamo.Business.Unit.Tests.Cyber
 {
     public class PasswordAnalyzerTests
     {
+        /* -------------------------------------------------- *
+         *  Entropy                                           *
+         * -------------------------------------------------- */
+
         [TestCase("!TMYC2025!", 30)]
         [TestCase("K9$pL!xQz&23", 43.02)]
         public void Can_get_entropy_numbers_for_example_2(string password, double expectedEntropy)
         {
-            var example2Entropy = PasswordAnalyzer.GetPasswordEntropy(password);
-            var tolerance = 0.001;
-            Assert.That(example2Entropy, Is.EqualTo(expectedEntropy).Within(tolerance));
+            var entropy = PasswordAnalyzer.GetPasswordEntropy(password);
+            Assert.That(entropy, Is.EqualTo(expectedEntropy).Within(0.001));
         }
 
         [Test]
@@ -23,15 +26,16 @@ namespace Dynamo.Business.Unit.Tests.Cyber
         {
             var passwords = GetPasswordsFromFile("week4_pt1_input.txt");
             Assert.That(passwords.Count, Is.EqualTo(200));
-            var entropyThreshold = 65;
-            var numberOfGoodPasswords = 0;
-            foreach (var password in passwords)
-            {
-                if (PasswordAnalyzer.GetPasswordEntropy(password) >= entropyThreshold)
-                    numberOfGoodPasswords++;
-            }
-            Assert.That(numberOfGoodPasswords, Is.EqualTo(81));
+
+            const double entropyThreshold = 65;
+            var good = passwords.Count(p => PasswordAnalyzer.GetPasswordEntropy(p) >= entropyThreshold);
+
+            Assert.That(good, Is.EqualTo(81));
         }
+
+        /* -------------------------------------------------- *
+         *  Single-string hashing                             *
+         * -------------------------------------------------- */
 
         [Test]
         public void Can_get_hash_values_for_examples()
@@ -39,14 +43,19 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var password = GetPasswordsFromFile("tmyc-week4-pt1-example1.txt").First();
             var updatedPassword = GetPasswordsFromFile("tmyc-week4-pt1-example2.txt").First();
 
-            var passwordSha1 = PasswordAnalyzer.ComputeSha1Hash(password);
+            var passwordSha1 = PasswordAnalyzer.Sha1(password);
+            var updatedPasswordSha1 = PasswordAnalyzer.Sha1(updatedPassword);
+
             Assert.That(passwordSha1, Is.EqualTo("edd7f5c3cbbdac6a1d3aae3b0dbae0e975f56413"));
-            var updatedPasswordSha1 = PasswordAnalyzer.ComputeSha1Hash(updatedPassword);
             Assert.That(updatedPasswordSha1, Is.EqualTo("6a531ecd01ed447c395a7431dcb65ec82d22eb66"));
 
-            var differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordSha1, updatedPasswordSha1);
-            Assert.That(differencePercentage, Is.EqualTo(87.5));
+            var difference = PasswordAnalyzer.DifferencePercentage(passwordSha1, updatedPasswordSha1);
+            Assert.That(difference, Is.EqualTo(87.5));
         }
+
+        /* -------------------------------------------------- *
+         *  List hashing                                      *
+         * -------------------------------------------------- */
 
         [Test]
         public void Can_get_hash_values_for_example_lists()
@@ -54,180 +63,145 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var passwords = GetPasswordsFromFile("tmyc-week4-pt1-example1.txt");
             var updatedPasswords = GetPasswordsFromFile("tmyc-week4-pt1-example2.txt");
 
-            var passwordsSha1 = PasswordAnalyzer.ComputeSha1Hash(passwords);
-            var updatedPasswordsSha1 = PasswordAnalyzer.ComputeSha1Hash(updatedPasswords);
+            var passwordsSha1 = PasswordAnalyzer.Sha1(passwords);
+            var updatedPasswordsSha1 = PasswordAnalyzer.Sha1(updatedPasswords);
 
-            var differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha1, updatedPasswordsSha1);
-            Assert.That(differencePercentage, Is.EqualTo(87.5));
+            var difference = PasswordAnalyzer.DifferencePercentage(passwordsSha1, updatedPasswordsSha1);
+            Assert.That(difference, Is.EqualTo(87.5));
         }
 
         [Test]
         public void Can_get_sha1_list_of_passwords()
         {
             var passwords = GetPasswordsFromFile("tmyc-week4-pt1-example1.txt");
-            var hashedPasswords = PasswordAnalyzer.ComputeSha1Hash(passwords);
+            var hashedPasswords = PasswordAnalyzer.Sha1(passwords);
+
             Assert.That(hashedPasswords[0], Is.EqualTo("edd7f5c3cbbdac6a1d3aae3b0dbae0e975f56413"));
         }
+
+        /* -------------------------------------------------- *
+         *  Multiple algorithms                               *
+         * -------------------------------------------------- */
 
         [Test]
         public void Can_get_different_hashes()
         {
-            var password = "!TMYC2025!";
+            const string password = "!TMYC2025!";
 
-            var sha1 = PasswordAnalyzer.ComputeSha1Hash(password);
-            Assert.That(sha1, Is.EqualTo("edd7f5c3cbbdac6a1d3aae3b0dbae0e975f56413"));
+            Assert.That(PasswordAnalyzer.Sha1(password),
+                Is.EqualTo("edd7f5c3cbbdac6a1d3aae3b0dbae0e975f56413"));
 
-            var sha256 = PasswordAnalyzer.ComputeSha256Hash(password);
-            Assert.That(sha256, Is.EqualTo("6a8982572c7a1caa4a89232836a3ebf33785cf9da9079756ce842d71c7bf1e54"));
+            Assert.That(PasswordAnalyzer.Sha256(password),
+                Is.EqualTo("6a8982572c7a1caa4a89232836a3ebf33785cf9da9079756ce842d71c7bf1e54"));
 
-            var sha512 = PasswordAnalyzer.ComputeSha512Hash(password);
-            Assert.That(sha512, Is.EqualTo("f36304521003ab238c5472a89a81c01d44ae13ed8196bf3185a3069724ce219375e80e9d2a3daa01fe2c12207d9315b462effee16dc6a9c9a41f58057bccb7c0"));
+            Assert.That(PasswordAnalyzer.Sha512(password),
+                Is.EqualTo("f36304521003ab238c5472a89a81c01d44ae13ed8196bf3185a3069724ce219375e80e9d2a3daa01fe2c12207d9315b462effee16dc6a9c9a41f58057bccb7c0"));
 
-            var blake2b = PasswordAnalyzer.ComputeBlake2bHash(password);
-            Assert.That(blake2b, Is.EqualTo("203b8e5a01eb375ced38fed7cbbc1fdbc4ab346c6562396c4324317f293571f481a0de56130159b186e7f8793b9d3d2388064082ab62e8e7070c797b610d5c51"));
+            Assert.That(PasswordAnalyzer.Blake2b(password),
+                Is.EqualTo("203b8e5a01eb375ced38fed7cbbc1fdbc4ab346c6562396c4324317f293571f481a0de56130159b186e7f8793b9d3d2388064082ab62e8e7070c797b610d5c51"));
 
-            var md5 = PasswordAnalyzer.ComputeMd5Hash(password);
-            Assert.That(md5, Is.EqualTo("0734950cc8ebafcc0c7c28a2ebae188c"));
+            Assert.That(PasswordAnalyzer.Md5(password),
+                Is.EqualTo("0734950cc8ebafcc0c7c28a2ebae188c"));
         }
+
+        /* -------------------------------------------------- *
+         *  Week-4 part-2 solutions                           *
+         * -------------------------------------------------- */
 
         [Test]
         public void Can_solve_TMYC_spring_2025_week_4_part_2()
         {
             var passwords = GetPasswordsFromFile("week4_pt1_input.txt");
             var updatedPasswords = GetPasswordsFromFile("week4_pt2_input.txt");
-            var diffPercentageDictionary = new Dictionary<string, double>();
 
-            var passwordsSha1 = PasswordAnalyzer.ComputeSha1Hash(passwords);
-            var updatedPasswordsSha1 = PasswordAnalyzer.ComputeSha1Hash(updatedPasswords);
-            var differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha1, updatedPasswordsSha1);
-            diffPercentageDictionary.Add("SHA1", differencePercentage);
+            var diffs = new Dictionary<string, double>
+            {
+                ["SHA1"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Sha1(passwords),
+                                 PasswordAnalyzer.Sha1(updatedPasswords)),
 
-            var passwordsSha256 = PasswordAnalyzer.ComputeSha256Hash(passwords);
-            var updatedPasswordsSha256 = PasswordAnalyzer.ComputeSha256Hash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha256, updatedPasswordsSha256);
-            diffPercentageDictionary.Add("SHA256", differencePercentage);
+                ["SHA256"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Sha256(passwords),
+                                 PasswordAnalyzer.Sha256(updatedPasswords)),
 
-            var passwordsSha512 = PasswordAnalyzer.ComputeSha512Hash(passwords);
-            var updatedPasswordsSha512 = PasswordAnalyzer.ComputeSha512Hash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha512, updatedPasswordsSha512);
-            diffPercentageDictionary.Add("SHA512", differencePercentage);
+                ["SHA512"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Sha512(passwords),
+                                 PasswordAnalyzer.Sha512(updatedPasswords)),
 
-            var passwordsBlake = PasswordAnalyzer.ComputeBlake2bHash(passwords);
-            var updatedPasswordsBlake = PasswordAnalyzer.ComputeBlake2bHash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsBlake, updatedPasswordsBlake);
-            diffPercentageDictionary.Add("BLAKE2B", differencePercentage);
+                ["BLAKE2B"] = PasswordAnalyzer.DifferencePercentage(
+                                  PasswordAnalyzer.Blake2b(passwords),
+                                  PasswordAnalyzer.Blake2b(updatedPasswords)),
 
-            var passwordsMd5 = PasswordAnalyzer.ComputeMd5Hash(passwords);
-            var updatedPasswordsMd5 = PasswordAnalyzer.ComputeMd5Hash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsMd5, updatedPasswordsMd5);
-            diffPercentageDictionary.Add("MD5", differencePercentage);
+                ["MD5"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Md5(passwords),
+                                 PasswordAnalyzer.Md5(updatedPasswords))
+            };
 
-            Assert.That(diffPercentageDictionary.Count, Is.EqualTo(5));
+            Assert.That(diffs.Count, Is.EqualTo(5));
         }
 
         [Test]
-        public void Can_solve_TMYC_spring_2025_week_4_part_2_2()
+        public void Can_solve_TMYC_spring_2025_week_4_part_2_big_string()
         {
             var passwords = GetOneBigString("week4_pt1_input.txt");
             var updatedPasswords = GetOneBigString("week4_pt2_input.txt");
-            var diffPercentageDictionary = new Dictionary<string, double>();
 
-            var passwordsSha1 = PasswordAnalyzer.ComputeSha1Hash(passwords);
-            var updatedPasswordsSha1 = PasswordAnalyzer.ComputeSha1Hash(updatedPasswords);
-            var differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha1, updatedPasswordsSha1);
-            diffPercentageDictionary.Add("SHA1", differencePercentage);
-
-            var passwordsSha256 = PasswordAnalyzer.ComputeSha256Hash(passwords);
-            var updatedPasswordsSha256 = PasswordAnalyzer.ComputeSha256Hash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha256, updatedPasswordsSha256);
-            diffPercentageDictionary.Add("SHA256", differencePercentage);
-
-            var passwordsSha512 = PasswordAnalyzer.ComputeSha512Hash(passwords);
-            var updatedPasswordsSha512 = PasswordAnalyzer.ComputeSha512Hash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsSha512, updatedPasswordsSha512);
-            diffPercentageDictionary.Add("SHA512", differencePercentage);
-
-            var passwordsBlake = PasswordAnalyzer.ComputeBlake2bHash(passwords);
-            var updatedPasswordsBlake = PasswordAnalyzer.ComputeBlake2bHash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsBlake, updatedPasswordsBlake);
-            diffPercentageDictionary.Add("BLAKE2B", differencePercentage);
-
-            var passwordsMd5 = PasswordAnalyzer.ComputeMd5Hash(passwords);
-            var updatedPasswordsMd5 = PasswordAnalyzer.ComputeMd5Hash(updatedPasswords);
-            differencePercentage = PasswordAnalyzer.GetDifferencePercentage(passwordsMd5, updatedPasswordsMd5);
-            diffPercentageDictionary.Add("MD5", differencePercentage);
-
-            Assert.That(diffPercentageDictionary.Count, Is.EqualTo(5));
-        }
-
-
-
-        public List<string> GetPasswordsFromFile(string fileName)
-        {
-            var passwordFile = FileGetter.GetMemoryStreamFromFile(fileName);
-            var passwords = new List<string>();
-
-            using (var reader = new StreamReader(passwordFile))
+            var diffs = new Dictionary<string, double>
             {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    var utf8Encoded = System.Text.Encoding.UTF8.GetBytes(line.Trim().TrimEnd('\r', '\n', ' ', '\t').ToString());
-                    passwords.Add(line.Trim().TrimEnd('\r', '\n', ' ', '\t'));
-                    //passwords.Add(System.Text.Encoding.UTF8.GetBytes(line.Trim().TrimEnd('\r', '\n', ' ', '\t')).ToString());
+                ["SHA1"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Sha1(passwords),
+                                 PasswordAnalyzer.Sha1(updatedPasswords)),
 
-                }
-            }
-            return passwords;
+                ["SHA256"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Sha256(passwords),
+                                 PasswordAnalyzer.Sha256(updatedPasswords)),
+
+                ["SHA512"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Sha512(passwords),
+                                 PasswordAnalyzer.Sha512(updatedPasswords)),
+
+                ["BLAKE2B"] = PasswordAnalyzer.DifferencePercentage(
+                                  PasswordAnalyzer.Blake2b(passwords),
+                                  PasswordAnalyzer.Blake2b(updatedPasswords)),
+
+                ["MD5"] = PasswordAnalyzer.DifferencePercentage(
+                                 PasswordAnalyzer.Md5(passwords),
+                                 PasswordAnalyzer.Md5(updatedPasswords))
+            };
+
+            Assert.That(diffs.Count, Is.EqualTo(5));
         }
 
-
-        public string GetOneBigString(string fileName)
+        /* -------------------------------------------------- *
+         *  Helpers                                           *
+         * -------------------------------------------------- */
+        private static List<string> GetPasswordsFromFile(string fileName)
         {
-            var passwordFile = FileGetter.GetMemoryStreamFromFile(fileName);
-            var passwords = new StringBuilder();
+            var stream = FileGetter.GetMemoryStreamFromFile(fileName);
+            var list = new List<string>();
 
-            using (var reader = new StreamReader(passwordFile))
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
-                string line;
+                string? line;
                 while ((line = reader.ReadLine()) != null)
-                {
-                    //var utf8Encoded = System.Text.Encoding.UTF8.GetBytes(line.Trim().TrimEnd('\r', '\n', ' ', '\t').ToString());
-                    passwords.Append(line.Trim().TrimEnd('\r', '\n', ' ', '\t'));
-                    //passwords.Add(line.Trim().TrimEnd('\r', '\n', ' ', '\t'));
-                    //passwords.Add(System.Text.Encoding.UTF8.GetBytes(line.Trim().TrimEnd('\r', '\n', ' ', '\t')).ToString());
-
-                }
+                    list.Add(line.Trim());
             }
-            return passwords.ToString();
+            return list;
         }
 
+        private static string GetOneBigString(string fileName)
+        {
+            var stream = FileGetter.GetMemoryStreamFromFile(fileName);
+            var sb = new StringBuilder();
 
-        //public static List<string> GetPasswordsFromFile(string fileName)
-        //{
-        //    var passwords = new List<string>();
-
-        //    using var stream = FileGetter.GetMemoryStreamFromFile(fileName);
-
-        //    // The last ‘true’ makes the reader throw if it sees an invalid UTF‑8 sequence.
-        //    using var reader = new StreamReader(
-        //        stream,
-        //        new UTF8Encoding(encoderShouldEmitUTF8Identifier: false,
-        //                         throwOnInvalidBytes: true),
-        //        detectEncodingFromByteOrderMarks: false,
-        //        bufferSize: 1024,
-        //        leaveOpen: false);
-
-        //    string? line;
-        //    while ((line = reader.ReadLine()) != null)
-        //    {
-        //        line = line.Trim('\r', '\n', ' ', '\t');
-        //        if (line.Length == 0) continue;          // skip blank lines if desired
-        //        passwords.Add(line);
-        //    }
-
-        //    return passwords;
-        //}
-
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                string? line;
+                while ((line = reader.ReadLine()) != null)
+                    sb.Append(line.Trim());
+            }
+            return sb.ToString();
+        }
     }
 }
+
