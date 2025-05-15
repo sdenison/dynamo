@@ -65,7 +65,7 @@ namespace Dynamo.Business.Shared.Cyber.Passwords
 
         public static string ComputeBlake2bHash(string input)
         {
-            using (var blake2b = new Konscious.Security.Cryptography.HMACBlake2B(64)) // 64 bytes = 512 bits
+            using (var blake2b = new Konscious.Security.Cryptography.HMACBlake2B(512))
             {
                 var inputBytes = System.Text.Encoding.UTF8.GetBytes(input);
                 var hashBytes = blake2b.ComputeHash(inputBytes);
@@ -101,16 +101,31 @@ namespace Dynamo.Business.Shared.Cyber.Passwords
             return ((double)differentChars / input1.Length) * 100;
         }
 
-        public static double GetDifferencePercentage(List<string> input1List, List<string> input2List)
+        public static double GetDifferencePercentage(
+            List<string> list1, List<string> list2)
         {
-            if (input1List.Count != input2List.Count)
-                throw new ArgumentException($"Parameters input1List and input2List must be the same length");
-            double differencePercentage = 0;
-            for (var i = 0; i < input1List.Count; i++)
+            if (list1.Count != list2.Count)
+                throw new ArgumentException("Lists must be same length");
+
+            int diff = 0, total = 0;
+
+            for (int i = 0; i < list1.Count; i++)
             {
-                differencePercentage += GetDifferencePercentage(input1List[i], input2List[i]);
+                var s1 = list1[i];
+                var s2 = list2[i];
+
+                if (s1.Length != s2.Length)
+                    throw new ArgumentException("Lists must be same length");
+
+                int pairLen = Math.Min(s1.Length, s2.Length);
+                for (int j = 0; j < pairLen; j++)
+                {
+                    if (s1[j] != s2[j]) diff++;
+                }
+                total += pairLen;
             }
-            return (double)differencePercentage / input1List.Count;
+
+            return total == 0 ? 0 : diff * 100.0 / total;
         }
     }
 }
