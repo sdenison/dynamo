@@ -42,21 +42,56 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
             return Convert.ToByte(str, 2);
         }
 
+        public static string ParseByteToString(string bits)
+        {
+            // bits should be an 8-character string of 0s and 1s
+            byte value = Convert.ToByte(bits, 2);   // binary → byte
+            return ((char)value).ToString();        // byte → char → string
+        }
+
+        public static string ParseByteHex(string bits)
+        {
+            if (bits.Length != 8 || bits.IndexOfAny(new[] { '0', '1' }) == -1)
+                throw new ArgumentException("Input must be exactly 8 characters of 0 or 1.", nameof(bits));
+
+            return Convert.ToByte(bits, 2).ToString("X2");   // "X2" → 2-digit hex, upper-case
+        }
+
         public static string GetStringFromOnesAndZeroString(string onesAndZeros, int offset)
         {
-            var bytes = new List<byte>();
+            //var bytes = new List<byte>();
+            var bytes = new StringBuilder();
             var b = string.Empty;
             for (var i = offset; i < onesAndZeros.Length; i++)
             {
                 b = b + onesAndZeros[i];
                 if (b.Length == 8)
                 {
-                    bytes.Add(ParseByte(b));
+                    bytes.Append(ParseByteToString(b));
                     b = string.Empty;
                 }
             }
-            return Encoding.ASCII.GetString(bytes.ToArray());
+            return bytes.ToString();
+            //return Encoding.ASCII.GetString(bytes.ToArray());
         }
+
+        //public static string GetStringFromOnesAndZeroString(string onesAndZeros, int offset)
+        //{
+        //    //var bytes = new List<byte>();
+        //    var bytes = new StringBuilder();
+        //    var b = string.Empty;
+        //    for (var i = offset; i < onesAndZeros.Length; i++)
+        //    {
+        //        b = b + onesAndZeros[i];
+        //        if (b.Length == 8)
+        //        {
+        //            bytes.Append(ParseByteHex(b));
+        //            b = string.Empty;
+        //        }
+        //    }
+        //    return bytes.ToString();
+        //    //return Encoding.ASCII.GetString(bytes.ToArray());
+        //}
 
         public List<string> GetBytesFromSpaces(List<string> spaces)
         {
