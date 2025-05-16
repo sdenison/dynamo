@@ -1,4 +1,5 @@
-﻿using Dynamo.Business.Shared.Cyber.Stenography;
+﻿using Dynamo.Business.Shared.Cyber.Scanner;
+using Dynamo.Business.Shared.Cyber.Stenography;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,22 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var messageAnalyzer = new MessageAnalyzer();
             var spaces = messageAnalyzer.GetSpacesAfterPunctuation(fileContents);
             var bytes = messageAnalyzer.GetBytesFromSpaces(spaces);
+            var realBytes = new List<byte>();
+            foreach (var b in bytes)
+            {
+                realBytes.Add(MessageAnalyzer.ParseByte(b));
+            }
+            var text = Encoding.UTF8.GetString(realBytes.ToArray());
+            Assert.That(text, Is.EqualTo("37482910"));
+        }
+
+        [Test]
+        public void Can_get_part_2_week_5_spring_2025()
+        {
+            var wholeText = GetOneBigString("week5_part2_document.txt");
+            var delimiter = "0xdeadbeef";
+            var message = FolderScanner.FindMessage(wholeText, delimiter);
+            var bytes = MessageAnalyzer.GetBytesFromCase(message);
             var realBytes = new List<byte>();
             foreach (var b in bytes)
             {

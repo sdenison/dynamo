@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Dynamo.Business.Shared.Cyber.Stenography
 {
@@ -59,6 +60,39 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
                     bytes.Add(currentString);
                     currentString = string.Empty;
                 }
+            }
+
+            return bytes;
+        }
+
+        public static List<string> GetBytesFromCase(string text, bool padIncompleteByte = false)
+        {
+            if (text is null) throw new ArgumentNullException(nameof(text));
+
+            var bytes = new List<string>(text.Length / 8 + 1);
+            var current = new StringBuilder(8);              // collects the 8 bits of the current “byte”
+
+            foreach (char c in text)
+            {
+                // Only letters contribute bits — skip anything else.
+                if (!char.IsLetter(c)) continue;
+
+                current.Append(char.IsUpper(c) ? '1' : '0');
+
+                if (current.Length == 8)
+                {
+                    bytes.Add(current.ToString());
+                    current.Clear();                         // start a new byte
+                }
+            }
+
+            // Handle a trailing partial byte if any bits are left over
+            if (current.Length > 0)
+            {
+                if (padIncompleteByte)
+                    current.Append('0', 8 - current.Length); // pad to 8 bits
+
+                bytes.Add(current.ToString());
             }
 
             return bytes;
