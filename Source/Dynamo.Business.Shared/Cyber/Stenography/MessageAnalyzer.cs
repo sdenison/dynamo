@@ -22,6 +22,10 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
 
             for (int i = 0; i < input.Length; i++)
             {
+                if (input[i] == '!')
+                {
+                    var xxxx = "got here";
+                }
                 if (IsPunctuation(input[i]) && i + 1 < input.Length && input[i + 1] == ' ')
                 {
                     // check for two spaces safely
@@ -44,14 +48,13 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
 
             for (int i = 0; i < spaces.Count; i++)
             {
-
                 if (spaces[i].Length == 1)
                     currentString = currentString + '0';
+
                 if (spaces[i].Length == 2)
                     currentString = currentString + '1';
-                if (i == 0)
-                    bytes.Add(currentString);
-                else if (i % 7 == 0)
+
+                if (currentString.Length == 8)
                 {
                     bytes.Add(currentString);
                     currentString = string.Empty;

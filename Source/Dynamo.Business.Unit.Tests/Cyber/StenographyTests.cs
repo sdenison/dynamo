@@ -31,14 +31,13 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var messageAnalyzer = new MessageAnalyzer();
             var spaces = messageAnalyzer.GetSpacesAfterPunctuation(fileContents);
             var bytes = messageAnalyzer.GetBytesFromSpaces(spaces);
-            Assert.That(bytes.Count, Is.EqualTo(spaces.Count / 8));
-            var str = string.Empty;
             var realBytes = new List<byte>();
             foreach (var b in bytes)
             {
                 realBytes.Add(MessageAnalyzer.ParseByte(b));
             }
-
+            var text = Encoding.UTF8.GetString(realBytes.ToArray());
+            Assert.That(text, Is.EqualTo("37482910"));
         }
 
 
@@ -51,7 +50,7 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             {
                 string? line;
                 while ((line = reader.ReadLine()) != null)
-                    sb.Append(line.Trim());
+                    sb.Append(line);
             }
             return sb.ToString();
         }
