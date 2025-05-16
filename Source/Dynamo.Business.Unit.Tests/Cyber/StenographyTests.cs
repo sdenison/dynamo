@@ -3,6 +3,7 @@ using Dynamo.Business.Shared.Cyber.Stenography;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Dynamo.Business.Unit.Tests.Cyber
@@ -54,7 +55,24 @@ namespace Dynamo.Business.Unit.Tests.Cyber
                 realBytes.Add(MessageAnalyzer.ParseByte(b));
             }
             var text = Encoding.UTF8.GetString(realBytes.ToArray());
-            Assert.That(text, Is.EqualTo("37482910"));
+            Assert.That(text, Is.EqualTo("4817263942689053"));
+        }
+
+        [Test]
+        public void Can_solve_week_5_spring_2025_challenge()
+        {
+            var wholeFile = GetOneBigByteArray("week5_security_cam.png");
+            var onesAndZeros = MessageAnalyzer.GetBytesFromLeastSignificantDights(wholeFile);
+            Assert.That(onesAndZeros.Count, Is.GreaterThan(0));
+
+            for (int offset = 0; offset < 8; offset++)
+            {
+                var message = MessageAnalyzer.GetStringFromOnesAndZeroString(onesAndZeros, offset).ToLower();
+                if (message.Contains("deadbeef"))
+                {
+                    var xxxxx = offset;
+                }
+            }
         }
 
 
@@ -71,5 +89,26 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             }
             return sb.ToString();
         }
+
+        private static byte[] GetOneBigByteArray(string fileName)
+        {
+            // Get the file as a stream (your existing helper)
+            using var stream = FileGetter.GetMemoryStreamFromFile(fileName);
+
+            // We’ll build the result in a MemoryStream
+            using var output = new MemoryStream();
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                // Convert each line to UTF-8 bytes and write them out
+                var lineBytes = Encoding.UTF8.GetBytes(line);
+                output.Write(lineBytes, 0, lineBytes.Length);
+            }
+
+            return output.ToArray();   // one contiguous byte[] without newline bytes
+        }
+
     }
 }

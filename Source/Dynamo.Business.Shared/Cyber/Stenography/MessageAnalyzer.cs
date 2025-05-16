@@ -42,6 +42,22 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
             return Convert.ToByte(str, 2);
         }
 
+        public static string GetStringFromOnesAndZeroString(string onesAndZeros, int offset)
+        {
+            var bytes = new List<byte>();
+            var b = string.Empty;
+            for (var i = offset; i < onesAndZeros.Length; i++)
+            {
+                b = b + onesAndZeros[i];
+                if (b.Length == 8)
+                {
+                    bytes.Add(ParseByte(b));
+                    b = string.Empty;
+                }
+            }
+            return Encoding.ASCII.GetString(bytes.ToArray());
+        }
+
         public List<string> GetBytesFromSpaces(List<string> spaces)
         {
             var bytes = new List<string>();
@@ -96,6 +112,20 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
             }
 
             return bytes;
+        }
+
+        public static string GetBytesFromLeastSignificantDights(byte[] bytes)
+        {
+            var onesAndZeros = new StringBuilder();
+            foreach (var b in bytes)
+            {
+                // If it's even the LSB should be 0
+                if (b % 2 == 0)
+                    onesAndZeros.Append("0");
+                else
+                    onesAndZeros.Append("1");
+            }
+            return onesAndZeros.ToString();
         }
 
         private bool IsPunctuation(char c)
