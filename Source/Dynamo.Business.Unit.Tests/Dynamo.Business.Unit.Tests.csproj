@@ -17,6 +17,7 @@
 	  <None Remove="FakeFiles\Week1Part2.txt" />
 	  <None Remove="FakeFiles\week4_pt1_input.txt" />
 	  <None Remove="FakeFiles\week4_pt2_input.txt" />
+	  <None Remove="FakeFiles\week5_part1_message.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="FakeFiles\blkjckhands.csv" />
@@ -34,6 +35,7 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="FakeFiles\week4_pt1_input.txt" />
 		<EmbeddedResource Include="FakeFiles\week4_pt2_input.txt" />
+		<EmbeddedResource Include="FakeFiles\week5_part1_message.txt" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="coverlet.msbuild" Version="6.0.2">
