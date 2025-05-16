@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Dynamo.Business.Shared.Cyber.Stenography
 {
@@ -29,6 +30,35 @@ namespace Dynamo.Business.Shared.Cyber.Stenography
             }
 
             return list;
+        }
+
+        public static byte ParseByte(string str)
+        {
+            return Convert.ToByte(str, 2);
+        }
+
+        public List<string> GetBytesFromSpaces(List<string> spaces)
+        {
+            var bytes = new List<string>();
+            var currentString = string.Empty;
+
+            for (int i = 0; i < spaces.Count; i++)
+            {
+
+                if (spaces[i].Length == 1)
+                    currentString = currentString + '0';
+                if (spaces[i].Length == 2)
+                    currentString = currentString + '1';
+                if (i == 0)
+                    bytes.Add(currentString);
+                else if (i % 7 == 0)
+                {
+                    bytes.Add(currentString);
+                    currentString = string.Empty;
+                }
+            }
+
+            return bytes;
         }
 
         private bool IsPunctuation(char c)

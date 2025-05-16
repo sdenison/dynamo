@@ -1,5 +1,6 @@
 ﻿using Dynamo.Business.Shared.Cyber.Stenography;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -20,8 +21,23 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             var fileContents = GetOneBigString("week5_part1_message.txt");
             var messageAnalyzer = new MessageAnalyzer();
             var spaces = messageAnalyzer.GetSpacesAfterPunctuation(fileContents);
-            // The spaces are supposed to represent bytes so it should be divisible by 8
             Assert.That(spaces.Count % 8, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Can_get_bytes_from_list_of_spaces()
+        {
+            var fileContents = GetOneBigString("week5_part1_message.txt");
+            var messageAnalyzer = new MessageAnalyzer();
+            var spaces = messageAnalyzer.GetSpacesAfterPunctuation(fileContents);
+            var bytes = messageAnalyzer.GetBytesFromSpaces(spaces);
+            Assert.That(bytes.Count, Is.EqualTo(spaces.Count / 8));
+            var str = string.Empty;
+            var realBytes = new List<byte>();
+            foreach (var b in bytes)
+            {
+                realBytes.Add(MessageAnalyzer.ParseByte(b));
+            }
 
         }
 
