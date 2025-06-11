@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Dynamo.Business.Shared.Cyber.Scanner
 {
@@ -42,5 +43,24 @@ namespace Dynamo.Business.Shared.Cyber.Scanner
             var endIndex = textToSearch.IndexOf(end);
             return textToSearch.Substring(startIndex, endIndex - startIndex);
         }
+
+        public static string FindMessage(string text, string delimiter)
+        {
+            if (delimiter is null) throw new ArgumentNullException(nameof(delimiter));
+            if (delimiter.Length == 0) throw new ArgumentException("Delimiter cannot be empty.", nameof(delimiter));
+            if (text is null) throw new ArgumentNullException(nameof(text));
+
+            // first occurrence (opening delimiter)
+            int first = text.IndexOf(delimiter, StringComparison.Ordinal);
+            if (first < 0) return null;                  // or throw
+
+            // second occurrence (closing delimiter) – search *after* the first one
+            int second = text.IndexOf(delimiter, first + delimiter.Length, StringComparison.Ordinal);
+            if (second < 0) return null;                  // or throw
+
+            int start = first + delimiter.Length;
+            return text.Substring(start, second - start);
+        }
+
     }
 }
