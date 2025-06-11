@@ -9,10 +9,17 @@
 		<None Remove="FakeFiles\MineLayout.txt" />
 		<None Remove="FakeFiles\Problem2Keyfile.txt" />
 		<None Remove="FakeFiles\server_logs.json" />
+		<None Remove="FakeFiles\tmyc-week4-pt1-example1.txt" />
+		<None Remove="FakeFiles\tmyc-week4-pt1-example2.txt" />
 	  <None Remove="FakeFiles\Week1ChallengeInputText.txt" />
 	  <None Remove="FakeFiles\Week1InputKeys.txt" />
 	  <None Remove="FakeFiles\Week1Part1.txt" />
 	  <None Remove="FakeFiles\Week1Part2.txt" />
+	  <None Remove="FakeFiles\week4_pt1_input.txt" />
+	  <None Remove="FakeFiles\week4_pt2_input.txt" />
+	  <None Remove="FakeFiles\week5_part1_message.txt" />
+	  <None Remove="FakeFiles\week5_part2_document.txt" />
+	  <None Remove="FakeFiles\week5_security_cam.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="FakeFiles\blkjckhands.csv" />
@@ -21,11 +28,18 @@
 		<EmbeddedResource Include="FakeFiles\MineLayout.txt" />
 		<EmbeddedResource Include="FakeFiles\Problem2Keyfile.txt" />
 		<EmbeddedResource Include="FakeFiles\server_logs.json" />
+		<EmbeddedResource Include="FakeFiles\tmyc-week4-pt1-example1.txt" />
+		<EmbeddedResource Include="FakeFiles\tmyc-week4-pt1-example2.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1ChallengeInputText.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1InputKeys.txt" />
 		<EmbeddedResource Include="FakeFiles\Week1Part2.txt">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
+		<EmbeddedResource Include="FakeFiles\week4_pt1_input.txt" />
+		<EmbeddedResource Include="FakeFiles\week4_pt2_input.txt" />
+		<EmbeddedResource Include="FakeFiles\week5_part1_message.txt" />
+		<EmbeddedResource Include="FakeFiles\week5_part2_document.txt" />
+		<EmbeddedResource Include="FakeFiles\week5_security_cam.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="coverlet.msbuild" Version="6.0.2">
@@ -37,6 +51,8 @@
 		<PackageReference Include="NUnit" Version="4.1.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.5" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Dynamo.Business\Dynamo.Business.csproj" />
