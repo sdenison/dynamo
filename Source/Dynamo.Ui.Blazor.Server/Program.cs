@@ -45,12 +45,15 @@ builder.Services.AddCsla(o => o
     .ClientSideDataPortal(co => co
         .UseLocalProxy())));
 
-//Set up DynamoDb dataService
-var awsDb = new AmazonDynamoDBClient(RegionEndpoint.USEast2);
+// Set up DynamoDB data service with configuration-driven values.
+var awsRegion = builder.Configuration["AppSettings:AWSRegion"] ?? RegionEndpoint.USEast2.SystemName;
+var backgroundJobTableName = builder.Configuration["AppSettings:BackgroundJobTableName"] ?? "test-BackgroundJob";
+
+var awsDb = new AmazonDynamoDBClient(RegionEndpoint.GetBySystemName(awsRegion));
 var db = new PocoDynamo(awsDb);
 db.RegisterTable<BackgroundJobEntity>();
 var metadata = db.GetTableMetadata(typeof(BackgroundJobEntity));
-metadata.Name = "test-BackgroundJob";
+metadata.Name = backgroundJobTableName;
 var dataService = new BackgroundJobDataService(db);
 
 //Add dependency injection 
