@@ -87,7 +87,7 @@ namespace Dynamo.Business.Unit.Tests.Cyber
             Assert.That(winningOffset, Is.EqualTo(3));
         }
 
-        [Test]
+        [Test, Ignore("png file doesn't exist in repository")]
         public void Can_solve_week_5_spring_2025_challenge()
         {
             var wholeFile = ExtractLsbs_SystemDrawing("C:\\users\\user1\\Downloads\\week5_security_cam.png");
