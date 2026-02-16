@@ -4,7 +4,56 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "name": "Launch Blazor Server (HTTPS)",
+            "type": "blazorwasm",
+            "request": "launch",
+            "hosted": true,
+            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net8.0/Dynamo.Ui.Blazor.Server.dll",
+            "cwd": "${workspaceFolder}/Dynamo.Ui.Blazor.Server",
+            "browser": "chrome",
+            "url": "https://localhost:5001",
+            "webRoot": "${workspaceFolder}/Dynamo.Ui.Blazor.Client/wwwroot",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "https://localhost:5001;http://localhost:5000"
+            },
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Launch Blazor Server (HTTP)", 
+            "type": "blazorwasm",
+            "request": "launch",
+            "hosted": true,
+            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net8.0/Dynamo.Ui.Blazor.Server.dll",
+            "cwd": "${workspaceFolder}/Dynamo.Ui.Blazor.Server",
+            "browser": "chrome",
+            "url": "http://localhost:5000",
+            "webRoot": "${workspaceFolder}/Dynamo.Ui.Blazor.Client/wwwroot",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5000"
+            },
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Launch Server Only",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net8.0/Dynamo.Ui.Blazor.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Dynamo.Ui.Blazor.Server",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "preLaunchTask": "build"
+        },
         {
             "name": ".NET Core Attach",
             "type": "coreclr",

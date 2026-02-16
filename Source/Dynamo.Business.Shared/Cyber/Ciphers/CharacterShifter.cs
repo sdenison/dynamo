@@ -1,4 +1,4 @@
-﻿namespace Dynamo.Business.Shared.Cyber
+﻿namespace Dynamo.Business.Shared.Cyber.Ciphers
 {
     public static class CharacterShifter
     {

@@ -63,7 +63,7 @@ namespace Dynamo.Business.Unit.Tests.Casino.Slots
             var averageWinAmount = (double)totalWinAmount / gamesToPlay;
 
             //190 was the accepted answer
-            Assert.That(averageWinAmount, Is.LessThan(193));
+            Assert.That(averageWinAmount, Is.LessThan(192));
             Assert.That(averageWinAmount, Is.GreaterThan(186));
         }
 

@@ -1,5 +1,6 @@
-﻿using Dynamo.Business.Shared.Cyber;
+﻿using Dynamo.Business.Shared.Cyber.Ciphers;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -163,7 +164,7 @@ namespace Dynamo.Business.Unit.Tests.Cyber
                 keysString = keyReader.ReadToEnd();
             }
 
-            var keys = keysString.Split('\r');
+            var keys = keysString.Split(Environment.NewLine);
 
             Assert.That(keys.Length, Is.EqualTo(63));
 
