@@ -31,3 +31,8 @@
 ## Running the app
     When the app is running you can navigate to it by using the public dns of the load balancer.
 
+## Kubernetes (new)
+    See Kubernetes/README.md for manifests and deployment steps.
+
+    Quick start:
+    kubectl apply -k Kubernetes/overlays/test
