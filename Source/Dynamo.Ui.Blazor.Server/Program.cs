@@ -27,9 +27,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddRazorPages();
@@ -65,12 +62,6 @@ builder.Services.AddBlazorBootstrap(); // Add this line
 
 // If using Kestrel:
 builder.Services.Configure<KestrelServerOptions>(options =>
-{
-    options.AllowSynchronousIO = true;
-});
-
-// If using IIS:
-builder.Services.Configure<IISServerOptions>(options =>
 {
     options.AllowSynchronousIO = true;
 });

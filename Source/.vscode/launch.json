@@ -9,7 +9,7 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net8.0/Dynamo.Ui.Blazor.Server.dll",
+            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net10.0/Dynamo.Ui.Blazor.Server.dll",
             "cwd": "${workspaceFolder}/Dynamo.Ui.Blazor.Server",
             "browser": "chrome",
             "url": "https://localhost:5001",
@@ -25,14 +25,14 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net8.0/Dynamo.Ui.Blazor.Server.dll",
+            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net10.0/Dynamo.Ui.Blazor.Server.dll",
             "cwd": "${workspaceFolder}/Dynamo.Ui.Blazor.Server",
-            "browser": "chrome",
-            "url": "http://localhost:5000",
+            "browser": "chromium",
+            "url": "http://localhost:5161",
             "webRoot": "${workspaceFolder}/Dynamo.Ui.Blazor.Client/wwwroot",
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://localhost:5000"
+                "ASPNETCORE_URLS": "http://localhost:5161"
             },
             "preLaunchTask": "build"
         },
@@ -40,7 +40,7 @@
             "name": "Launch Server Only",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net8.0/Dynamo.Ui.Blazor.Server.dll",
+            "program": "${workspaceFolder}/Dynamo.Ui.Blazor.Server/bin/Debug/net10.0/Dynamo.Ui.Blazor.Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Dynamo.Ui.Blazor.Server",
             "stopAtEntry": false,
